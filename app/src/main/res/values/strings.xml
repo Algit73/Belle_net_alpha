@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Belle_net_alpha</string>
+    <string name="mapbox_access_token">pk.eyJ1IjoiYWxtYXBib3g3MyIsImEiOiJjamVibHB2eXYxaWQ3MnlvMzBjdDc3OHgwIn0.7K_axUKMgFqI8Z3lk7RFmQ</string>
 </resources>

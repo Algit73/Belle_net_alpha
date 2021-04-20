@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background = "@drawable/bellenet_bottom_sheet_background"
+    android:paddingBottom="32dp"
+    android:id="@+id/bottom_sheet_challenges"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="16dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_profile_image"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/al_profile_300"
+        app:civ_border_width="2dp"
+        app:civ_border_color="@color/teal_200"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/user_name"
+        android:text="Alireza Alikhani"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="@id/user_profile_image"
+        app:layout_constraintBottom_toBottomOf="@id/user_profile_image"
+        app:layout_constraintLeft_toRightOf="@+id/user_profile_image"
+        android:layout_marginStart="16dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/list_of_challanges_text"
+        android:textSize="16sp"
+        android:text="Choose the Challange:"
+        app:layout_constraintTop_toBottomOf="@id/user_profile_image"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/list_of_challanges"
+        app:layout_constraintTop_toBottomOf="@id/user_profile_image"
+        app:layout_constraintLeft_toRightOf="@id/list_of_challanges_text"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/choose_date_text"
+        android:textSize="16sp"
+        android:text="Choose the Date:"
+        app:layout_constraintTop_toBottomOf="@id/list_of_challanges_text"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_date"
+        android:hint="Click to Choose the Date"
+        android:textSize="16sp"
+        android:inputType="date"
+        app:layout_constraintTop_toTopOf="@id/choose_date_text"
+        app:layout_constraintBottom_toBottomOf="@id/choose_date_text"
+        app:layout_constraintLeft_toRightOf="@id/choose_date_text"
+        android:layout_marginStart="16dp"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/save_challenge"
+        android:text="Save"
+        android:background="@drawable/button_rounded_corners"
+        app:layout_constraintTop_toBottomOf="@id/choose_date_text"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="36dp"
+        android:layout_marginStart="24dp"
+        app:backgroundTint="@color/save_button"
+        android:shadowColor="@color/teal_200"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cancel_challenge"
+        android:text="cancel"
+        android:background="@drawable/button_rounded_corners"
+        app:layout_constraintTop_toBottomOf="@id/choose_date_text"
+        app:layout_constraintLeft_toRightOf="@id/save_challenge"
+        android:layout_marginTop="36dp"
+        android:layout_marginStart="24dp"
+        app:backgroundTint="@color/cancel_button"
+        />
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
