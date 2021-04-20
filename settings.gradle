@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "Belle_net_alpha"
