@@ -19,6 +19,7 @@ public class file_maker
     private FileWriter file_writer ;
     private BufferedReader buffered_reader ;
     private BufferedWriter buffered_writer;
+    private static final String TAG = main_activity.class.getSimpleName();
 
 
     public file_maker(String parent, String file_name)
@@ -62,14 +63,14 @@ public class file_maker
             while ((line = buffered_reader.readLine()) != null)
             {
                 output.append(line + "\n");
-                Log.v("TAG", "file_maker: "+line);
+                Log.v(TAG, "file_maker output of read: "+line);
             }
             response = output.toString();
             return new JSONObject(response);
         }
         catch (Exception e)
         {
-            Log.v("TAG", "file_maker: "+e.getMessage());
+            Log.v(TAG, "file_maker output of read: "+e.getMessage());
             return null;
         }
     }
@@ -78,7 +79,7 @@ public class file_maker
     {
         try
         {
-            Log.v("TAG", "file_maker: Writing");
+            Log.v(TAG, "file_maker: Writing 1");
             file_writer = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(file_writer);
             bw.write(object.toString());
@@ -87,7 +88,7 @@ public class file_maker
         catch (IOException e)
         {
             e.printStackTrace();
-            Log.v("TAG", "file_maker: "+e.getMessage());
+            Log.v(TAG, "file_maker: Writing 2 "+e.getMessage());
         }
     }
 }

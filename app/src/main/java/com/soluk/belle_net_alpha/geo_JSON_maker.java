@@ -10,6 +10,7 @@ public class geo_JSON_maker
 {
     private JSONObject features_object;
     private JSONArray features_child_array;
+    private static final String TAG = main_activity.class.getSimpleName();
 
 
 
@@ -45,7 +46,7 @@ public class geo_JSON_maker
             properties.put("marker-size", "medium");
             properties.put("marker-symbol", "");
             properties.put("name", feature.get("name"));
-            properties.put("name", feature.get("family"));
+            properties.put("family", feature.get("family"));
             properties.put("date_created", feature.get("date_created"));
             properties.put("event_date", feature.get("date_of_event"));
 

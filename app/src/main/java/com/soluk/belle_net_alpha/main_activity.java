@@ -92,7 +92,8 @@ public class main_activity extends AppCompatActivity implements
     private static final String PROPERTY_EVENT_DATE = "event_date";
     private static final String PROPERTY_IS_USER_JOINED = "is_user_joined";
     private static final String PROPERTY_PIC = "profile_pic";
-    private static final String USER_NAME = "Alireza Alikhani";
+    private static final String USER_NAME = "Alireza";
+    private static final String USER_FAMILY = "Alikhani";
     private static final String USER_PIC = "#loncle";
     private static final String USER_ID = "#ahdx98!s5kjxsp";
     private MapView mapView;
@@ -334,27 +335,40 @@ public class main_activity extends AppCompatActivity implements
         String formattedDate = df.format(c);
         Log.d(TAG, "Current Date after " + formattedDate);
 
+        String myFormat = "yyyy-MM-dd"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
         JSONObject feature = new JSONObject();
         try
         {
             feature.put("name",USER_NAME);
+            feature.put("family",USER_FAMILY);
             feature.put("date_created",formattedDate);
+            feature.put("date_of_event",sdf.format(myCalendar.getTime()));
             feature.put("user_picture",USER_PIC);
             feature.put("longitude_pinned",selected_postion.getLongitude());
             feature.put("latitude_pinned",selected_postion.getLatitude());
+            Log.v(TAG, " user created EVENT: "+feature.toString());
+            Log.v(TAG, " user clicked save: It's OK");
 
         }
         catch (Exception e)
         {
-
+            Log.v(TAG, " user clicked save Error: "+e.getMessage());
         }
 
         //feature_maker.add_feature(USER_NAME,"February, 9",
         //      String.valueOf(selected_postion.getLongitude()), String.valueOf(selected_postion.getLatitude()),USER_PIC);
         //"-123","42");
         feature_maker.add_feature(feature);
+        Log.v(TAG, "On user clicked add Feature: "+feature_maker.toString());
         geo_json_holder.write(feature_maker.get_features_object());
         update_map();
+        //file_maker geo_json_holder = new file_maker(file_directory_static,FILE_NAME);
+        Log.v(TAG, "On user clicked save: ");
+        //geo_json_holder.read();
+        Log.v(TAG, geo_json_holder.read().toString());
+
 
     }
 
@@ -416,6 +430,7 @@ public class main_activity extends AppCompatActivity implements
     {
         String myFormat = "MMMM/dd/yyyy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
 
         edit_date_time.setText(sdf.format(myCalendar.getTime()));
     }
