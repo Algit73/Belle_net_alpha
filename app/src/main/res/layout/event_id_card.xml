@@ -63,7 +63,7 @@
                     />
 
                 <TextView
-                    android:id="@+id/date_to_show"
+                    android:id="@+id/created_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
@@ -81,7 +81,7 @@
                     android:textAlignment="center"
                     android:text="Event Will Begin on:"
                     android:textStyle="italic"
-                    app:layout_constraintTop_toBottomOf="@id/date_to_show"
+                    app:layout_constraintTop_toBottomOf="@id/created_date"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     android:layout_marginTop="8dp"
@@ -135,6 +135,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             />
+
         <View
             android:layout_width="1dp"
             android:layout_height="1dp"
