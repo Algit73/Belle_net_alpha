@@ -90,6 +90,7 @@ public class main_activity extends AppCompatActivity implements
     private static final String PROPERTY_FAMILY = "family";
     private static final String PROPERTY_DATE_CREATED = "date_created";
     private static final String PROPERTY_EVENT_DATE = "event_date";
+    private static final String PROPERTY_EVENT_ID = "event_id";
     private static final String PROPERTY_IS_USER_JOINED = "is_user_joined";
     private static final String PROPERTY_PIC = "profile_pic";
     private static final String USER_NAME = "Alireza";
@@ -332,8 +333,8 @@ public class main_activity extends AppCompatActivity implements
         Log.d(TAG, "Current Date Before " + c);
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        String formattedDate = df.format(c);
-        Log.d(TAG, "Current Date after " + formattedDate);
+        String formatted_date = df.format(c);
+        Log.d(TAG, "Current Date after " + formatted_date);
 
         String myFormat = "yyyy-MM-dd"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
@@ -343,7 +344,8 @@ public class main_activity extends AppCompatActivity implements
         {
             feature.put("name",USER_NAME);
             feature.put("family",USER_FAMILY);
-            feature.put("date_created",formattedDate);
+            feature.put("event_unique_id","123");   // It should be changed
+            feature.put("date_created",formatted_date);
             feature.put("date_of_event",sdf.format(myCalendar.getTime()));
             feature.put("user_picture",USER_PIC);
             feature.put("longitude_pinned",selected_postion.getLongitude());
@@ -357,9 +359,7 @@ public class main_activity extends AppCompatActivity implements
             Log.v(TAG, " user clicked save Error: "+e.getMessage());
         }
 
-        //feature_maker.add_feature(USER_NAME,"February, 9",
-        //      String.valueOf(selected_postion.getLongitude()), String.valueOf(selected_postion.getLatitude()),USER_PIC);
-        //"-123","42");
+
         feature_maker.add_feature(feature);
         Log.v(TAG, "On user clicked add Feature: "+feature_maker.toString());
         geo_json_holder.write(feature_maker.get_features_object());
@@ -541,7 +541,7 @@ public class main_activity extends AppCompatActivity implements
         List<Feature> features = mapboxMap.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID);
         if (!features.isEmpty())
         {
-            String name = features.get(0).getStringProperty(PROPERTY_NAME);
+            String name = features.get(0).getStringProperty(PROPERTY_EVENT_ID);
             Log.v(TAG,"Feature Name: "+name);
             List<Feature> featureList = featureCollection.features();
             if (featureList != null)
@@ -549,7 +549,7 @@ public class main_activity extends AppCompatActivity implements
                 Log.v(TAG,"Feature Size: "+featureList.size());
                 for (int i = 0; i < featureList.size(); i++)
                 {
-                    if (featureList.get(i).getStringProperty(PROPERTY_NAME).equals(name))
+                    if (featureList.get(i).getStringProperty(PROPERTY_EVENT_ID).equals(name))
                     {
                         Log.v(TAG,"featureList.get(i): "+featureList.get(i).getStringProperty(PROPERTY_NAME));
                         if (featureSelectStatus(i))

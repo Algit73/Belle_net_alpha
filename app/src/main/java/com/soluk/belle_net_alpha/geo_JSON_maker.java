@@ -47,6 +47,7 @@ public class geo_JSON_maker
             properties.put("marker-symbol", "");
             properties.put("name", feature.get("name"));
             properties.put("family", feature.get("family"));
+            properties.put("event_id", feature.get("event_unique_id"));
             properties.put("date_created", feature.get("date_created"));
             properties.put("event_date", feature.get("date_of_event"));
 
