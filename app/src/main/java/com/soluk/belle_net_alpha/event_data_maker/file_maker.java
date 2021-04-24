@@ -1,7 +1,9 @@
-package com.soluk.belle_net_alpha;
+package com.soluk.belle_net_alpha.event_data_maker;
 
 import android.content.ContextWrapper;
 import android.util.Log;
+
+import com.soluk.belle_net_alpha.main_activity;
 
 import org.json.JSONObject;
 

@@ -14,7 +14,6 @@ import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,13 +44,14 @@ import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
 import com.mapbox.mapboxsdk.style.layers.Property;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+import com.soluk.belle_net_alpha.event_data_maker.file_maker;
+import com.soluk.belle_net_alpha.event_data_maker.geo_JSON_maker;
 import com.soluk.belle_net_alpha.http_requests.SimpleHttp;
 import com.soluk.belle_net_alpha.http_requests.SimpleHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.nio.charset.Charset;
@@ -109,7 +109,7 @@ public class main_activity extends AppCompatActivity implements
     private Button save_challenge;
     private Button cancel_challenge;
     private EditText edit_date_time;
-    private final Calendar myCalendar = Calendar.getInstance();
+    private final Calendar calendar_date_picker = Calendar.getInstance();
     private boolean active_user_pin_mode;
     private static final String FILE_NAME = "geo_json_bellenet";
     private static String file_directory_static = "";
@@ -236,9 +236,9 @@ public class main_activity extends AppCompatActivity implements
                                   int dayOfMonth)
             {
                 // TODO Auto-generated method stub
-                myCalendar.set(Calendar.YEAR, year);
-                myCalendar.set(Calendar.MONTH, monthOfYear);
-                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                calendar_date_picker.set(Calendar.YEAR, year);
+                calendar_date_picker.set(Calendar.MONTH, monthOfYear);
+                calendar_date_picker.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 update_edit_box();
             }
 
@@ -251,14 +251,20 @@ public class main_activity extends AppCompatActivity implements
             public void onClick(View v)
             {
                 // TODO Auto-generated method stub
-                new DatePickerDialog(main_activity.this, date, myCalendar
-                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                new DatePickerDialog(main_activity.this, date, calendar_date_picker
+                        .get(Calendar.YEAR), calendar_date_picker.get(Calendar.MONTH),
+                        calendar_date_picker.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
 
 
 
+    }
+
+    private void update_edit_box()
+    {
+        SimpleDateFormat us_date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        edit_date_time.setText(us_date_format.format(calendar_date_picker.getTime()));
     }
 
     @Override
@@ -328,47 +334,33 @@ public class main_activity extends AppCompatActivity implements
     {
         symbol_manager.delete(user_marker_pinned);
 
-        Date c = Calendar.getInstance().getTime();
-        //System.out.println("Current time => " + c);
-        Log.d(TAG, "Current Date Before " + c);
-
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        String formatted_date = df.format(c);
-        Log.d(TAG, "Current Date after " + formatted_date);
-
-        String myFormat = "yyyy-MM-dd"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        Date current_date = Calendar.getInstance().getTime();
+        SimpleDateFormat us_date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);    // Date Styles may should change to the getDefault()
 
         JSONObject feature = new JSONObject();
+
         try
         {
             feature.put("name",USER_NAME);
             feature.put("family",USER_FAMILY);
             feature.put("event_unique_id","123");   // It should be changed
-            feature.put("date_created",formatted_date);
-            feature.put("date_of_event",sdf.format(myCalendar.getTime()));
+            feature.put("date_created",us_date_format.format(current_date));
+            feature.put("date_of_event",us_date_format.format(calendar_date_picker.getTime()));
             feature.put("user_picture",USER_PIC);
             feature.put("longitude_pinned",selected_postion.getLongitude());
             feature.put("latitude_pinned",selected_postion.getLatitude());
-            Log.v(TAG, " user created EVENT: "+feature.toString());
-            Log.v(TAG, " user clicked save: It's OK");
+            Log.v(TAG, "user created event: OK");
 
         }
         catch (Exception e)
         {
-            Log.v(TAG, " user clicked save Error: "+e.getMessage());
+            Log.v(TAG, "user failed to create event: "+e.getMessage());
         }
 
 
         feature_maker.add_feature(feature);
-        Log.v(TAG, "On user clicked add Feature: "+feature_maker.toString());
         geo_json_holder.write(feature_maker.get_features_object());
         update_map();
-        //file_maker geo_json_holder = new file_maker(file_directory_static,FILE_NAME);
-        Log.v(TAG, "On user clicked save: ");
-        //geo_json_holder.read();
-        Log.v(TAG, geo_json_holder.read().toString());
-
 
     }
 
@@ -393,14 +385,9 @@ public class main_activity extends AppCompatActivity implements
 
         }
 
-
-
         geo_json_holder = new file_maker(file_directory,FILE_NAME);
-        geo_json_holder.read();
         geo_json_holder.write(feature_maker.get_features_object());
-        geo_json_holder.read();
-        Log.v(TAG,"Feature: "+geo_json_holder.read().toString());
-        FeatureCollection.fromJson(geo_json_holder.read().toString());
+
         update_map();
 
     }
@@ -420,20 +407,11 @@ public class main_activity extends AppCompatActivity implements
                 symbol_manager.setIconAllowOverlap(true);
                 style.addImage("myMarker", BitmapFactory.decodeResource(getResources(),R.drawable.blue_marker));
 
-
-
             }
         });
     }
 
-    private void update_edit_box()
-    {
-        String myFormat = "MMMM/dd/yyyy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
-
-        edit_date_time.setText(sdf.format(myCalendar.getTime()));
-    }
 
     /**
      * Sets up all of the sources and layers needed for this example
