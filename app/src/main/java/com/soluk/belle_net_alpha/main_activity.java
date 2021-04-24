@@ -271,15 +271,12 @@ public class main_activity extends AppCompatActivity implements
             }
         });
 
-
-
-
     }
 
 
     private void update_edit_box()
     {
-        SimpleDateFormat us_date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        SimpleDateFormat us_date_format = new SimpleDateFormat("MMMM,dd,yyyy", Locale.US);
         edit_date_time.setText(us_date_format.format(calendar_date_picker.getTime()));
     }
 
@@ -325,8 +322,6 @@ public class main_activity extends AppCompatActivity implements
     public void onMapReady(@NonNull MapboxMap mapboxMap)
     {
         this.mapboxMap = mapboxMap;
-
-
 
         mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded()
         {
@@ -390,8 +385,7 @@ public class main_activity extends AppCompatActivity implements
             try
             {
                 JSONObject event = new JSONObject(received_events.get(i).toString());
-                //if (Environment.isExternalStorageManager())
-                    catch_profile_images(event.get("user_picture").toString().substring(1));
+                catch_profile_images(event.get("user_picture").toString().substring(1));
                 Log.d(TAG,"profile prefix: "+event.get("user_picture").toString().substring(1));
                 feature_maker.add_feature(event);
             }
@@ -430,9 +424,9 @@ public class main_activity extends AppCompatActivity implements
 
     private String saveToInternalStorage(Bitmap bitmapImage, String name)
     {
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        ContextWrapper context_wrapper = new ContextWrapper(getApplicationContext());
         // path to /data/data/yourapp/app_data/imageDir
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        File directory = context_wrapper.getDir("Profile_Pictures", Context.MODE_PRIVATE);
         // Create imageDir
         File mypath=new File(directory,name);
         Log.d(TAG,"Profile pic address "+mypath);
@@ -442,7 +436,7 @@ public class main_activity extends AppCompatActivity implements
         {
             fos = new FileOutputStream(mypath);
             // Use the compress method on the BitMap object to write image to the OutputStream
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 50, fos);
         }
         catch (Exception e)
         {
@@ -467,6 +461,7 @@ public class main_activity extends AppCompatActivity implements
     private void catch_profile_images(String postfix)
     {
 
+        Log.d(TAG,"catch_profile_images: Entered");
         Target target = new Target()
         {
             @Override
@@ -490,12 +485,13 @@ public class main_activity extends AppCompatActivity implements
             @Override
             public void onPrepareLoad(Drawable placeHolderDrawable)
             {
-
+                Log.d(TAG,"BMP onPrepareLoad");
             }
         };
         String path = getString(R.string.profile_pic_url)+postfix+".jpg";
         Log.d(TAG,"profile path: "+path);
         Picasso.get().load(path).into(target);
+        Log.d(TAG,"catch_profile_images: Exited");
     }
 
 
@@ -740,13 +736,11 @@ public class main_activity extends AppCompatActivity implements
                 return null;
             }
 
-            //String geoJson = loadGeoJsonFromAsset(activity, "bikers_pinned_events.geojson");
             Log.v(TAG,"Feature Collection Returned");
-            //File file = null;
+
             file_maker geo_json_holder = new file_maker(file_directory_static,FILE_NAME);
             geo_json_holder.read();
 
-            //return FeatureCollection.fromJson(geoJson);
             Log.v(TAG,"LoadGeoJsonDataTask: doInBackground");
             return FeatureCollection.fromJson(geo_json_holder.read().toString());
         }
@@ -775,27 +769,9 @@ public class main_activity extends AppCompatActivity implements
             GenerateViewIconTask generateViewIconTask=null;
             Log.v(TAG,"LoadGeoJsonDataTask: onPostExecute");
             new GenerateViewIconTask(activity).execute(featureCollection);
-            //generateViewIconTask = (GenerateViewIconTask) new GenerateViewIconTask(activity).execute(featureCollection);
-            //generateViewIconTask.get().clear();
+
         }
 
-        static String loadGeoJsonFromAsset(Context context, String filename)
-        {
-            try
-            {
-                // Load GeoJSON file from local asset folder
-                InputStream is = context.getAssets().open(filename);
-                int size = is.available();
-                byte[] buffer = new byte[size];
-                is.read(buffer);
-                is.close();
-                return new String(buffer, Charset.forName("UTF-8"));
-            }
-            catch (Exception exception)
-            {
-                throw new RuntimeException(exception);
-            }
-        }
     }
 
     /**
@@ -854,7 +830,7 @@ public class main_activity extends AppCompatActivity implements
         {
 
             ContextWrapper cw = new ContextWrapper(context);
-            File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+            File directory = cw.getDir("Profile_Pictures", Context.MODE_PRIVATE);
             try
             {
                 File file =new File(directory, name);
