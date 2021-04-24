@@ -51,6 +51,7 @@ public class geo_JSON_maker
             properties.put("event_id", feature.get("event_unique_id"));
             properties.put("date_created", feature.get("date_created"));
             properties.put("event_date", feature.get("date_of_event"));
+            properties.put("profile_pic", feature.get("user_picture"));
 
         }
         catch (JSONException e)

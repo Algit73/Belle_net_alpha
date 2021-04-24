@@ -7,13 +7,19 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PointF;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,10 +54,17 @@ import com.soluk.belle_net_alpha.event_data_maker.file_maker;
 import com.soluk.belle_net_alpha.event_data_maker.geo_JSON_maker;
 import com.soluk.belle_net_alpha.http_requests.SimpleHttp;
 import com.soluk.belle_net_alpha.http_requests.SimpleHttpResponseHandler;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.nio.charset.Charset;
@@ -164,6 +177,7 @@ public class main_activity extends AppCompatActivity implements
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_main);
 
+
         // Initialize the map view
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
@@ -259,7 +273,9 @@ public class main_activity extends AppCompatActivity implements
 
 
 
+
     }
+
 
     private void update_edit_box()
     {
@@ -374,7 +390,8 @@ public class main_activity extends AppCompatActivity implements
             try
             {
                 JSONObject event = new JSONObject(received_events.get(i).toString());
-                //catch_profile_images(event.get("user_picture").toString().substring(1));
+                //if (Environment.isExternalStorageManager())
+                    catch_profile_images(event.get("user_picture").toString().substring(1));
                 Log.d(TAG,"profile prefix: "+event.get("user_picture").toString().substring(1));
                 feature_maker.add_feature(event);
             }
@@ -410,6 +427,77 @@ public class main_activity extends AppCompatActivity implements
             }
         });
     }
+
+    private String saveToInternalStorage(Bitmap bitmapImage, String name)
+    {
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        // path to /data/data/yourapp/app_data/imageDir
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        // Create imageDir
+        File mypath=new File(directory,name);
+        Log.d(TAG,"Profile pic address "+mypath);
+
+        FileOutputStream fos = null;
+        try
+        {
+            fos = new FileOutputStream(mypath);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG,"Int Strge Create File failed: "+e.getMessage());
+            e.printStackTrace();
+        }
+        finally
+        {
+            try
+            {
+                fos.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        Log.d(TAG,"Directory: "+ directory.getAbsolutePath());
+        return directory.getAbsolutePath();
+    }
+
+    private void catch_profile_images(String postfix)
+    {
+
+        Target target = new Target()
+        {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from)
+            {
+
+                Log.d(TAG,"BMP Received");
+                saveToInternalStorage(bitmap,postfix);
+                //store_image(bitmap,postfix);
+
+                //retrieve_image(postfix);
+
+            }
+
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable)
+            {
+                Log.d(TAG,"BMP Failed");
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable)
+            {
+
+            }
+        };
+        String path = getString(R.string.profile_pic_url)+postfix+".jpg";
+        Log.d(TAG,"profile path: "+path);
+        Picasso.get().load(path).into(target);
+    }
+
 
 
 
@@ -725,14 +813,13 @@ public class main_activity extends AppCompatActivity implements
         private final HashMap<String, View> viewMap = new HashMap<>();
         private final WeakReference<main_activity> activityRef;
         private final boolean refreshSource;
-        private String path;
-        private Context context;
+        @SuppressLint("StaticFieldLeak")
+        private final Context context;
 
         GenerateViewIconTask(main_activity activity, boolean refreshSource)
         {
             this.activityRef = new WeakReference<>(activity);
             this.refreshSource = refreshSource;
-            //this.path = activity.getString(R.string.profile_pic_url);
             this.context = activity.getApplicationContext();
             Log.v(TAG,"GenerateViewIconTask: Constructor_1");
         }
@@ -762,35 +849,28 @@ public class main_activity extends AppCompatActivity implements
             return str;
         }
 
-        /*
-        private  File getOutputMediaFile(String postfix)
+
+        private Bitmap get_profile_bmp(String name)
         {
 
-            File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
-                    + "/Android/data/"
-                    + "com.soluk.bellenet_series_1"
-                    + "/profiles");
-            Log.d(TAG, "Address: " + mediaStorageDir);
-
-
-
-            // Create the storage directory if it does not exist
-            if (! mediaStorageDir.exists())
+            ContextWrapper cw = new ContextWrapper(context);
+            File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+            try
             {
-                if (! mediaStorageDir.mkdirs())
-                {
-                    return null;
-                }
+                File file =new File(directory, name);
+                Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
+                return bitmap;
+
+            }
+            catch (FileNotFoundException e)
+            {
+                e.printStackTrace();
+                return null;
             }
 
-            // Create a media file name
-            File mediaFile;
-            String mImageName = postfix;
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
-            return mediaFile;
         }
 
-         */
+
 
         @SuppressWarnings("WrongThread")
         @Override
@@ -809,62 +889,31 @@ public class main_activity extends AppCompatActivity implements
 
                     @SuppressLint("InflateParams") ConstraintLayout constraint_layout =
                             (ConstraintLayout) inflater.inflate(R.layout.event_id_card, null);
-                    //BubbleLayout bubbleLayout = (BubbleLayout)
-                    //      inflater.inflate(R.layout.symbol_layer_info_window_layout_callout, null);
+
 
                     String name = feature.getStringProperty(PROPERTY_NAME);
-                    //TextView titleTextView = bubbleLayout.findViewById(R.id.info_window_title);
                     TextView titleTextView = constraint_layout.findViewById(R.id.invitor_name);
                     titleTextView.setText(name);
 
                     String date_creation = feature.getStringProperty(PROPERTY_DATE_CREATED);
-                    //TextView descriptionTextView = bubbleLayout.findViewById(R.id.info_window_description);
                     TextView created_date = constraint_layout.findViewById(R.id.created_date);
-                    //descriptionTextView.setText(
-                    //      String.format(activity.getString(R.string.capital), date));
                     created_date.setText(date_reformat(date_creation));
 
                     String date_of_event = feature.getStringProperty(PROPERTY_EVENT_DATE);
                     TextView event_date = constraint_layout.findViewById(R.id.event_date);
-                    //descriptionTextView.setText(
-                    //      String.format(activity.getString(R.string.capital), date));
-                    Log.d(TAG, "Jakesh e Sag " + name+" va:"+ date_of_event);
                     event_date.setText(date_reformat(date_of_event)); //
-                    //
 
 
-                    //String path = this.path + feature.getStringProperty(PROPERTY_PIC).substring(1)+".jpg";
-                    //Log.v(TAG,"Profile Pic Path: "+path);
-
-
-                    /*
-                    File file = getOutputMediaFile(feature.getStringProperty(PROPERTY_PIC).substring(1));
-                    if(file.exists())
-                        Log.d(TAG,"File Exists Final: " + "Yes");
-                    else
-                        Log.d(TAG,"File Exists Final: " + "No");
-                    Bitmap profile_bitmap = BitmapFactory.decodeFile(String.valueOf(file));
-                    if(profile_bitmap!=null)
-                        Log.d(TAG,"bitmap is not null ");
-                    else
-                        Log.d(TAG,"bitmap is null ");
-
-                     */
-
-
-                    //CircleImageView profile_image_2 = constraint_layout.findViewById(R.id.profile_image_2);
-                    //profile_image_2.setImageBitmap(profile_bitmap);
+                    String profile_pic_name = feature.getStringProperty(PROPERTY_PIC).substring(1);
+                    CircleImageView profile_image = constraint_layout.findViewById(R.id.profile_image);
+                    Bitmap profile_pic = get_profile_bmp(profile_pic_name);
+                    if(profile_pic!=null)
+                        profile_image.setImageBitmap(profile_pic);
 
                     int measureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-                    //bubbleLayout.measure(measureSpec, measureSpec);
                     constraint_layout.measure(measureSpec, measureSpec);
 
-                    //float measuredWidth = bubbleLayout.getMeasuredWidth();
 
-                    //bubbleLayout.setArrowPosition(measuredWidth / 2 - 5);
-                    //constraint_layout.setArrowPosition(measuredWidth / 2 - 5);
-
-                    //Bitmap bitmap = SymbolGenerator.generate(bubbleLayout);
                     Bitmap bitmap = SymbolGenerator.generate(constraint_layout);
                     imagesMap.put(name, bitmap);
                     viewMap.put(name, constraint_layout);
