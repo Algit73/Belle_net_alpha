@@ -58,6 +58,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -94,7 +95,6 @@ public class main_activity extends AppCompatActivity implements
 
     private static final String TAG = main_activity.class.getSimpleName();
     private static final String GEOJSON_SOURCE_ID = "GEOJSON_SOURCE_ID";
-    private static final String GEOJSON_SOURCE_ID_2 = "GEOJSON_SOURCE_ID_2";
     private static final String MARKER_IMAGE_ID = "MARKER_IMAGE_ID";
     private static final String MARKER_LAYER_ID = "MARKER_LAYER_ID";
     private static final String CALLOUT_LAYER_ID = "CALLOUT_LAYER_ID";
@@ -106,6 +106,7 @@ public class main_activity extends AppCompatActivity implements
     private static final String PROPERTY_EVENT_ID = "event_id";
     private static final String PROPERTY_IS_USER_JOINED = "is_user_joined";
     private static final String PROPERTY_PIC = "profile_pic";
+    private static final String PROPERTY_NUM_OF_JOINED = "count";
     private static final String USER_NAME = "Alireza";
     private static final String USER_FAMILY = "Alikhani";
     private static final String USER_PIC = "#loncle";
@@ -603,31 +604,62 @@ public class main_activity extends AppCompatActivity implements
         List<Feature> features = mapboxMap.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID);
         if (!features.isEmpty())
         {
-            String name = features.get(0).getStringProperty(PROPERTY_EVENT_ID);
-            Log.v(TAG,"Feature Name: "+name);
+            String event_id = features.get(0).getStringProperty(PROPERTY_EVENT_ID);
+            Log.v(TAG,"Feature Name: "+event_id);
             List<Feature> featureList = featureCollection.features();
             if (featureList != null)
             {
                 Log.v(TAG,"Feature Size: "+featureList.size());
                 for (int i = 0; i < featureList.size(); i++)
                 {
-                    if (featureList.get(i).getStringProperty(PROPERTY_EVENT_ID).equals(name))
+                    if (featureList.get(i).getStringProperty(PROPERTY_EVENT_ID).equals(event_id))
                     {
                         Log.v(TAG,"featureList.get(i): "+featureList.get(i).getStringProperty(PROPERTY_NAME));
                         if (featureSelectStatus(i))
                         {
                             number_of_selected_cards--;
                             if(number_of_selected_cards==0)
-                                set_camera_position(0);
+                                try
+                                {
+                                    set_camera_position(0,null);
+                                }
+                            catch (Exception e)
+                            {
+
+                            }
+
                             setFeatureSelectState(featureList.get(i), false);
-                            Log.v("TAG","Item Deselected");
+                            Log.v(TAG,"Item Deselected");
+
+
+
+
+                            //String file_directory = main_activity.this.getFilesDir().toString();
+                            //geo_json_holder = new file_maker(file_directory,FILE_NAME);
+                            //Log.d(TAG,"Feature deselected data: "+geo);
+
+
                         }
                         else
                         {
                             //Timber.tag(TAG).v("Item Selected");
                             number_of_selected_cards++;
                             if(number_of_selected_cards>0)
-                                set_camera_position(50);
+                            {
+                                try
+                                {
+                                    JSONObject geometry = new JSONObject(featureList.get(i).geometry().toJson());
+                                    JSONArray point = new JSONArray(geometry.get("coordinates").toString());
+                                    set_camera_position(50,point);
+                                    //point.getJSONObject().ge
+                                    Log.d(TAG,"Feature deselected data: "+point.get(0));
+                                }
+                                catch (Exception e)
+                                {
+                                    Log.d(TAG,"Feature deselected Exception: "+e.getMessage());
+                                }
+
+                            }
                             setSelected(i);
                         }
                     }
@@ -641,14 +673,21 @@ public class main_activity extends AppCompatActivity implements
         }
     }
 
-    private void set_camera_position(int tilt)
+    private void set_camera_position(int tilt,JSONArray point) throws JSONException
     {
-        CameraPosition position = new CameraPosition.Builder()
-                //.target(new LatLng(location.getLatitude(), location.getLongitude())) // Sets the new camera position
-                //.zoom(12) // Sets the zoom
-                //.bearing(degree) // Rotate the camera
-                .tilt(tilt) // Set the camera tilt
-                .build();
+
+        CameraPosition position = null;
+        if(point!=null)
+        position = new CameraPosition.Builder()
+                    .target(new LatLng( (double)point.get(1), (double)point.get(0))) // Sets the new camera position
+                    //.zoom(12) // Sets the zoom
+                    //.bearing(degree) // Rotate the camera
+                    .tilt(tilt) // Set the camera tilt
+                    .build();
+        else
+            position = new CameraPosition.Builder()
+                    .tilt(tilt) // Set the camera tilt
+                    .build();
 
         mapboxMap.animateCamera(CameraUpdateFactory
                 .newCameraPosition(position), 2000);
@@ -791,6 +830,7 @@ public class main_activity extends AppCompatActivity implements
         private final boolean refreshSource;
         @SuppressLint("StaticFieldLeak")
         private final Context context;
+        private boolean is_user_joined;
 
         GenerateViewIconTask(main_activity activity, boolean refreshSource)
         {
@@ -866,25 +906,39 @@ public class main_activity extends AppCompatActivity implements
                     @SuppressLint("InflateParams") ConstraintLayout constraint_layout =
                             (ConstraintLayout) inflater.inflate(R.layout.event_id_card, null);
 
-
+                    /// Name Section
                     String name = feature.getStringProperty(PROPERTY_NAME);
                     TextView titleTextView = constraint_layout.findViewById(R.id.invitor_name);
                     titleTextView.setText(name);
 
+                    /// Created Date Section
                     String date_creation = feature.getStringProperty(PROPERTY_DATE_CREATED);
                     TextView created_date = constraint_layout.findViewById(R.id.created_date);
                     created_date.setText(date_reformat(date_creation));
 
+                    /// Event Date Section
                     String date_of_event = feature.getStringProperty(PROPERTY_EVENT_DATE);
                     TextView event_date = constraint_layout.findViewById(R.id.event_date);
                     event_date.setText(date_reformat(date_of_event)); //
 
-
+                    /// Profile Pix Section
                     String profile_pic_name = feature.getStringProperty(PROPERTY_PIC).substring(1);
                     CircleImageView profile_image = constraint_layout.findViewById(R.id.profile_image);
                     Bitmap profile_pic = get_profile_bmp(profile_pic_name);
                     if(profile_pic!=null)
                         profile_image.setImageBitmap(profile_pic);
+
+                    /// Number of Joined User Section
+                    String num_of_joined = feature.getStringProperty(PROPERTY_NUM_OF_JOINED);
+                    TextView number_of_joined_users_tv = constraint_layout.findViewById(R.id.num_of_joined);
+                    number_of_joined_users_tv.setText(num_of_joined);
+
+                    /// Is User Joined Section
+                    String is_user_joined = feature.getStringProperty(PROPERTY_IS_USER_JOINED);
+
+
+
+
 
                     int measureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
                     constraint_layout.measure(measureSpec, measureSpec);

@@ -27,7 +27,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
-                    android:text="You Are Invited by:"
+                    android:text="Event Initiated by:"
                     android:textAlignment="center"
                     android:textStyle="italic"
                     app:layout_constraintTop_toTopOf="parent"
@@ -103,25 +103,30 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/join_status"
-                    app:layout_constraintTop_toBottomOf="@+id/join_event"
+                    android:id="@+id/num_of_joined_holder"
+                    app:layout_constraintTop_toBottomOf="@+id/event_date"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    android:layout_marginTop="6dp"
-                    android:text="Click to join"
+                    android:layout_marginTop="8dp"
+                    android:text="Joined Users Are:"
                         />
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
+
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/join_event"
-                    android:src="@drawable/plus"
-                    android:backgroundTint="@color/mapbox_blue"
-                    app:tint="@android:color/white"
-                    app:layout_constraintTop_toBottomOf="@id/event_date"
-                    app:layout_constraintRight_toRightOf="parent"
+                    android:id="@+id/num_of_joined"
+                    app:layout_constraintTop_toBottomOf="@+id/num_of_joined_holder"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    android:layout_marginTop="16dp"
-                    android:contentDescription="JOIN_EVENT" />
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:layout_marginTop="2dp"
+                    android:text="98"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                        />
+
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -129,6 +134,7 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:src="@drawable/default_profile_pic"
+            android:background="@drawable/event_id_card_circle_background"
             app:civ_border_width="2dp"
             app:civ_border_color="@color/cardview_light_background"
             app:layout_constraintTop_toTopOf="parent"

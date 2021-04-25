@@ -65,14 +65,14 @@ public class file_maker
             while ((line = buffered_reader.readLine()) != null)
             {
                 output.append(line + "\n");
-                Log.v(TAG, "file_maker output of read: "+line);
+                Log.d(TAG, "file_maker output of read: "+line);
             }
             response = output.toString();
             return new JSONObject(response);
         }
         catch (Exception e)
         {
-            Log.v(TAG, "file_maker output of read: "+e.getMessage());
+            Log.d(TAG, "file_maker output of read: "+e.getMessage());
             return null;
         }
     }
