@@ -53,13 +53,25 @@ public class geo_JSON_maker
             properties.put("event_date", feature.get("date_of_event"));
             properties.put("profile_pic", feature.get("user_picture"));
             properties.put("is_user_joined", feature.get("is_user_joined"));
-            properties.put("count", feature.get("count "));
-
+            properties.put("count", feature.get("count"));
+            properties.put("longitude_pinned", feature.get("longitude_pinned"));
+            properties.put("latitude_pinned", feature.get("latitude_pinned"));
+            properties.put("event_type", feature.get("event_type"));
         }
         catch (JSONException e)
         {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }
+
+        try
+        {
+            properties.put("longitude_end", feature.get("longitude_end"));
+            properties.put("latitude_end", feature.get("latitude_end"));
+        }
+        catch (Exception e)
+        {
+
         }
 
         ////// GeoJson Geometry ///////

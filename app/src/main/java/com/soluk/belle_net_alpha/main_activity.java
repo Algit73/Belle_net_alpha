@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.JsonObject;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -120,6 +121,7 @@ public class main_activity extends AppCompatActivity implements
     private FloatingActionButton add_pin_on_map;
     private Spinner list_of_challenges;
     private BottomSheetBehavior bottom_sheet_Choose_challenge;
+    private BottomSheetBehavior bottom_sheet_click_join;
     private Button save_challenge;
     private Button cancel_challenge;
     private EditText edit_date_time;
@@ -138,6 +140,9 @@ public class main_activity extends AppCompatActivity implements
 
     private CircleImageView profile_test;
     private ImageView profile_test_2;
+
+    private boolean join_status = false;
+    private String  last_event_selected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -187,12 +192,13 @@ public class main_activity extends AppCompatActivity implements
         add_pin_on_map = findViewById(R.id.fab_pin_on_maps);
         list_of_challenges = findViewById(R.id.list_of_challanges);
         View bottom_sheet_challenges_veiw = findViewById(R.id.bottom_sheet_challenges);
+        View bottom_sheet_click_join_view = findViewById(R.id.bottom_sheet_click_to_join);
         save_challenge = findViewById(R.id.save_challenge);
         cancel_challenge = findViewById(R.id.cancel_challenge);
         edit_date_time = findViewById(R.id.edit_date);
 
 
-        // Configuring BottomSheet in the BelleNet
+        /// Configuring BottomSheet_Choose_Challenge in the BelleNet
         bottom_sheet_Choose_challenge = BottomSheetBehavior.from(bottom_sheet_challenges_veiw);
         ArrayAdapter<CharSequence> list_of_challenges_adapter = ArrayAdapter.createFromResource(this,
                 R.array.list_of_challenges_items, android.R.layout.simple_spinner_item);
@@ -239,6 +245,13 @@ public class main_activity extends AppCompatActivity implements
                             "Please pin a location on map",Toast.LENGTH_SHORT).show();
             }
         });
+
+        /// Configuring BottomSheet_Choose_Challenge in the BelleNet
+        bottom_sheet_click_join = BottomSheetBehavior.from(bottom_sheet_click_join_view);
+        bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+
+
 
 
         // Configuring Date and Time
@@ -615,48 +628,65 @@ public class main_activity extends AppCompatActivity implements
                     if (featureList.get(i).getStringProperty(PROPERTY_EVENT_ID).equals(event_id))
                     {
                         Log.v(TAG,"featureList.get(i): "+featureList.get(i).getStringProperty(PROPERTY_NAME));
+                        Log.d(TAG,"number_of_selected_cards: "+number_of_selected_cards);
+
                         if (featureSelectStatus(i))
                         {
-                            number_of_selected_cards--;
-                            if(number_of_selected_cards==0)
+
+                            if(featureList.get(i).getStringProperty(PROPERTY_EVENT_ID).equals(last_event_selected))
+                            {
+                                number_of_selected_cards--;
+                                if(number_of_selected_cards==0)
+                                    try
+                                    {
+                                        set_camera_position(0,null);
+                                        bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
+                                    }
+                                    catch (Exception e)
+                                    {
+
+                                    }
+
+                                setFeatureSelectState(featureList.get(i), false);
+                                Log.v(TAG,"Item Deselected");
+                            }
+                            else
+                            {
+                                last_event_selected = featureList.get(i).getStringProperty(PROPERTY_EVENT_ID);
                                 try
                                 {
-                                    set_camera_position(0,null);
+                                    update_bottom_sheet_click(featureList.get(i));
                                 }
-                            catch (Exception e)
-                            {
+                                catch (Exception e)
+                                {
+
+                                }
 
                             }
-
-                            setFeatureSelectState(featureList.get(i), false);
-                            Log.v(TAG,"Item Deselected");
-
-
-
-
-                            //String file_directory = main_activity.this.getFilesDir().toString();
-                            //geo_json_holder = new file_maker(file_directory,FILE_NAME);
-                            //Log.d(TAG,"Feature deselected data: "+geo);
 
 
                         }
                         else
                         {
                             //Timber.tag(TAG).v("Item Selected");
+                            last_event_selected = featureList.get(i).getStringProperty(PROPERTY_EVENT_ID);
                             number_of_selected_cards++;
                             if(number_of_selected_cards>0)
                             {
+
                                 try
                                 {
                                     JSONObject geometry = new JSONObject(featureList.get(i).geometry().toJson());
+                                    update_bottom_sheet_click(featureList.get(i));
+                                    //Log.d(TAG,"Feature selected data: "+featureList.get(i).properties());
                                     JSONArray point = new JSONArray(geometry.get("coordinates").toString());
                                     set_camera_position(50,point);
                                     //point.getJSONObject().ge
-                                    Log.d(TAG,"Feature deselected data: "+point.get(0));
+                                    //Log.d(TAG,"Feature selected data: "+point.get(0));
                                 }
                                 catch (Exception e)
                                 {
-                                    Log.d(TAG,"Feature deselected Exception: "+e.getMessage());
+                                    Log.d(TAG,"Feature selected Exception: "+e.getMessage());
                                 }
 
                             }
@@ -691,6 +721,139 @@ public class main_activity extends AppCompatActivity implements
 
         mapboxMap.animateCamera(CameraUpdateFactory
                 .newCameraPosition(position), 2000);
+    }
+
+    /// Each time a pin selected, the appropriate bottom_sheet appears
+    private void update_bottom_sheet_click(Feature feature) throws JSONException
+    {
+        JSONObject info = new JSONObject(feature.properties().toString());
+        bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+        Button join_btn = findViewById(R.id.join_event);
+        Button cancel_join_event_btn = findViewById(R.id.cancel_join_event);
+
+        /// Setting name of the user
+        TextView selected_user_name = findViewById(R.id.selected_user_name);
+        String name_family = (String) (info.get("name")+ " " + info.get("family"));
+        selected_user_name.setText(name_family);
+
+        /// Setting the profile image of the selected_user
+        CircleImageView selected_user_profile_image = findViewById(R.id.selected_user_profile_image);
+        Bitmap selected_profile_image_bmp = get_profile_bmp(info.get("profile_pic").toString().substring(1));
+        if(selected_profile_image_bmp!=null)
+            selected_user_profile_image.setImageBitmap(selected_profile_image_bmp);
+
+        /// Setting event date
+        TextView selected_event_date = findViewById(R.id.selected_event_date);
+        selected_event_date.setText(date_reformat(info.get("event_date").toString()));
+
+        /// Setting event type
+        TextView selected_event_type = findViewById(R.id.selected_event_type);
+        String event_type = info.get("event_type").toString();
+        if(event_type.equals("1"))
+            selected_event_type.setText("Ensemble Riding");
+        else if(event_type.equals("2"))
+            selected_event_type.setText("Offering Challenge");
+        if(event_type.equals("3"))
+            selected_event_type.setText("Sharing Experience");
+
+        /// Check if user is joined
+        TextView selected_event_status = findViewById(R.id.selected_event_user_join_status);
+
+        if(info.get("is_user_joined").toString().equals("true"))
+        {
+            selected_event_status.setText("You have joined this event");
+            join_btn.setText("Opt out");
+            join_status = true;
+
+        }
+        else
+        {
+            selected_event_status.setText("You have not joined this event");
+            join_btn.setText("Join");
+            join_status = false;
+        }
+
+        join_btn.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if(join_status)
+                {
+
+                }
+                else
+                {
+
+                }
+            }
+        });
+
+        /// Closing the bottom_sheet_click
+        cancel_join_event_btn.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                number_of_selected_cards--;
+                bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
+                if(number_of_selected_cards==0)
+                    try
+                    {
+                        set_camera_position(0,null);
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+
+                setFeatureSelectState(feature, false);
+            }
+        });
+
+
+        Log.d(TAG,"Feature selected data: "+info.toString());
+
+    }
+
+    private Bitmap get_profile_bmp(String name)
+    {
+
+        ContextWrapper cw = new ContextWrapper(this);
+        File directory = cw.getDir("Profile_Pictures", Context.MODE_PRIVATE);
+        try
+        {
+            File file =new File(directory, name);
+            Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
+            return bitmap;
+
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    private String date_reformat(String time)
+    {
+        String inputPattern = "yyyy-MM-dd";
+        String outputPattern = "MMMM,dd,yy";
+        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
+
+        Date date = null;
+        String str = null;
+
+        try {
+            date = inputFormat.parse(time);
+            str = outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return str;
     }
 
     /**
@@ -778,7 +941,7 @@ public class main_activity extends AppCompatActivity implements
             Log.v(TAG,"Feature Collection Returned");
 
             file_maker geo_json_holder = new file_maker(file_directory_static,FILE_NAME);
-            geo_json_holder.read();
+            //geo_json_holder.read();
 
             Log.v(TAG,"LoadGeoJsonDataTask: doInBackground");
             return FeatureCollection.fromJson(geo_json_holder.read().toString());

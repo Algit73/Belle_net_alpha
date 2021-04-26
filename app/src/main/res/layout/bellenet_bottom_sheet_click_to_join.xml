@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background = "@drawable/bellenet_bottom_sheet_background"
+    android:paddingBottom="32dp"
+    android:id="@+id/bottom_sheet_click_to_join"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="16dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/selected_user_profile_image"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/al_profile_300"
+        app:civ_border_width="2dp"
+        app:civ_border_color="@color/teal_200"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/event_creator_text"
+        app:layout_constraintTop_toTopOf="@id/selected_user_profile_image"
+        app:layout_constraintLeft_toRightOf="@id/selected_user_profile_image"
+        android:layout_marginStart="16dp"
+        android:text="Event Created By:"
+
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/selected_user_name"
+        android:text="Alireza Alikhani"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/event_creator_text"
+        app:layout_constraintBottom_toBottomOf="@id/selected_user_profile_image"
+        app:layout_constraintLeft_toRightOf="@+id/selected_user_profile_image"
+        android:layout_marginStart="16dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/selected_event_date_text"
+        android:textSize="16sp"
+        android:text="Event Date"
+        app:layout_constraintTop_toBottomOf="@id/selected_user_profile_image"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/selected_event_date"
+        android:text="April, 25, 21"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/selected_user_profile_image"
+        app:layout_constraintLeft_toRightOf="@id/selected_event_date_text"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/selected_event_type_text"
+        android:textSize="16sp"
+        android:text="Event Type:"
+        app:layout_constraintTop_toBottomOf="@id/selected_event_date_text"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/selected_event_type"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:text="Ensemble riding"
+        app:layout_constraintTop_toTopOf="@id/selected_event_type_text"
+        app:layout_constraintBottom_toBottomOf="@id/selected_event_type_text"
+        app:layout_constraintLeft_toRightOf="@id/selected_event_type_text"
+        android:layout_marginStart="16dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/selected_event_user_join_status"
+        android:textSize="16sp"
+        android:text="You have not joined this event"
+        app:layout_constraintTop_toBottomOf="@id/selected_event_type_text"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        />
+
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/join_event"
+        android:text="Join"
+        android:background="@drawable/button_rounded_corners"
+        app:layout_constraintTop_toBottomOf="@id/selected_event_user_join_status"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="36dp"
+        android:layout_marginStart="24dp"
+        app:backgroundTint="@color/save_button"
+        android:shadowColor="@color/teal_200"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cancel_join_event"
+        android:text="cancel"
+        android:background="@drawable/button_rounded_corners"
+        app:layout_constraintTop_toBottomOf="@id/selected_event_user_join_status"
+        app:layout_constraintLeft_toRightOf="@id/join_event"
+        android:layout_marginTop="36dp"
+        android:layout_marginStart="24dp"
+        app:backgroundTint="@color/cancel_button"
+        />
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

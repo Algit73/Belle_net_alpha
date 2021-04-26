@@ -47,5 +47,6 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include layout="@layout/bellenet_bottom_sheet_pin_to_add" />
+    <include layout="@layout/bellenet_bottom_sheet_click_to_join" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
