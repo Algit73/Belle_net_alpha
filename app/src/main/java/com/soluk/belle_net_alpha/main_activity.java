@@ -122,8 +122,6 @@ public class main_activity extends AppCompatActivity implements
     private Spinner list_of_challenges;
     private BottomSheetBehavior bottom_sheet_Choose_challenge;
     private BottomSheetBehavior bottom_sheet_click_join;
-    private Button save_challenge;
-    private Button cancel_challenge;
     private EditText edit_date_time;
     private final Calendar calendar_date_picker = Calendar.getInstance();
     private boolean active_user_pin_mode;
@@ -144,16 +142,13 @@ public class main_activity extends AppCompatActivity implements
     private boolean join_status = false;
     private String  last_event_selected;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState)
+    void get_updated()
     {
-        super.onCreate(savedInstanceState);
-
+        number_of_selected_cards = 0;
+        try{set_camera_position(0,null);}
+        catch (Exception e){};
         Map<String, String> params = new HashMap<>();
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Typ", "application/json; utf-8");
         params.put("user_id",USER_ID);
-
 
         SimpleHttp.post(getString(R.string.events_info_url), params, new SimpleHttpResponseHandler()
         {
@@ -179,6 +174,14 @@ public class main_activity extends AppCompatActivity implements
                 }
             }
         });
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+
+        get_updated();
 
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_main);
@@ -193,8 +196,8 @@ public class main_activity extends AppCompatActivity implements
         list_of_challenges = findViewById(R.id.list_of_challanges);
         View bottom_sheet_challenges_veiw = findViewById(R.id.bottom_sheet_challenges);
         View bottom_sheet_click_join_view = findViewById(R.id.bottom_sheet_click_to_join);
-        save_challenge = findViewById(R.id.save_challenge);
-        cancel_challenge = findViewById(R.id.cancel_challenge);
+        Button save_challenge = findViewById(R.id.save_challenge);
+        Button cancel_challenge = findViewById(R.id.cancel_challenge);
         edit_date_time = findViewById(R.id.edit_date);
 
 
@@ -661,14 +664,10 @@ public class main_activity extends AppCompatActivity implements
                                 {
 
                                 }
-
                             }
-
-
                         }
                         else
                         {
-                            //Timber.tag(TAG).v("Item Selected");
                             last_event_selected = featureList.get(i).getStringProperty(PROPERTY_EVENT_ID);
                             number_of_selected_cards++;
                             if(number_of_selected_cards>0)
@@ -678,11 +677,8 @@ public class main_activity extends AppCompatActivity implements
                                 {
                                     JSONObject geometry = new JSONObject(featureList.get(i).geometry().toJson());
                                     update_bottom_sheet_click(featureList.get(i));
-                                    //Log.d(TAG,"Feature selected data: "+featureList.get(i).properties());
                                     JSONArray point = new JSONArray(geometry.get("coordinates").toString());
                                     set_camera_position(50,point);
-                                    //point.getJSONObject().ge
-                                    //Log.d(TAG,"Feature selected data: "+point.get(0));
                                 }
                                 catch (Exception e)
                                 {
@@ -706,21 +702,24 @@ public class main_activity extends AppCompatActivity implements
     private void set_camera_position(int tilt,JSONArray point) throws JSONException
     {
 
-        CameraPosition position = null;
-        if(point!=null)
-        position = new CameraPosition.Builder()
-                    .target(new LatLng( (double)point.get(1), (double)point.get(0))) // Sets the new camera position
-                    //.zoom(12) // Sets the zoom
-                    //.bearing(degree) // Rotate the camera
-                    .tilt(tilt) // Set the camera tilt
-                    .build();
-        else
-            position = new CameraPosition.Builder()
-                    .tilt(tilt) // Set the camera tilt
-                    .build();
+        if(mapboxMap!=null)
+        {
+            CameraPosition position = null;
+            if (point != null)
+                position = new CameraPosition.Builder()
+                        .target(new LatLng((double) point.get(1), (double) point.get(0))) // Sets the new camera position
+                        //.zoom(12) // Sets the zoom
+                        //.bearing(degree) // Rotate the camera
+                        .tilt(tilt) // Set the camera tilt
+                        .build();
+            else
+                position = new CameraPosition.Builder()
+                        .tilt(tilt) // Set the camera tilt
+                        .build();
 
-        mapboxMap.animateCamera(CameraUpdateFactory
-                .newCameraPosition(position), 2000);
+            mapboxMap.animateCamera(CameraUpdateFactory
+                    .newCameraPosition(position), 2000);
+        }
     }
 
     /// Each time a pin selected, the appropriate bottom_sheet appears
@@ -779,14 +778,47 @@ public class main_activity extends AppCompatActivity implements
             @Override
             public void onClick(View v)
             {
+                Log.d(TAG, "Button Pressed");
+                Map<String, String> params = new HashMap<>();
                 if(join_status)
                 {
-
+                    params.put("request","out");
                 }
                 else
                 {
-
+                    params.put("request","join");
+                    params.put("user_date_of_join","2021-4-27");
                 }
+
+                try
+                { params.put("event_unique_id",info.get("event_id").toString()); }
+                catch (JSONException e) { e.printStackTrace(); }
+                params.put("joined_user_id",USER_ID);
+
+                SimpleHttp.post(getString(R.string.event_join_status), params, new SimpleHttpResponseHandler()
+                {
+                    @Override
+                    public void onResponse(int responseCode, String responseBody)
+                    {
+                        Log.d(TAG, "Post Body: "+responseBody);
+                        //number_of_selected_cards--;
+                        bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
+                        if(number_of_selected_cards==0)
+                            try
+                            {
+                                set_camera_position(0,null);
+                            }
+                            catch (Exception e)
+                            {
+
+                            }
+
+                        setFeatureSelectState(feature, false);
+                    }
+                });
+                get_updated();
+
+
             }
         });
 
@@ -1092,9 +1124,17 @@ public class main_activity extends AppCompatActivity implements
                         profile_image.setImageBitmap(profile_pic);
 
                     /// Number of Joined User Section
-                    String num_of_joined = feature.getStringProperty(PROPERTY_NUM_OF_JOINED);
-                    TextView number_of_joined_users_tv = constraint_layout.findViewById(R.id.num_of_joined);
-                    number_of_joined_users_tv.setText(num_of_joined);
+                    try
+                    {
+                        String num_of_joined = feature.getStringProperty(PROPERTY_NUM_OF_JOINED);
+                        TextView number_of_joined_users_tv = constraint_layout.findViewById(R.id.num_of_joined);
+                        number_of_joined_users_tv.setText(num_of_joined);
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+
 
                     /// Is User Joined Section
                     String is_user_joined = feature.getStringProperty(PROPERTY_IS_USER_JOINED);
