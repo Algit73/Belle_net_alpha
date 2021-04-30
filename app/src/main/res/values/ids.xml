@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="sd_ensemble_cycling" type="id" />
+    <item name="sd_offer_challenge" type="id" />
+    <item name="sd_share_experience" type="id" />
+</resources>

@@ -37,39 +37,18 @@
         android:layout_marginStart="16dp"
         />
 
-    <TextView
+    <ImageView
+        android:id="@+id/date_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/list_of_challanges_text"
-        android:textSize="16sp"
-        android:text="Choose the Challange:"
         app:layout_constraintTop_toBottomOf="@id/user_profile_image"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        app:layout_constraintLeft_toLeftOf="@id/user_profile_image"
+        app:layout_constraintRight_toRightOf="@id/user_profile_image"
+        android:layout_marginTop="@dimen/mapbox_dimen_16dp"
+        android:src="@drawable/calendar"
+        app:tint="@color/gray_800"
         />
 
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/list_of_challanges"
-        app:layout_constraintTop_toBottomOf="@id/user_profile_image"
-        app:layout_constraintLeft_toRightOf="@id/list_of_challanges_text"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/choose_date_text"
-        android:textSize="16sp"
-        android:text="Choose the Date:"
-        app:layout_constraintTop_toBottomOf="@id/list_of_challanges_text"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        />
 
     <EditText
         android:layout_width="wrap_content"
@@ -78,11 +57,37 @@
         android:hint="Click to Choose the Date"
         android:textSize="16sp"
         android:inputType="date"
-        app:layout_constraintTop_toTopOf="@id/choose_date_text"
-        app:layout_constraintBottom_toBottomOf="@id/choose_date_text"
-        app:layout_constraintLeft_toRightOf="@id/choose_date_text"
+        app:layout_constraintTop_toTopOf="@id/date_icon"
+        app:layout_constraintBottom_toBottomOf="@id/date_icon"
+        app:layout_constraintLeft_toRightOf="@id/date_icon"
         android:layout_marginStart="16dp"
         />
+
+    <ImageView
+        android:id="@+id/clock_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/date_icon"
+        app:layout_constraintLeft_toLeftOf="@id/user_profile_image"
+        app:layout_constraintRight_toRightOf="@id/user_profile_image"
+        android:layout_marginTop="@dimen/mapbox_dimen_16dp"
+        android:src="@drawable/clock_outline"
+        app:tint="@color/gray_800"
+        />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_time"
+        android:hint="Click to Choose the Time"
+        android:textSize="16sp"
+        android:inputType="date"
+        app:layout_constraintTop_toTopOf="@id/clock_icon"
+        app:layout_constraintBottom_toBottomOf="@id/clock_icon"
+        app:layout_constraintLeft_toRightOf="@id/clock_icon"
+        android:layout_marginStart="16dp"
+        />
+
 
     <Button
         android:layout_width="wrap_content"
@@ -90,12 +95,13 @@
         android:id="@+id/save_challenge"
         android:text="Save"
         android:background="@drawable/button_rounded_corners"
-        app:layout_constraintTop_toBottomOf="@id/choose_date_text"
+        app:layout_constraintTop_toBottomOf="@id/clock_icon"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="36dp"
         android:layout_marginStart="24dp"
         app:backgroundTint="@color/save_button"
         android:shadowColor="@color/teal_200"
+        android:textColor="@color/gray_100"
         />
 
     <Button
@@ -104,11 +110,12 @@
         android:id="@+id/cancel_challenge"
         android:text="cancel"
         android:background="@drawable/button_rounded_corners"
-        app:layout_constraintTop_toBottomOf="@id/choose_date_text"
+        app:layout_constraintTop_toBottomOf="@id/clock_icon"
         app:layout_constraintLeft_toRightOf="@id/save_challenge"
         android:layout_marginTop="36dp"
         android:layout_marginStart="24dp"
         app:backgroundTint="@color/cancel_button"
+        android:textColor="@color/gray_100"
         />
 
 

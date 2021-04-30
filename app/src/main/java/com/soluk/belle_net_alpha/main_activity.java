@@ -3,6 +3,7 @@ package com.soluk.belle_net_alpha;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
@@ -23,6 +24,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.BounceInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -35,12 +37,26 @@ import android.widget.Toast;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.JsonObject;
+import com.leinardi.android.speeddial.SpeedDialActionItem;
+import com.leinardi.android.speeddial.SpeedDialView;
+import com.mapbox.android.core.location.LocationEngine;
+import com.mapbox.android.core.location.LocationEngineProvider;
+import com.mapbox.android.core.permissions.PermissionsListener;
+import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.api.directions.v5.models.RouteOptions;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.location.LocationComponent;
+import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
+import com.mapbox.mapboxsdk.location.LocationComponentOptions;
+import com.mapbox.mapboxsdk.location.modes.CameraMode;
+import com.mapbox.mapboxsdk.location.modes.RenderMode;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
@@ -51,6 +67,11 @@ import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
 import com.mapbox.mapboxsdk.style.layers.Property;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+import com.mapbox.navigation.base.internal.route.RouteUrl;
+import com.mapbox.navigation.base.options.NavigationOptions;
+import com.mapbox.navigation.core.MapboxNavigation;
+import com.mapbox.navigation.core.directions.session.RoutesRequestCallback;
+import com.mapbox.navigation.ui.route.NavigationMapRoute;
 import com.soluk.belle_net_alpha.event_data_maker.file_maker;
 import com.soluk.belle_net_alpha.event_data_maker.geo_JSON_maker;
 import com.soluk.belle_net_alpha.http_requests.SimpleHttp;
@@ -58,6 +79,7 @@ import com.soluk.belle_net_alpha.http_requests.SimpleHttpResponseHandler;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -91,7 +113,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
 
 public class main_activity extends AppCompatActivity implements
-        OnMapReadyCallback, MapboxMap.OnMapClickListener,MapboxMap.OnMapLongClickListener
+        OnMapReadyCallback, MapboxMap.OnMapClickListener,MapboxMap.OnMapLongClickListener, PermissionsListener
 {
 
     private static final String TAG = main_activity.class.getSimpleName();
@@ -112,9 +134,18 @@ public class main_activity extends AppCompatActivity implements
     private static final String USER_FAMILY = "Alikhani";
     private static final String USER_PIC = "#loncle";
     private static final String USER_ID = "#ahdx98!s5kjxsp";
+    /// Mapbox Variables
     private MapView mapView;
     private MapboxMap mapboxMap;
     private SymbolManager symbol_manager;
+    private NavigationOptions navigation_options;
+    private MapboxNavigation mapbox_navigation;
+    private LocationComponent location_component;
+    private LocationEngine location_engine;
+    private NavigationMapRoute navigation_mapRoute;
+    private List<Point> list_of_points;
+    ///
+    private PermissionsManager permissionsManager;
     private GeoJsonSource source;
     private FeatureCollection featureCollection;
     private int number_of_selected_cards;
@@ -193,7 +224,7 @@ public class main_activity extends AppCompatActivity implements
         mapView.getMapAsync(this);
 
         add_pin_on_map = findViewById(R.id.fab_pin_on_maps);
-        list_of_challenges = findViewById(R.id.list_of_challanges);
+        //list_of_challenges = findViewById(R.id.list_of_challanges);
         View bottom_sheet_challenges_veiw = findViewById(R.id.bottom_sheet_challenges);
         View bottom_sheet_click_join_view = findViewById(R.id.bottom_sheet_click_to_join);
         Button save_challenge = findViewById(R.id.save_challenge);
@@ -203,10 +234,10 @@ public class main_activity extends AppCompatActivity implements
 
         /// Configuring BottomSheet_Choose_Challenge in the BelleNet
         bottom_sheet_Choose_challenge = BottomSheetBehavior.from(bottom_sheet_challenges_veiw);
-        ArrayAdapter<CharSequence> list_of_challenges_adapter = ArrayAdapter.createFromResource(this,
-                R.array.list_of_challenges_items, android.R.layout.simple_spinner_item);
-        list_of_challenges_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        list_of_challenges.setAdapter(list_of_challenges_adapter);
+        //ArrayAdapter<CharSequence> list_of_challenges_adapter = ArrayAdapter.createFromResource(this,
+          //      R.array.list_of_challenges_items, android.R.layout.simple_spinner_item);
+        //list_of_challenges_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //list_of_challenges.setAdapter(list_of_challenges_adapter);
         bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
 
         add_pin_on_map.setOnClickListener(new View.OnClickListener()
@@ -214,8 +245,17 @@ public class main_activity extends AppCompatActivity implements
             @Override
             public void onClick(View v)
             {
-                bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_EXPANDED);
-                add_postition_mode = true;
+                //bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_EXPANDED);
+                //add_postition_mode = true;
+
+                JSONArray current_position = new JSONArray();
+                try
+                {
+                    current_position.put(location_component.getLastKnownLocation().getLongitude());
+                    current_position.put(location_component.getLastKnownLocation().getLatitude());
+                    set_camera_position(0,current_position);
+                }
+                catch (JSONException e) {e.printStackTrace();}
             }
         });
 
@@ -288,8 +328,56 @@ public class main_activity extends AppCompatActivity implements
             }
         });
 
+        pin_event_sd_init();
+
     }
 
+    void pin_event_sd_init()
+    {
+        SpeedDialView pin_event_sd = findViewById(R.id.pin_event_sd);
+        pin_event_sd.addActionItem(new SpeedDialActionItem.Builder(R.id.sd_ensemble_cycling,
+                R.drawable.bike)
+                .setFabBackgroundColor(ResourcesCompat.getColor(getResources()
+                        ,R.color.teal_500,getTheme()))
+                .setFabImageTintColor(Color.WHITE)
+                .setLabelBackgroundColor(Color.WHITE)
+                .setLabel("Ensemble Cycling")
+                .create());
+        pin_event_sd.addActionItem(new SpeedDialActionItem.Builder(R.id.sd_offer_challenge,
+                R.drawable.map)
+                .setFabBackgroundColor(ResourcesCompat.getColor(getResources()
+                        ,R.color.light_blue_500,getTheme()))
+                .setFabImageTintColor(Color.WHITE)
+                .setLabelBackgroundColor(Color.WHITE)
+                .setLabel("Offer a Challenge")
+                .create());
+        pin_event_sd.addActionItem(new SpeedDialActionItem.Builder(R.id.sd_share_experience,
+                R.drawable.image)
+                .setFabBackgroundColor(ResourcesCompat.getColor(getResources()
+                        ,R.color.blue_500,getTheme()))
+                .setFabImageTintColor(Color.WHITE)
+                .setLabelBackgroundColor(Color.WHITE)
+                .setLabel("Share Experience")
+                .create());
+
+        pin_event_sd.setOnActionSelectedListener(new SpeedDialView.OnActionSelectedListener()
+        {
+            @SuppressLint("NonConstantResourceId")
+            @Override
+            public boolean onActionSelected(SpeedDialActionItem actionItem)
+            {
+                switch (actionItem.getId())
+                {
+                    case R.id.sd_ensemble_cycling:
+                        bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_EXPANDED);
+                        add_postition_mode = true;break;
+                    case R.id.sd_offer_challenge:  break;
+                    case R.id.sd_share_experience:  break;
+                }
+                return false;
+            }
+        });
+    }
 
     private void update_edit_box()
     {
@@ -349,6 +437,8 @@ public class main_activity extends AppCompatActivity implements
                   new LoadGeoJsonDataTask(main_activity.this).execute();
                 mapboxMap.addOnMapClickListener(main_activity.this);
                 mapboxMap.addOnMapLongClickListener(main_activity.this);
+                enableLocationComponent(style);
+                mapbox_navigation_configuration(style);
                 symbol_manager = new SymbolManager(mapView, mapboxMap, style);
                 symbol_manager.setIconAllowOverlap(true);
                 style.addImage("myMarker", BitmapFactory.decodeResource(getResources(),R.drawable.blue_marker));
@@ -356,6 +446,124 @@ public class main_activity extends AppCompatActivity implements
             }
         });
 
+    }
+
+    void mapbox_navigation_configuration(Style style)
+    {
+        LocationEngine locationEngine = LocationEngineProvider.getBestLocationEngine(main_activity.this);
+        navigation_options = MapboxNavigation.defaultNavigationOptionsBuilder(main_activity.this,
+                getString(R.string.mapbox_access_token))
+                .locationEngine(locationEngine)
+                .build();
+        mapbox_navigation = new MapboxNavigation(navigation_options);
+        //mapbox_navigation.registerRouteProgressObserver(main_activity.this);
+        mapboxMap.addOnMapClickListener(main_activity.this);
+        symbol_manager = new SymbolManager(mapView, mapboxMap, style);
+        symbol_manager.setIconAllowOverlap(true);
+        style.addImage("myMarker", BitmapFactory.decodeResource(getResources(),R.drawable.blue_marker));
+    }
+
+    @SuppressWarnings( {"MissingPermission"})
+    private void enableLocationComponent(@NonNull Style loadedMapStyle)
+    {
+        // Check if permissions are enabled and if not request
+        if (PermissionsManager.areLocationPermissionsGranted(this))
+        {
+
+            LocationComponentOptions locationComponentOptions =
+                    LocationComponentOptions.builder(this)
+                            .pulseEnabled(true)
+                            .pulseColor(Color.CYAN)
+                            .pulseAlpha(.4f)
+                            .pulseInterpolator(new BounceInterpolator())
+                            .build();
+
+            LocationComponentActivationOptions locationComponentActivationOptions = LocationComponentActivationOptions
+                    .builder(this, loadedMapStyle)
+                    .locationComponentOptions(locationComponentOptions)
+                    .build();
+
+            location_component = mapboxMap.getLocationComponent();
+            location_component.activateLocationComponent(locationComponentActivationOptions);
+            location_component.setLocationComponentEnabled(true);
+            location_component.setCameraMode(CameraMode.TRACKING);
+            location_component.setRenderMode(RenderMode.COMPASS);
+        }
+        else
+        {
+            permissionsManager = new PermissionsManager(this);
+            permissionsManager.requestLocationPermissions(this);
+        }
+    }
+
+
+    private void getRoute(List<Point> list)
+    {
+
+        mapbox_navigation.requestRoutes(RouteOptions.builder()
+                .baseUrl("https://api.mapbox.com")
+                .user("mapbox")
+                .requestUuid("ck7dtdd2z00yx75plynvtan26")
+                .accessToken(getString(R.string.mapbox_access_token))
+                .coordinates(list)
+                .geometries(RouteUrl.GEOMETRY_POLYLINE6)
+                .voiceUnits(RouteUrl.METRIC)
+                .profile(RouteUrl.PROFILE_CYCLING)
+                .build(), new RoutesRequestCallback()
+        {
+            @Override
+            public void onRoutesReady(@NotNull List<? extends DirectionsRoute> list)
+            {
+                Log.d("TAG","Received");
+                DirectionsRoute currentRoute;
+                currentRoute = list.get(0);
+
+                if (navigation_mapRoute == null)
+                {
+                    navigation_mapRoute = new NavigationMapRoute.Builder(mapView, mapboxMap, main_activity.this)
+                            .withVanishRouteLineEnabled(true)
+                            .withMapboxNavigation(mapbox_navigation)
+                            .build();
+                }
+                navigation_mapRoute.addRoute(currentRoute);
+
+            }
+
+            @Override
+            public void onRoutesRequestFailure(@NotNull Throwable throwable, @NotNull RouteOptions routeOptions)
+            {
+                Log.d("TAG","Failure");
+            }
+
+            @Override
+            public void onRoutesRequestCanceled(@NotNull RouteOptions routeOptions)
+            {
+                Log.d("TAG","Canceled");
+            }
+        });
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void onExplanationNeeded(List<String> permissionsToExplain)
+    {
+        Toast.makeText(this, R.string.user_location_permission_explanation, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onPermissionResult(boolean granted)
+    {
+        if (granted) {
+            enableLocationComponent(mapboxMap.getStyle());
+        } else {
+            Toast.makeText(this, R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
+            finish();
+        }
     }
 
     void save_user_created_event()
@@ -1259,5 +1467,6 @@ public class main_activity extends AppCompatActivity implements
             mapboxMap.removeOnMapClickListener(this);
         }
         mapView.onDestroy();
+        mapbox_navigation.onDestroy();
     }
 }
