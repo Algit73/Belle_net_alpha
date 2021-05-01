@@ -85,7 +85,7 @@
         app:layout_constraintRight_toRightOf="parent"
         android:src="@drawable/plus"
         app:tint="@color/white"
-        android:background="@drawable/add_button_circle_background"
+        android:background="@drawable/ib_circle_background"
         />
 
 

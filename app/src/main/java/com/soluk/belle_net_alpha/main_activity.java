@@ -32,6 +32,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -99,6 +100,7 @@ import java.nio.charset.Charset;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -151,19 +153,35 @@ public class main_activity extends AppCompatActivity implements
     private LocationComponent location_component;
     private LocationEngine location_engine;
     private NavigationMapRoute navigation_mapRoute;
-    private List<Point> list_of_points;
     ///
     private PermissionsManager permissionsManager;
     private GeoJsonSource source;
     private FeatureCollection featureCollection;
     private int number_of_selected_cards;
     private Spinner list_of_challenges;
-    private BottomSheetBehavior bottom_sheet_Choose_challenge;
+
     private BottomSheetBehavior bottom_sheet_click_join;
+
+    private SpeedDialView pin_event_sd;
+    private FloatingActionButton set_cam_on_location_fab;
+
+    /// Variables for sending event
+    private BottomSheetBehavior bottom_sheet_Choose_challenge;
     private TextView event_date_tv;
     private TextView event_time_tv;
     private final Calendar calendar_date_picker = Calendar.getInstance();
     private final Calendar calendar_time_picker = Calendar.getInstance();
+    private ImageButton add_marker_on_map_ib;
+    private ImageButton accept_marker_on_map_ib;
+    private ImageButton reject_marker_on_map_ib;
+    private int EVENT_TYPE_ENSEMBLE = 0;
+    private int EVENT_TYPE_CHALLENGE = 1;
+    private int EVENT_TYPE_EXPERIENCE = 2;
+    private int event_type;
+    private List<Point> list_of_added_points;
+    private List<Symbol> list_of_of_added_points_symbol;
+
+
     private boolean active_user_pin_mode;
     private static final String FILE_NAME = "geo_json_bellenet";
     private static String file_directory_static = "";
@@ -245,7 +263,7 @@ public class main_activity extends AppCompatActivity implements
 
 
         /// Set camera on the user location
-        FloatingActionButton set_cam_on_location_fab = findViewById(R.id.fab_pin_on_maps);
+        set_cam_on_location_fab = findViewById(R.id.fab_pin_on_maps);
         set_cam_on_location_fab.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -264,18 +282,6 @@ public class main_activity extends AppCompatActivity implements
         });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
         button_sheet_add_event_init();
         pin_event_sd_init();
 
@@ -283,7 +289,6 @@ public class main_activity extends AppCompatActivity implements
 
     void button_sheet_add_event_init()
     {
-
 
         // Configuring Buttons in the BottomSheet of BelleNet
         Button save_challenge_btn = findViewById(R.id.save_challenge);
@@ -389,23 +394,86 @@ public class main_activity extends AppCompatActivity implements
                         ,true);
                 time_picker_dialog.show();
 
-/*
+                /*
                 time_picker_dialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
                         .setTextColor(ResourcesCompat.getColor(getResources()
                                 ,R.color.gray_800,getTheme()));
-                time_picker_dialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
-                        .setTextColor(ResourcesCompat.getColor(getResources()
-                                ,R.color.gray_800,getTheme()));
-
- */
+                */
             }
         });
+
+        /// Configuring pinning on map
+        add_marker_on_map_ib = findViewById(R.id.add_marker_ib);
+        accept_marker_on_map_ib = findViewById(R.id.accept_pinned_markers_ib);
+        reject_marker_on_map_ib = findViewById(R.id.reject_pinned_markers_ib);
+        add_marker_on_map_ib.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+                accept_marker_on_map_ib.setVisibility(View.VISIBLE);
+                reject_marker_on_map_ib.setVisibility(View.VISIBLE);
+
+                set_cam_on_location_fab.setVisibility(View.INVISIBLE);
+                pin_event_sd.setVisibility(View.INVISIBLE);
+
+                add_postition_mode = true;
+            }
+        });
+
+        accept_marker_on_map_ib.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_EXPANDED);
+                accept_marker_on_map_ib.setVisibility(View.INVISIBLE);
+                reject_marker_on_map_ib.setVisibility(View.INVISIBLE);
+
+                set_cam_on_location_fab.setVisibility(View.VISIBLE);
+                pin_event_sd.setVisibility(View.VISIBLE);
+
+                symbol_manager.delete(list_of_of_added_points_symbol);
+                list_of_of_added_points_symbol = null;
+                list_of_added_points = null;
+
+                navigation_mapRoute.updateRouteVisibilityTo(false);
+
+                add_postition_mode = false;
+            }
+        });
+
+        reject_marker_on_map_ib.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_EXPANDED);
+                accept_marker_on_map_ib.setVisibility(View.INVISIBLE);
+                reject_marker_on_map_ib.setVisibility(View.INVISIBLE);
+
+                set_cam_on_location_fab.setVisibility(View.VISIBLE);
+                pin_event_sd.setVisibility(View.VISIBLE);
+
+                symbol_manager.delete(list_of_of_added_points_symbol);
+                list_of_of_added_points_symbol = null;
+                list_of_added_points = null;
+
+                navigation_mapRoute.updateRouteVisibilityTo(false);
+
+
+                add_postition_mode = false;
+            }
+        });
+
 
     }
 
     void pin_event_sd_init()
     {
-        SpeedDialView pin_event_sd = findViewById(R.id.pin_event_sd);
+        pin_event_sd = findViewById(R.id.pin_event_sd);
         pin_event_sd.addActionItem(new SpeedDialActionItem.Builder(R.id.sd_ensemble_cycling,
                 R.drawable.bike)
                 .setFabBackgroundColor(ResourcesCompat.getColor(getResources()
@@ -441,7 +509,8 @@ public class main_activity extends AppCompatActivity implements
                 {
                     case R.id.sd_ensemble_cycling:
                         bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_EXPANDED);
-                        add_postition_mode = true;break;
+                        event_type = 0;
+                        break;
                     case R.id.sd_offer_challenge:  break;
                     case R.id.sd_share_experience:  break;
                 }
@@ -471,32 +540,78 @@ public class main_activity extends AppCompatActivity implements
     @Override
     public boolean onMapLongClick(@NonNull LatLng point)
     {
-        if(add_postition_mode)  // Prohibit adding marker when the mode was not initiated
-        {
-            if (!is_marker_added)   // Check if any marker has been added by the user
-            {
-                selected_postion = point;
-                user_marker_pinned = symbol_manager.create(new SymbolOptions()
-                        .withLatLng(new LatLng(point.getLatitude(), point.getLongitude()))
-                        .withIconImage("myMarker")
-                        .withTextAnchor(Property.TEXT_ANCHOR_BOTTOM)
-                        .withIconSize(1.0f));
 
-                is_marker_added = true;
-                //add_postition_mode = false;
+        Log.d(TAG, "onMapLongClick: Entered");
+
+        if (add_postition_mode)  // Prohibit adding marker when the mode was not initiated
+        {
+            if(list_of_of_added_points_symbol==null)
+                list_of_of_added_points_symbol = new ArrayList<>();
+
+            if (event_type != EVENT_TYPE_ENSEMBLE)
+            {
+                if (!is_marker_added)   // Check if any marker has been added by the user
+                {
+                    selected_postion = point;
+                    user_marker_pinned = symbol_manager.create(new SymbolOptions()
+                            .withLatLng(new LatLng(point.getLatitude(), point.getLongitude()))
+                            .withIconImage("marker_start_flag")
+                            .withTextAnchor(Property.TEXT_ANCHOR_BOTTOM)
+                            .withIconSize(1.0f));
+
+                    is_marker_added = true;
+                    //add_postition_mode = false;
+                }
+                else
+                {
+                    symbol_manager.delete(user_marker_pinned);
+                    selected_postion = point;
+                    user_marker_pinned = symbol_manager.create(new SymbolOptions()
+                            .withLatLng(new LatLng(point.getLatitude(), point.getLongitude()))
+                            .withIconImage("marker_start_flag")
+                            .withTextAnchor(Property.TEXT_ANCHOR_BOTTOM)
+                            .withIconSize(1.0f));
+                }
             }
+
             else
             {
-                symbol_manager.delete(user_marker_pinned);
-                selected_postion = point;
-                user_marker_pinned = symbol_manager.create(new SymbolOptions()
-                        .withLatLng(new LatLng(point.getLatitude(), point.getLongitude()))
-                        .withIconImage("myMarker")
-                        .withTextAnchor(Property.TEXT_ANCHOR_BOTTOM)
-                        .withIconSize(1.0f));
+                Log.d(TAG, "Ensemble Riding: Entered");
+                if (list_of_added_points == null)
+                {
+                    list_of_added_points = new ArrayList<>();
+                    user_marker_pinned = symbol_manager.create(new SymbolOptions()
+                            .withLatLng(new LatLng(point.getLatitude(), point.getLongitude()))
+                            .withIconImage("marker_start_flag")
+                            .withTextAnchor(Property.TEXT_ANCHOR_BOTTOM)
+                            .withIconSize(1.0f));
+                }
+                else
+                {
+                    user_marker_pinned = symbol_manager.create(new SymbolOptions()
+                            .withLatLng(new LatLng(point.getLatitude(), point.getLongitude()))
+                            .withIconImage("marker_guide_pin")
+                            .withTextAnchor(Property.TEXT_ANCHOR_BOTTOM)
+                            .withIconSize(1.0f));
+                }
+
+                list_of_of_added_points_symbol.add(user_marker_pinned);
+
+                Point marked_point = Point.fromLngLat(point.getLongitude(), point.getLatitude());
+                list_of_added_points.add(marked_point);
+                Log.d(TAG, "list Size: "+list_of_added_points.size());
+                if(list_of_added_points.size()>1)
+                    getRoute(list_of_added_points);
 
             }
+
+
         }
+
+
+
+
+
         return false;
     }
 
@@ -518,8 +633,6 @@ public class main_activity extends AppCompatActivity implements
                 mapbox_navigation_configuration(style);
                 symbol_manager = new SymbolManager(mapView, mapboxMap, style);
                 symbol_manager.setIconAllowOverlap(true);
-                style.addImage("myMarker", BitmapFactory.decodeResource(getResources(),R.drawable.blue_marker));
-                //style.removeImage("myMarker");
             }
         });
 
@@ -537,7 +650,8 @@ public class main_activity extends AppCompatActivity implements
         mapboxMap.addOnMapClickListener(main_activity.this);
         symbol_manager = new SymbolManager(mapView, mapboxMap, style);
         symbol_manager.setIconAllowOverlap(true);
-        style.addImage("myMarker", BitmapFactory.decodeResource(getResources(),R.drawable.blue_marker));
+        style.addImage("marker_guide_pin", BitmapFactory.decodeResource(getResources(),R.drawable.blue_marker));
+        style.addImage("marker_start_flag", BitmapFactory.decodeResource(getResources(),R.drawable.start_64));
     }
 
     @SuppressWarnings( {"MissingPermission"})
@@ -577,6 +691,7 @@ public class main_activity extends AppCompatActivity implements
     private void getRoute(List<Point> list)
     {
 
+        Log.d(TAG, "Get Route");
         mapbox_navigation.requestRoutes(RouteOptions.builder()
                 .baseUrl("https://api.mapbox.com")
                 .user("mapbox")
@@ -603,6 +718,7 @@ public class main_activity extends AppCompatActivity implements
                             .build();
                 }
                 navigation_mapRoute.addRoute(currentRoute);
+
 
             }
 
@@ -714,11 +830,12 @@ public class main_activity extends AppCompatActivity implements
             public void onStyleLoaded(@NonNull Style style)
             {
 
-                mapboxMap.addOnMapClickListener(main_activity.this);
-                mapboxMap.addOnMapLongClickListener(main_activity.this);
+                //mapboxMap.addOnMapClickListener(main_activity.this);
+                //mapboxMap.addOnMapLongClickListener(main_activity.this);
                 symbol_manager = new SymbolManager(mapView, mapboxMap, style);
                 symbol_manager.setIconAllowOverlap(true);
-                style.addImage("myMarker", BitmapFactory.decodeResource(getResources(),R.drawable.blue_marker));
+                style.addImage("marker_guide_pin", BitmapFactory.decodeResource(getResources(),R.drawable.blue_marker));
+                style.addImage("marker_start_flag", BitmapFactory.decodeResource(getResources(),R.drawable.start_64));
 
             }
         });
