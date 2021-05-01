@@ -16,12 +16,14 @@
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:src="@drawable/al_profile_300"
+        android:background="@drawable/event_id_card_circle_background"
         app:civ_border_width="2dp"
         app:civ_border_color="@color/teal_200"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+
 
         />
     <TextView
@@ -31,6 +33,7 @@
         android:text="Alireza Alikhani"
         android:textSize="24sp"
         android:textStyle="bold"
+        android:textColor="@color/gray_800"
         app:layout_constraintTop_toTopOf="@id/user_profile_image"
         app:layout_constraintBottom_toBottomOf="@id/user_profile_image"
         app:layout_constraintLeft_toRightOf="@+id/user_profile_image"
@@ -38,10 +41,60 @@
         />
 
     <ImageView
-        android:id="@+id/date_icon"
+        android:id="@+id/marker_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/user_profile_image"
+        app:layout_constraintLeft_toLeftOf="@id/user_profile_image"
+        app:layout_constraintRight_toRightOf="@id/user_profile_image"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/map_marker_outline"
+        app:tint="@color/gray_800"
+        />
+
+    <TextView
+        android:id="@+id/marker_explanation_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="Please mark your route on the map"
+        android:textColor="@color/gray_600"
+        app:layout_constraintTop_toTopOf="@id/marker_icon"
+        app:layout_constraintLeft_toRightOf="@id/marker_icon"
+        android:layout_marginStart="16dp"
+        />
+
+    <TextView
+        android:id="@+id/tap_to_add_marker_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="Tap the add button to enter your route"
+        app:layout_constraintTop_toBottomOf="@+id/marker_explanation_text"
+        app:layout_constraintLeft_toRightOf="@id/marker_icon"
+        android:layout_marginStart="16dp"
+        />
+
+    <ImageButton
+        android:id="@+id/add_marker_ib"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        app:layout_constraintTop_toTopOf="@id/marker_icon"
+        app:layout_constraintBottom_toBottomOf="@id/marker_icon"
+        app:layout_constraintLeft_toRightOf="@id/tap_to_add_marker_text"
+        app:layout_constraintRight_toRightOf="parent"
+        android:src="@drawable/plus"
+        app:tint="@color/white"
+        android:background="@drawable/add_button_circle_background"
+        />
+
+
+
+    <ImageView
+        android:id="@+id/date_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/tap_to_add_marker_text"
         app:layout_constraintLeft_toLeftOf="@id/user_profile_image"
         app:layout_constraintRight_toRightOf="@id/user_profile_image"
         android:layout_marginTop="@dimen/mapbox_dimen_16dp"
@@ -50,10 +103,10 @@
         />
 
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/edit_date"
+        android:id="@+id/input_date_tv"
         android:hint="Click to Choose the Date"
         android:textSize="16sp"
         android:inputType="date"
@@ -75,10 +128,10 @@
         app:tint="@color/gray_800"
         />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/edit_time"
+        android:id="@+id/input_time_tv"
         android:hint="Click to Choose the Time"
         android:textSize="16sp"
         android:inputType="date"

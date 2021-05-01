@@ -6,7 +6,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -23,6 +25,7 @@ import android.os.Environment;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.widget.ArrayAdapter;
@@ -32,6 +35,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -92,6 +96,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.nio.charset.Charset;
+import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -100,6 +105,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -149,12 +157,13 @@ public class main_activity extends AppCompatActivity implements
     private GeoJsonSource source;
     private FeatureCollection featureCollection;
     private int number_of_selected_cards;
-    private FloatingActionButton add_pin_on_map;
     private Spinner list_of_challenges;
     private BottomSheetBehavior bottom_sheet_Choose_challenge;
     private BottomSheetBehavior bottom_sheet_click_join;
-    private EditText edit_date_time;
+    private TextView event_date_tv;
+    private TextView event_time_tv;
     private final Calendar calendar_date_picker = Calendar.getInstance();
+    private final Calendar calendar_time_picker = Calendar.getInstance();
     private boolean active_user_pin_mode;
     private static final String FILE_NAME = "geo_json_bellenet";
     private static String file_directory_static = "";
@@ -223,30 +232,25 @@ public class main_activity extends AppCompatActivity implements
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
-        add_pin_on_map = findViewById(R.id.fab_pin_on_maps);
-        //list_of_challenges = findViewById(R.id.list_of_challanges);
-        View bottom_sheet_challenges_veiw = findViewById(R.id.bottom_sheet_challenges);
+        /// Configuring BottomSheet_Choose_Challenge in the BelleNet
         View bottom_sheet_click_join_view = findViewById(R.id.bottom_sheet_click_to_join);
-        Button save_challenge = findViewById(R.id.save_challenge);
-        Button cancel_challenge = findViewById(R.id.cancel_challenge);
-        edit_date_time = findViewById(R.id.edit_date);
-
+        bottom_sheet_click_join = BottomSheetBehavior.from(bottom_sheet_click_join_view);
+        bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
 
         /// Configuring BottomSheet_Choose_Challenge in the BelleNet
+        View bottom_sheet_challenges_veiw = findViewById(R.id.bottom_sheet_challenges);
         bottom_sheet_Choose_challenge = BottomSheetBehavior.from(bottom_sheet_challenges_veiw);
-        //ArrayAdapter<CharSequence> list_of_challenges_adapter = ArrayAdapter.createFromResource(this,
-          //      R.array.list_of_challenges_items, android.R.layout.simple_spinner_item);
-        //list_of_challenges_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //list_of_challenges.setAdapter(list_of_challenges_adapter);
         bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-        add_pin_on_map.setOnClickListener(new View.OnClickListener()
+
+
+        /// Set camera on the user location
+        FloatingActionButton set_cam_on_location_fab = findViewById(R.id.fab_pin_on_maps);
+        set_cam_on_location_fab.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                //bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_EXPANDED);
-                //add_postition_mode = true;
 
                 JSONArray current_position = new JSONArray();
                 try
@@ -259,8 +263,33 @@ public class main_activity extends AppCompatActivity implements
             }
         });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+        button_sheet_add_event_init();
+        pin_event_sd_init();
+
+    }
+
+    void button_sheet_add_event_init()
+    {
+
+
         // Configuring Buttons in the BottomSheet of BelleNet
-        cancel_challenge.setOnClickListener(new View.OnClickListener()
+        Button save_challenge_btn = findViewById(R.id.save_challenge);
+        Button cancel_challenge_btn = findViewById(R.id.cancel_challenge);
+
+        cancel_challenge_btn.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -271,7 +300,7 @@ public class main_activity extends AppCompatActivity implements
             }
         });
 
-        save_challenge.setOnClickListener(new View.OnClickListener()
+        save_challenge_btn.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -289,17 +318,9 @@ public class main_activity extends AppCompatActivity implements
             }
         });
 
-        /// Configuring BottomSheet_Choose_Challenge in the BelleNet
-        bottom_sheet_click_join = BottomSheetBehavior.from(bottom_sheet_click_join_view);
-        bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-
-
-
-
-        // Configuring Date and Time
-
-        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener()
+        /// Configuring DatePicker
+        event_date_tv = findViewById(R.id.input_date_tv);
+        DatePickerDialog.OnDateSetListener event_date = new DatePickerDialog.OnDateSetListener()
         {
 
             @Override
@@ -310,25 +331,75 @@ public class main_activity extends AppCompatActivity implements
                 calendar_date_picker.set(Calendar.YEAR, year);
                 calendar_date_picker.set(Calendar.MONTH, monthOfYear);
                 calendar_date_picker.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                update_edit_box();
+                update_date_picker_tv();
             }
 
         };
 
-        edit_date_time.setOnClickListener(new View.OnClickListener()
+        event_date_tv.setOnClickListener(new View.OnClickListener()
         {
 
             @Override
             public void onClick(View v)
             {
                 // TODO Auto-generated method stub
-                new DatePickerDialog(main_activity.this, date, calendar_date_picker
-                        .get(Calendar.YEAR), calendar_date_picker.get(Calendar.MONTH),
-                        calendar_date_picker.get(Calendar.DAY_OF_MONTH)).show();
+                DatePickerDialog date_picker_dialog = new DatePickerDialog(main_activity.this
+                        ,android.R.style.Theme_Holo_Light_Dialog_MinWidth
+                        ,event_date
+                        ,calendar_date_picker.get(Calendar.YEAR)
+                        ,calendar_date_picker.get(Calendar.MONTH)
+                        ,calendar_date_picker.get(Calendar.DAY_OF_MONTH));
+                date_picker_dialog.show();
+                date_picker_dialog.getDatePicker().setMinDate((System.currentTimeMillis() - 1000));
+                date_picker_dialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
+                        .setTextColor(ResourcesCompat.getColor(getResources()
+                        ,R.color.gray_800,getTheme()));
+                date_picker_dialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
+                        .setTextColor(ResourcesCompat.getColor(getResources()
+                                ,R.color.gray_800,getTheme()));
+
+
             }
         });
 
-        pin_event_sd_init();
+        /// Configuring TimePicker
+        event_time_tv = findViewById(R.id.input_time_tv);
+        TimePickerDialog.OnTimeSetListener event_time = new TimePickerDialog.OnTimeSetListener()
+        {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute)
+            {
+                calendar_time_picker.set(Calendar.HOUR_OF_DAY,hourOfDay);
+                calendar_time_picker.set(Calendar.MINUTE,minute);
+                update_time_picker_tv();
+
+            }
+        };
+        event_time_tv.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                TimePickerDialog time_picker_dialog = new TimePickerDialog(main_activity.this
+                        ,android.R.style.Theme_Holo_Light_Dialog_MinWidth
+                        ,event_time
+                        ,calendar_time_picker
+                        .get(Calendar.HOUR_OF_DAY)
+                        ,calendar_time_picker.get(Calendar.MINUTE)
+                        ,true);
+                time_picker_dialog.show();
+
+/*
+                time_picker_dialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
+                        .setTextColor(ResourcesCompat.getColor(getResources()
+                                ,R.color.gray_800,getTheme()));
+                time_picker_dialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
+                        .setTextColor(ResourcesCompat.getColor(getResources()
+                                ,R.color.gray_800,getTheme()));
+
+ */
+            }
+        });
 
     }
 
@@ -379,10 +450,16 @@ public class main_activity extends AppCompatActivity implements
         });
     }
 
-    private void update_edit_box()
+    private void update_date_picker_tv()
     {
-        SimpleDateFormat us_date_format = new SimpleDateFormat("MMMM,dd,yyyy", Locale.US);
-        edit_date_time.setText(us_date_format.format(calendar_date_picker.getTime()));
+        SimpleDateFormat us_date_format = new SimpleDateFormat("MMMM, dd, yyyy", Locale.US);
+        event_date_tv.setText(us_date_format.format(calendar_date_picker.getTime()));
+    }
+
+    private void update_time_picker_tv()
+    {
+        SimpleDateFormat time_24_format = new SimpleDateFormat("H : mm", Locale.US);
+        event_time_tv.setText(time_24_format.format(calendar_time_picker.getTime()));
     }
 
     @Override
