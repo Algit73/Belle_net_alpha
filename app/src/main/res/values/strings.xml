@@ -5,6 +5,14 @@
     <string name="event_join_status">https://soluk.org/belle_net_users_info/send_join_event_status.php</string>
     <string name="user_location_permission_explanation">This app needs location permissions to show its functionality.</string>
     <string name="user_location_permission_not_granted">You didn\'t grant location permissions.</string>
+    <string name="user_has_not_pinned_location">Please pin a location on map</string>
+    <string name="user_has_not_pinned_destination">Please pin at least one another location on map</string>
+
+    <string name="hint_user_to_mark_spots_on_map">Please mark your spots on the map</string>
+    <string name="hint_user_to_tap_on_add_icon">Tap the add button to enter your route</string>
+
+    <string name="hint_user_the_marks_added">You have marked the map successfully</string>
+    <string name="hint_user_to_remove_the_marks">Tap remove button to remove marks</string>
 
     <string name="profile_pic_url">https://soluk.org/belle_net_users_info/profile_pictures/%23</string>
     <string-array name="list_of_challenges_items">

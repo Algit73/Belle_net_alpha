@@ -174,10 +174,11 @@ public class main_activity extends AppCompatActivity implements
     private ImageButton add_marker_on_map_ib;
     private ImageButton accept_marker_on_map_ib;
     private ImageButton reject_marker_on_map_ib;
-    private int EVENT_TYPE_ENSEMBLE = 0;
-    private int EVENT_TYPE_CHALLENGE = 1;
-    private int EVENT_TYPE_EXPERIENCE = 2;
-    private int event_type;
+    //private int EVENT_TYPE_ENSEMBLE = 0;
+    //private int EVENT_TYPE_CHALLENGE = 1;
+    //private int EVENT_TYPE_EXPERIENCE = 2;
+    private enum event_types {EVENT_TYPE_ENSEMBLE,EVENT_TYPE_CHALLENGE,EVENT_TYPE_EXPERIENCE};
+    private event_types event_type;
     private List<Point> list_of_added_points;
     private List<Symbol> list_of_of_added_points_symbol;
 
@@ -301,6 +302,8 @@ public class main_activity extends AppCompatActivity implements
             {
                 is_marker_added = false;
                 add_postition_mode = false;
+                change_add_marker_on_map_ib_mode(true);
+                remove_points_routes();
                 bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
             }
         });
@@ -310,16 +313,51 @@ public class main_activity extends AppCompatActivity implements
             @Override
             public void onClick(View v)
             {
+                if(list_of_added_points==null)
+                {
+                    Toast.makeText(main_activity.this,
+                            "Please add your spots on the map",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                String date_value = event_date_tv.getText().toString();
+
+                if(!date_value.matches(".*\\d.*"))
+                {
+                    Toast.makeText(main_activity.this,
+                            "Please input the event date",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                String time_value = event_time_tv.getText().toString();
+
+                if(!time_value.matches(".*\\d.*"))
+                {
+                    Toast.makeText(main_activity.this,
+                            "Please input the event time",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                send_user_created_event();
+                bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
+                remove_points_routes();
+                change_add_marker_on_map_ib_mode(true);
+                /*
+
                 if(is_marker_added)
                 {
                     is_marker_added = false;
                     add_postition_mode = false;
-                    save_user_created_event();
+                    change_add_marker_on_map_ib_mode(true);
+                    remove_points_routes();
+                    //save_user_created_event();
                     bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
                 }
                 else
                     Toast.makeText(main_activity.this,
                             "Please pin a location on map",Toast.LENGTH_SHORT).show();
+
+                 */
             }
         });
 
@@ -406,71 +444,136 @@ public class main_activity extends AppCompatActivity implements
         add_marker_on_map_ib = findViewById(R.id.add_marker_ib);
         accept_marker_on_map_ib = findViewById(R.id.accept_pinned_markers_ib);
         reject_marker_on_map_ib = findViewById(R.id.reject_pinned_markers_ib);
+
+        // Configuring Add Marker: 1- Adding points and route 2- Removing points and route
         add_marker_on_map_ib.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
+                // Check if any point has been added previously: null if not
+                if(list_of_added_points!=null)
+                {
+                    remove_points_routes();
+                    change_add_marker_on_map_ib_mode(true);
+                }
+                else
+                {
+                    bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-                accept_marker_on_map_ib.setVisibility(View.VISIBLE);
-                reject_marker_on_map_ib.setVisibility(View.VISIBLE);
+                    accept_marker_on_map_ib.setVisibility(View.VISIBLE);
+                    reject_marker_on_map_ib.setVisibility(View.VISIBLE);
 
-                set_cam_on_location_fab.setVisibility(View.INVISIBLE);
-                pin_event_sd.setVisibility(View.INVISIBLE);
+                    set_cam_on_location_fab.setVisibility(View.INVISIBLE);
+                    pin_event_sd.setVisibility(View.INVISIBLE);
 
-                add_postition_mode = true;
+                    add_postition_mode = true;
+                }
+
             }
         });
 
+        // Configuring accept button: accepts the points if user choses at least one
         accept_marker_on_map_ib.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_EXPANDED);
-                accept_marker_on_map_ib.setVisibility(View.INVISIBLE);
-                reject_marker_on_map_ib.setVisibility(View.INVISIBLE);
+                // Check if any point has been added, if not toasts a message
+                if(list_of_of_added_points_symbol!=null)
+                {
+                    // Only "Share Experience" accepts one point
+                    if(event_type!=event_types.EVENT_TYPE_ENSEMBLE
+                            ||list_of_of_added_points_symbol.size()>1)
+                    {
+                        open_bottom_sheet_add_event();
+                        change_add_marker_on_map_ib_mode(false);
+                        change_add_marker_on_map_ib_mode(false);
+                    }
+                    else
+                        Toast.makeText(main_activity.this,R.string.user_has_not_pinned_destination,
+                                Toast.LENGTH_LONG).show();
 
-                set_cam_on_location_fab.setVisibility(View.VISIBLE);
-                pin_event_sd.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    Toast.makeText(main_activity.this,R.string.user_has_not_pinned_location,
+                                    Toast.LENGTH_LONG).show();
+                }
 
-                symbol_manager.delete(list_of_of_added_points_symbol);
-                list_of_of_added_points_symbol = null;
-                list_of_added_points = null;
 
-                navigation_mapRoute.updateRouteVisibilityTo(false);
-
-                add_postition_mode = false;
             }
         });
 
+        // Configuring reject button: removes points and route, empties the list of points
         reject_marker_on_map_ib.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_EXPANDED);
-                accept_marker_on_map_ib.setVisibility(View.INVISIBLE);
-                reject_marker_on_map_ib.setVisibility(View.INVISIBLE);
-
-                set_cam_on_location_fab.setVisibility(View.VISIBLE);
-                pin_event_sd.setVisibility(View.VISIBLE);
-
-                symbol_manager.delete(list_of_of_added_points_symbol);
-                list_of_of_added_points_symbol = null;
-                list_of_added_points = null;
-
-                navigation_mapRoute.updateRouteVisibilityTo(false);
-
-
-                add_postition_mode = false;
+                open_bottom_sheet_add_event();
+                remove_points_routes();
+                change_add_marker_on_map_ib_mode(true);
             }
         });
 
 
     }
 
+
+    /// Changing the functionality of the add_marker_on_map_ib -> add or remove
+    void change_add_marker_on_map_ib_mode (boolean add_mode)
+    {
+        TextView hint_1 = findViewById(R.id.marker_explanation_text);
+        TextView hint_2 = findViewById(R.id.tap_to_add_marker_text);
+
+        if(add_mode)
+        {
+            add_marker_on_map_ib.setImageResource(R.drawable.plus);
+            add_marker_on_map_ib.setBackgroundTintList(ResourcesCompat.getColorStateList(getResources()
+                    ,R.color.teal_200,getTheme()));
+
+            hint_1.setText(R.string.hint_user_to_mark_spots_on_map);
+            hint_2.setText(R.string.hint_user_to_tap_on_add_icon);
+        }
+        else
+        {
+            add_marker_on_map_ib.setImageResource(R.drawable.close);
+            add_marker_on_map_ib.setBackgroundTintList(ResourcesCompat.getColorStateList(getResources()
+                    , R.color.red_500, getTheme()));
+
+            hint_1.setText(R.string.hint_user_the_marks_added);
+            hint_2.setText(R.string.hint_user_to_remove_the_marks);
+        }
+    }
+
+    /// Opens bottom_sheet_add_event
+    void open_bottom_sheet_add_event()
+    {
+        bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_EXPANDED);
+        accept_marker_on_map_ib.setVisibility(View.INVISIBLE);
+        reject_marker_on_map_ib.setVisibility(View.INVISIBLE);
+
+        set_cam_on_location_fab.setVisibility(View.VISIBLE);
+        pin_event_sd.setVisibility(View.VISIBLE);
+        add_postition_mode = false;
+    }
+
+    // Removing route and pinned points on the map on demand
+    void remove_points_routes()
+    {
+        if(list_of_of_added_points_symbol!=null)
+        {
+            symbol_manager.delete(list_of_of_added_points_symbol);
+            list_of_of_added_points_symbol = null;
+            list_of_added_points = null;
+
+            navigation_mapRoute.updateRouteVisibilityTo(false);
+        }
+
+    }
+
+    /// Initializing Pin_event_Speed_Dial
     void pin_event_sd_init()
     {
         pin_event_sd = findViewById(R.id.pin_event_sd);
@@ -509,7 +612,7 @@ public class main_activity extends AppCompatActivity implements
                 {
                     case R.id.sd_ensemble_cycling:
                         bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_EXPANDED);
-                        event_type = 0;
+                        event_type = event_types.EVENT_TYPE_ENSEMBLE;
                         break;
                     case R.id.sd_offer_challenge:  break;
                     case R.id.sd_share_experience:  break;
@@ -548,7 +651,7 @@ public class main_activity extends AppCompatActivity implements
             if(list_of_of_added_points_symbol==null)
                 list_of_of_added_points_symbol = new ArrayList<>();
 
-            if (event_type != EVENT_TYPE_ENSEMBLE)
+            if (event_type != event_types.EVENT_TYPE_ENSEMBLE)
             {
                 if (!is_marker_added)   // Check if any marker has been added by the user
                 {
@@ -738,7 +841,8 @@ public class main_activity extends AppCompatActivity implements
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
@@ -759,7 +863,8 @@ public class main_activity extends AppCompatActivity implements
         }
     }
 
-    void save_user_created_event()
+    void
+    send_user_created_event()
     {
         symbol_manager.delete(user_marker_pinned);
 

@@ -15,7 +15,7 @@
         app:layout_anchorGravity="center"
         app:mapbox_cameraTargetLat="42.149683"
         app:mapbox_cameraTargetLng="-119.155770"
-        app:mapbox_cameraZoom="3.853171" />
+        app:mapbox_cameraZoom="12" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
