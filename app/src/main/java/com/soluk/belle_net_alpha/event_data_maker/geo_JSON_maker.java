@@ -46,16 +46,17 @@ public class geo_JSON_maker
             properties.put("marker-color", "#D81B60");
             properties.put("marker-size", "medium");
             properties.put("marker-symbol", "");
-            properties.put("name", feature.get("name"));
-            properties.put("family", feature.get("family"));
+            properties.put("name", feature.get("user_name"));
+            properties.put("family", feature.get("user_family"));
+            properties.put("user_id", feature.get("user_id"));
             properties.put("event_id", feature.get("event_unique_id"));
             properties.put("date_created", feature.get("date_created"));
             properties.put("event_date", feature.get("date_of_event"));
             properties.put("profile_pic", feature.get("user_picture"));
             properties.put("is_user_joined", feature.get("is_user_joined"));
             properties.put("count", feature.get("count"));
-            properties.put("longitude_pinned", feature.get("longitude_pinned"));
-            properties.put("latitude_pinned", feature.get("latitude_pinned"));
+            properties.put("longitude_0", feature.get("longitude_0"));
+            properties.put("latitude_0", feature.get("latitude_0"));
             properties.put("event_type", feature.get("event_type"));
         }
         catch (JSONException e)
@@ -81,8 +82,8 @@ public class geo_JSON_maker
 
         try
         {
-            geo_lat_long.put(feature.get("longitude_pinned"));
-            geo_lat_long.put(feature.get("latitude_pinned"));
+            geo_lat_long.put(feature.get("longitude_0"));
+            geo_lat_long.put(feature.get("latitude_0"));
             geometry.put("type", "Point");
             geometry.put("coordinates",geo_lat_long);
 

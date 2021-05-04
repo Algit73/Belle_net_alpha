@@ -102,12 +102,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/selected_event_user_join_status"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:text="You have not joined this event"
         app:layout_constraintTop_toBottomOf="@id/selected_event_type_text"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:textStyle="bold"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/selected_event_user_join_hint"
+        android:textSize="16sp"
+        android:text="*Click remove to revoke the event"
+        app:layout_constraintTop_toBottomOf="@id/selected_event_user_join_status"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         />
 
 
@@ -118,7 +131,7 @@
         android:id="@+id/join_event"
         android:text="Join"
         android:background="@drawable/button_rounded_corners"
-        app:layout_constraintTop_toBottomOf="@id/selected_event_user_join_status"
+        app:layout_constraintTop_toBottomOf="@id/selected_event_user_join_hint"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="36dp"
         android:layout_marginStart="24dp"
@@ -133,7 +146,7 @@
         android:id="@+id/cancel_join_event"
         android:text="cancel"
         android:background="@drawable/button_rounded_corners"
-        app:layout_constraintTop_toBottomOf="@id/selected_event_user_join_status"
+        app:layout_constraintTop_toBottomOf="@id/selected_event_user_join_hint"
         app:layout_constraintLeft_toRightOf="@id/join_event"
         android:layout_marginTop="36dp"
         android:layout_marginStart="24dp"

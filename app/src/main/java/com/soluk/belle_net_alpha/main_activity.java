@@ -11,6 +11,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -144,6 +145,7 @@ public class main_activity extends AppCompatActivity implements
     private static final String USER_FAMILY = "Alikhani";
     private static final String USER_PIC = "#loncle";
     private static final String USER_ID = "#ahdx98!s5kjxsp";
+    private static final String USER_PASSWORD = "alirezalovesbellenet";
     /// Mapbox Variables
     private MapView mapView;
     private MapboxMap mapboxMap;
@@ -174,11 +176,12 @@ public class main_activity extends AppCompatActivity implements
     private ImageButton add_marker_on_map_ib;
     private ImageButton accept_marker_on_map_ib;
     private ImageButton reject_marker_on_map_ib;
-    //private int EVENT_TYPE_ENSEMBLE = 0;
-    //private int EVENT_TYPE_CHALLENGE = 1;
-    //private int EVENT_TYPE_EXPERIENCE = 2;
-    private enum event_types {EVENT_TYPE_ENSEMBLE,EVENT_TYPE_CHALLENGE,EVENT_TYPE_EXPERIENCE};
-    private event_types event_type;
+    private final int EVENT_TYPE_ENSEMBLE = 0;
+    private final int EVENT_TYPE_CHALLENGE = 1;
+    private final int EVENT_TYPE_EXPERIENCE = 2;
+    private int event_type;
+    //private enum event_types {EVENT_TYPE_ENSEMBLE,EVENT_TYPE_CHALLENGE,EVENT_TYPE_EXPERIENCE};
+    //private event_types event_type;
     private List<Point> list_of_added_points;
     private List<Symbol> list_of_of_added_points_symbol;
 
@@ -244,6 +247,28 @@ public class main_activity extends AppCompatActivity implements
 
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_main);
+
+        Button post_test = findViewById(R.id.tes_post);
+        post_test.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Map<String, String> params = new HashMap<>();
+                params.put("user_id",USER_ID);
+                params.put("user_password",USER_PASSWORD);
+
+                SimpleHttp.post(getString(R.string.register_event), params, new SimpleHttpResponseHandler()
+                {
+                    @Override
+                    public void onResponse(int responseCode, String responseBody)
+                    {
+                        Log.d(TAG,"Post Test Code: "+responseCode);
+                        Log.d(TAG,"Post Test Body: "+responseBody);
+                    }
+                });
+            }
+        });
 
 
         // Initialize the map view
@@ -483,7 +508,8 @@ public class main_activity extends AppCompatActivity implements
                 if(list_of_of_added_points_symbol!=null)
                 {
                     // Only "Share Experience" accepts one point
-                    if(event_type!=event_types.EVENT_TYPE_ENSEMBLE
+                    //if(event_type!=event_types.EVENT_TYPE_ENSEMBLE
+                    if(event_type!=EVENT_TYPE_ENSEMBLE
                             ||list_of_of_added_points_symbol.size()>1)
                     {
                         open_bottom_sheet_add_event();
@@ -612,7 +638,8 @@ public class main_activity extends AppCompatActivity implements
                 {
                     case R.id.sd_ensemble_cycling:
                         bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_EXPANDED);
-                        event_type = event_types.EVENT_TYPE_ENSEMBLE;
+                        //event_type = event_types.EVENT_TYPE_ENSEMBLE;
+                        event_type = EVENT_TYPE_ENSEMBLE;
                         break;
                     case R.id.sd_offer_challenge:  break;
                     case R.id.sd_share_experience:  break;
@@ -651,7 +678,8 @@ public class main_activity extends AppCompatActivity implements
             if(list_of_of_added_points_symbol==null)
                 list_of_of_added_points_symbol = new ArrayList<>();
 
-            if (event_type != event_types.EVENT_TYPE_ENSEMBLE)
+            //if (event_type != event_types.EVENT_TYPE_ENSEMBLE)
+            if (event_type != EVENT_TYPE_ENSEMBLE)
             {
                 if (!is_marker_added)   // Check if any marker has been added by the user
                 {
@@ -863,38 +891,44 @@ public class main_activity extends AppCompatActivity implements
         }
     }
 
-    void
-    send_user_created_event()
+    void send_user_created_event()
     {
-        symbol_manager.delete(user_marker_pinned);
-
         Date current_date = Calendar.getInstance().getTime();
-        SimpleDateFormat us_date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);    // Date Styles may should change to the getDefault()
+        SimpleDateFormat standard_date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);    // Date Styles may should change to the getDefault()
+        SimpleDateFormat time_24_format = new SimpleDateFormat("H:mm", Locale.US);
 
-        JSONObject feature = new JSONObject();
+        //symbol_manager.delete(user_marker_pinned);
+        Map<String, String> params = new HashMap<>();
+        params.put("user_name",USER_NAME);
+        params.put("user_family",USER_FAMILY);
+        params.put("user_id",USER_ID);
+        params.put("user_password",USER_PASSWORD);
+        params.put("num_points",String.valueOf(list_of_added_points.size()));
+        params.put("event_type",String.valueOf(event_type));
+        params.put("date_created",standard_date_format.format(current_date));
+        params.put("date_of_event",standard_date_format.format(current_date));
+        params.put("event_time",time_24_format.format(calendar_time_picker.getTime()));
+        params.put("user_type",String.valueOf(1));
+        params.put("user_picture",USER_PIC);
 
-        try
+        for(int i=0;i<list_of_added_points.size();i++)
         {
-            feature.put("name",USER_NAME);
-            feature.put("family",USER_FAMILY);
-            feature.put("event_unique_id","123");   // It should be changed
-            feature.put("date_created",us_date_format.format(current_date));
-            feature.put("date_of_event",us_date_format.format(calendar_date_picker.getTime()));
-            feature.put("user_picture",USER_PIC);
-            feature.put("longitude_pinned",selected_postion.getLongitude());
-            feature.put("latitude_pinned",selected_postion.getLatitude());
-            Log.v(TAG, "user created event: OK");
-
+            String longitude_x = "longitude_"+ i;
+            String latitude_x = "latitude_"+ i;
+            params.put(longitude_x,String.valueOf(list_of_added_points.get(i).longitude()));
+            params.put(latitude_x,String.valueOf(list_of_added_points.get(i).latitude()));
         }
-        catch (Exception e)
+
+        SimpleHttp.post(getString(R.string.register_event), params, new SimpleHttpResponseHandler()
         {
-            Log.v(TAG, "user failed to create event: "+e.getMessage());
-        }
-
-
-        feature_maker.add_feature(feature);
-        geo_json_holder.write(feature_maker.get_features_object());
-        update_map();
+            @Override
+            public void onResponse(int responseCode, String responseBody)
+            {
+                Log.d(TAG,"Post Test Code: "+responseCode);
+                Log.d(TAG,"Post Test Body: "+responseBody);
+                get_updated();
+            }
+        });
 
     }
 
@@ -1137,7 +1171,7 @@ public class main_activity extends AppCompatActivity implements
                 {
                     if (featureList.get(i).getStringProperty(PROPERTY_EVENT_ID).equals(event_id))
                     {
-                        Log.v(TAG,"featureList.get(i): "+featureList.get(i).getStringProperty(PROPERTY_NAME));
+                        Log.v(TAG,"featureList.get(i): "+featureList.get(i));
                         Log.d(TAG,"number_of_selected_cards: "+number_of_selected_cards);
 
                         if (featureSelectStatus(i))
@@ -1169,7 +1203,7 @@ public class main_activity extends AppCompatActivity implements
                                 }
                                 catch (Exception e)
                                 {
-
+                                    Log.d(TAG,"Closing Bottom: "+e.getMessage());
                                 }
                             }
                         }
@@ -1237,6 +1271,7 @@ public class main_activity extends AppCompatActivity implements
 
         Button join_btn = findViewById(R.id.join_event);
         Button cancel_join_event_btn = findViewById(R.id.cancel_join_event);
+        TextView hint_user_tv = findViewById(R.id.selected_event_user_join_hint);
 
         /// Setting name of the user
         TextView selected_user_name = findViewById(R.id.selected_user_name);
@@ -1266,18 +1301,34 @@ public class main_activity extends AppCompatActivity implements
         /// Check if user is joined
         TextView selected_event_status = findViewById(R.id.selected_event_user_join_status);
 
-        if(info.get("is_user_joined").toString().equals("true"))
+        boolean user_owns_event = info.get("user_id").toString().equals(USER_ID);
+        if(!user_owns_event)
         {
-            selected_event_status.setText("You have joined this event");
-            join_btn.setText("Opt out");
-            join_status = true;
+            join_btn.setBackgroundTintList(ResourcesCompat.getColorStateList(getResources()
+                    ,R.color.save_button,getTheme()));
+            if (info.get("is_user_joined").toString().equals("true"))
+            {
+                selected_event_status.setText("You have joined this event");
+                hint_user_tv.setText("*Click opt out if you don't want to participate");
+                join_btn.setText("Opt out");
+                join_status = true;
 
+            }
+            else
+            {
+                selected_event_status.setText("You have not joined this event");
+                hint_user_tv.setText("*Click join to join this event");
+                join_btn.setText("Join");
+                join_status = false;
+            }
         }
         else
         {
-            selected_event_status.setText("You have not joined this event");
-            join_btn.setText("Join");
-            join_status = false;
+            selected_event_status.setText("You own this event");
+            hint_user_tv.setText("*Click remove to revoke the event");
+            join_btn.setText("Remove");
+            join_btn.setBackgroundTintList(ResourcesCompat.getColorStateList(getResources()
+                    ,R.color.red_500,getTheme()));
         }
 
         join_btn.setOnClickListener(new View.OnClickListener()
@@ -1285,47 +1336,51 @@ public class main_activity extends AppCompatActivity implements
             @Override
             public void onClick(View v)
             {
+                Date current_date = Calendar.getInstance().getTime();
+                SimpleDateFormat standard_date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+
                 Log.d(TAG, "Button Pressed");
                 Map<String, String> params = new HashMap<>();
-                if(join_status)
-                {
-                    params.put("request","out");
-                }
-                else
-                {
-                    params.put("request","join");
-                    params.put("user_date_of_join","2021-4-27");
-                }
 
-                try
-                { params.put("event_unique_id",info.get("event_id").toString()); }
+                try {params.put("event_unique_id",info.get("event_id").toString());}
                 catch (JSONException e) { e.printStackTrace(); }
                 params.put("joined_user_id",USER_ID);
 
-                SimpleHttp.post(getString(R.string.event_join_status), params, new SimpleHttpResponseHandler()
+                if(!user_owns_event)
                 {
-                    @Override
-                    public void onResponse(int responseCode, String responseBody)
+                    if (join_status)
                     {
-                        Log.d(TAG, "Post Body: "+responseBody);
-                        //number_of_selected_cards--;
-                        bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
-                        if(number_of_selected_cards==0)
-                            try
-                            {
-                                set_camera_position(0,null);
-                            }
-                            catch (Exception e)
-                            {
-
-                            }
-
-                        setFeatureSelectState(feature, false);
+                        params.put("request", "out");
+                        send_join_command(params, feature);
                     }
-                });
-                get_updated();
+                    else
+                    {
+                        params.put("request", "join");
+                        params.put("user_date_of_join", standard_date_format.format(current_date));
+                        send_join_command(params,feature);
+                    }
+                }
+                else
+                {
+                    params.put("request", "remove");
+                    AlertDialog.Builder alert_dialog_bl = new AlertDialog.Builder(main_activity.this);
+                    alert_dialog_bl.setMessage("Do you really want to remove this event?")
+                            .setCancelable(true)
+                            .setPositiveButton("YES", new DialogInterface.OnClickListener()
+                            {public void onClick(DialogInterface dialog, int id) {send_join_command(params, feature);}})
+                            .setNegativeButton("CANCEL",new DialogInterface.OnClickListener()
+                            {public void onClick(DialogInterface dialog, int id) {dialog.cancel();}});
 
 
+                    AlertDialog alertDialog = alert_dialog_bl.create();
+
+                    alertDialog.show();
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ResourcesCompat.getColor(getResources()
+                            ,R.color.gray_800,getTheme()));
+                    alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ResourcesCompat.getColor(getResources()
+                            ,R.color.gray_800,getTheme()));
+
+                }
             }
         });
 
@@ -1338,14 +1393,8 @@ public class main_activity extends AppCompatActivity implements
                 number_of_selected_cards--;
                 bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
                 if(number_of_selected_cards==0)
-                    try
-                    {
-                        set_camera_position(0,null);
-                    }
-                    catch (Exception e)
-                    {
-
-                    }
+                    try {set_camera_position(0,null);}
+                    catch (Exception ignored){}
 
                 setFeatureSelectState(feature, false);
             }
@@ -1354,6 +1403,27 @@ public class main_activity extends AppCompatActivity implements
 
         Log.d(TAG,"Feature selected data: "+info.toString());
 
+    }
+
+    void send_join_command(Map<String, String> params, Feature feature)
+    {
+        Log.d(TAG,"Send join: "+params.get("request"));
+        SimpleHttp.post(getString(R.string.event_join_status), params, new SimpleHttpResponseHandler()
+        {
+            @Override
+            public void onResponse(int responseCode, String responseBody)
+            {
+                Log.d(TAG, "Post Body: "+responseBody);
+                //number_of_selected_cards--;
+                bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
+                if(number_of_selected_cards==0)
+                    try{set_camera_position(0,null);}
+                    catch (Exception ignored){}
+
+                setFeatureSelectState(feature, false);
+            }
+        });
+        get_updated();
     }
 
     private Bitmap get_profile_bmp(String name)
