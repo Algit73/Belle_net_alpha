@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -13,6 +15,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -40,6 +43,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.JsonObject;
@@ -117,6 +121,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.eq;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.get;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.literal;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.switchCase;
 import static com.mapbox.mapboxsdk.style.layers.Property.ICON_ANCHOR_BOTTOM;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAnchor;
@@ -153,14 +158,13 @@ public class main_activity extends AppCompatActivity implements
     private NavigationOptions navigation_options;
     private MapboxNavigation mapbox_navigation;
     private LocationComponent location_component;
-    private LocationEngine location_engine;
+
     private NavigationMapRoute navigation_mapRoute;
     ///
     private PermissionsManager permissionsManager;
     private GeoJsonSource source;
     private FeatureCollection featureCollection;
     private int number_of_selected_cards;
-    private Spinner list_of_challenges;
 
     private BottomSheetBehavior bottom_sheet_click_join;
 
@@ -196,10 +200,7 @@ public class main_activity extends AppCompatActivity implements
     private boolean is_marker_added = false;
     private boolean data_received_correctly = false;
     private Symbol user_marker_pinned;
-    private LatLng selected_postion;
 
-    private CircleImageView profile_test;
-    private ImageView profile_test_2;
 
     private boolean join_status = false;
     private String  last_event_selected;
@@ -207,45 +208,57 @@ public class main_activity extends AppCompatActivity implements
     void get_db_updated()
     {
         number_of_selected_cards = 0;
-        set_camera_position(0,null);
+        if((mapboxMap!=null)&&(mapView!=null))
+            set_camera_position(0,null);
         Map<String, String> params = new HashMap<>();
         params.put("user_id",USER_ID);
 
-        SimpleHttp.post(getString(R.string.events_info_url), params, new SimpleHttpResponseHandler()
+        SimpleHttp.post(getString(R.string.events_info_url), params, (result_code,response_body)->
         {
-            @Override
-            public void onResponse(int result_code, String response_body)
+            try
             {
-                try
-                {
-                    Log.d(TAG, "Post Code: "+result_code);
-                    Log.d(TAG, "Post Body: "+response_body);
-                    if(result_code==200)
-                    {
-                        JSONArray received_events = new JSONArray(response_body);
-                        add_received_events(received_events);
-                        data_received_correctly=true;
-                    }
-                }
-                catch (Exception e) {Log.d(TAG, "on Post Response: "+e.getMessage());}
+                Log.d(TAG, "Post Code: "+result_code); Log.d(TAG, "Post Body: "+response_body);
+                if(result_code!=200)
+                    return;
+                    JSONArray received_events = new JSONArray(response_body);
+                    add_received_events(received_events);
+                    data_received_correctly=true;
             }
+            catch (Exception e) {Log.d(TAG, "on Post Response: "+e.getMessage());}
         });
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
 
 
-        get_db_updated();
+        //get_db_updated();
 
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_main);
 
+        /// Initializing and configuring Bottom Navigation
+        BottomNavigationView bottom_navigation_view = findViewById(R.id.bottom_navigation);
+
+        bottom_navigation_view.setOnNavigationItemSelectedListener(item ->
+        {
+           switch (item.getItemId())
+           {
+               case R.id.page_map:
+                   break;
+               case R.id.page_events:
+                   break;
+               case R.id.page_profile:
+                   break;
+           }
+            return false;
+        });
 
 
-        // Initialize the map view
+        /// Initialize the map view
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
@@ -280,6 +293,14 @@ public class main_activity extends AppCompatActivity implements
 
         button_sheet_add_event_init();
         pin_event_sd_init();
+
+        if (savedInstanceState == null)
+        {
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .add(R.id.fragment_map_view, map_fragment.class, null)
+                    .commit();
+        }
 
     }
 
@@ -573,12 +594,11 @@ public class main_activity extends AppCompatActivity implements
             if(list_of_of_added_points_symbol==null)
                 list_of_of_added_points_symbol = new ArrayList<>();
 
-            //if (event_type != event_types.EVENT_TYPE_ENSEMBLE)
             if (event_type != EVENT_TYPE_ENSEMBLE)
             {
                 if (!is_marker_added)   // Check if any marker has been added by the user
                 {
-                    selected_postion = point;
+                    //selected_postion = point;
                     user_marker_pinned = symbol_manager.create(new SymbolOptions()
                             .withLatLng(new LatLng(point.getLatitude(), point.getLongitude()))
                             .withIconImage("marker_start_flag")
@@ -591,7 +611,7 @@ public class main_activity extends AppCompatActivity implements
                 else
                 {
                     symbol_manager.delete(user_marker_pinned);
-                    selected_postion = point;
+                    //selected_postion = point;
                     user_marker_pinned = symbol_manager.create(new SymbolOptions()
                             .withLatLng(new LatLng(point.getLatitude(), point.getLongitude()))
                             .withIconImage("marker_start_flag")
@@ -757,11 +777,14 @@ public class main_activity extends AppCompatActivity implements
 
     }
 
+    /*
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
     {
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
+     */
 
     @Override
     public void onExplanationNeeded(List<String> permissionsToExplain)
@@ -1129,25 +1152,21 @@ public class main_activity extends AppCompatActivity implements
 
     private void set_camera_position(int tilt,LatLng point)
     {
+        CameraPosition position = null;
+        if (point != null)
+            position = new CameraPosition.Builder()
+                    .target(point) // Sets the new camera position
+                    //.zoom(12) // Sets the zoom
+                    //.bearing(degree) // Rotate the camera
+                    .tilt(tilt) // Set the camera tilt
+                    .build();
+        else
+            position = new CameraPosition.Builder()
+                    .tilt(tilt) // Set the camera tilt
+                    .build();
 
-        if(mapboxMap!=null)
-        {
-            CameraPosition position = null;
-            if (point != null)
-                position = new CameraPosition.Builder()
-                        .target(point) // Sets the new camera position
-                        //.zoom(12) // Sets the zoom
-                        //.bearing(degree) // Rotate the camera
-                        .tilt(tilt) // Set the camera tilt
-                        .build();
-            else
-                position = new CameraPosition.Builder()
-                        .tilt(tilt) // Set the camera tilt
-                        .build();
-
-            mapboxMap.animateCamera(CameraUpdateFactory
-                    .newCameraPosition(position), 2000);
-        }
+        mapboxMap.animateCamera(CameraUpdateFactory
+                .newCameraPosition(position), 2000);
     }
 
     /// Each time a pin selected, the appropriate bottom_sheet appears
@@ -1282,6 +1301,10 @@ public class main_activity extends AppCompatActivity implements
                             ,R.color.gray_800,getTheme()));
 
                 }
+                //setFeatureSelectState(feature, false);
+
+                //symbol_manager.delete(li);
+                navigation_mapRoute.updateRouteVisibilityTo(false);
             }
         });
 
@@ -1328,6 +1351,7 @@ public class main_activity extends AppCompatActivity implements
             }
         });
         get_db_updated();
+        remove_points_routes();
     }
 
     private Bitmap get_profile_bmp(String name)
