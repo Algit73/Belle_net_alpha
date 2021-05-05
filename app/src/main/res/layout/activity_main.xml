@@ -22,20 +22,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/tes_post"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:text="send"
-            android:backgroundTint="@color/teal_500"
-            android:textColor="@color/white"
-            android:layout_marginBottom="32dp"
-            android:visibility="gone"
-            />
-
 
         <com.leinardi.android.speeddial.SpeedDialView
             android:id="@+id/pin_event_sd"

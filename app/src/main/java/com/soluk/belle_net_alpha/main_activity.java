@@ -204,11 +204,10 @@ public class main_activity extends AppCompatActivity implements
     private boolean join_status = false;
     private String  last_event_selected;
 
-    void get_updated()
+    void get_db_updated()
     {
         number_of_selected_cards = 0;
-        try{set_camera_position(0,null);}
-        catch (Exception e){};
+        set_camera_position(0,null);
         Map<String, String> params = new HashMap<>();
         params.put("user_id",USER_ID);
 
@@ -217,7 +216,6 @@ public class main_activity extends AppCompatActivity implements
             @Override
             public void onResponse(int result_code, String response_body)
             {
-
                 try
                 {
                     Log.d(TAG, "Post Code: "+result_code);
@@ -228,12 +226,8 @@ public class main_activity extends AppCompatActivity implements
                         add_received_events(received_events);
                         data_received_correctly=true;
                     }
-
                 }
-                catch (Exception e)
-                {
-                    Log.d(TAG, "on Post Response: "+e.getMessage());
-                }
+                catch (Exception e) {Log.d(TAG, "on Post Response: "+e.getMessage());}
             }
         });
     }
@@ -243,32 +237,12 @@ public class main_activity extends AppCompatActivity implements
     {
         super.onCreate(savedInstanceState);
 
-        get_updated();
+
+        get_db_updated();
 
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_main);
 
-        Button post_test = findViewById(R.id.tes_post);
-        post_test.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                Map<String, String> params = new HashMap<>();
-                params.put("user_id",USER_ID);
-                params.put("user_password",USER_PASSWORD);
-
-                SimpleHttp.post(getString(R.string.register_event), params, new SimpleHttpResponseHandler()
-                {
-                    @Override
-                    public void onResponse(int responseCode, String responseBody)
-                    {
-                        Log.d(TAG,"Post Test Code: "+responseCode);
-                        Log.d(TAG,"Post Test Body: "+responseBody);
-                    }
-                });
-            }
-        });
 
 
         // Initialize the map view
@@ -296,14 +270,10 @@ public class main_activity extends AppCompatActivity implements
             public void onClick(View v)
             {
 
-                JSONArray current_position = new JSONArray();
-                try
-                {
-                    current_position.put(location_component.getLastKnownLocation().getLongitude());
-                    current_position.put(location_component.getLastKnownLocation().getLatitude());
+                    LatLng current_position = new LatLng(location_component.getLastKnownLocation().getLatitude()
+                                                    ,location_component.getLastKnownLocation().getLongitude()) ;
                     set_camera_position(0,current_position);
-                }
-                catch (JSONException e) {e.printStackTrace();}
+
             }
         });
 
@@ -367,101 +337,39 @@ public class main_activity extends AppCompatActivity implements
                 bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
                 remove_points_routes();
                 change_add_marker_on_map_ib_mode(true);
-                /*
-
-                if(is_marker_added)
-                {
-                    is_marker_added = false;
-                    add_postition_mode = false;
-                    change_add_marker_on_map_ib_mode(true);
-                    remove_points_routes();
-                    //save_user_created_event();
-                    bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
-                }
-                else
-                    Toast.makeText(main_activity.this,
-                            "Please pin a location on map",Toast.LENGTH_SHORT).show();
-
-                 */
             }
         });
 
         /// Configuring DatePicker
         event_date_tv = findViewById(R.id.input_date_tv);
-        DatePickerDialog.OnDateSetListener event_date = new DatePickerDialog.OnDateSetListener()
-        {
-
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth)
-            {
-                // TODO Auto-generated method stub
-                calendar_date_picker.set(Calendar.YEAR, year);
-                calendar_date_picker.set(Calendar.MONTH, monthOfYear);
-                calendar_date_picker.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                update_date_picker_tv();
-            }
-
-        };
-
         event_date_tv.setOnClickListener(new View.OnClickListener()
         {
 
             @Override
             public void onClick(View v)
             {
-                // TODO Auto-generated method stub
-                DatePickerDialog date_picker_dialog = new DatePickerDialog(main_activity.this
-                        ,android.R.style.Theme_Holo_Light_Dialog_MinWidth
-                        ,event_date
-                        ,calendar_date_picker.get(Calendar.YEAR)
-                        ,calendar_date_picker.get(Calendar.MONTH)
-                        ,calendar_date_picker.get(Calendar.DAY_OF_MONTH));
-                date_picker_dialog.show();
-                date_picker_dialog.getDatePicker().setMinDate((System.currentTimeMillis() - 1000));
-                date_picker_dialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
-                        .setTextColor(ResourcesCompat.getColor(getResources()
-                        ,R.color.gray_800,getTheme()));
-                date_picker_dialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
-                        .setTextColor(ResourcesCompat.getColor(getResources()
-                                ,R.color.gray_800,getTheme()));
 
+                date_time_provider date_provider = new date_time_provider(main_activity.this)
+                                                    .set_date_tv(event_date_tv)
+                                                    .set_date_format(date_time_provider.US);
 
+                date_provider.show_date_dialog();
             }
         });
 
         /// Configuring TimePicker
         event_time_tv = findViewById(R.id.input_time_tv);
-        TimePickerDialog.OnTimeSetListener event_time = new TimePickerDialog.OnTimeSetListener()
-        {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute)
-            {
-                calendar_time_picker.set(Calendar.HOUR_OF_DAY,hourOfDay);
-                calendar_time_picker.set(Calendar.MINUTE,minute);
-                update_time_picker_tv();
 
-            }
-        };
         event_time_tv.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                TimePickerDialog time_picker_dialog = new TimePickerDialog(main_activity.this
-                        ,android.R.style.Theme_Holo_Light_Dialog_MinWidth
-                        ,event_time
-                        ,calendar_time_picker
-                        .get(Calendar.HOUR_OF_DAY)
-                        ,calendar_time_picker.get(Calendar.MINUTE)
-                        ,true);
-                time_picker_dialog.show();
+                date_time_provider time_provider = new date_time_provider(main_activity.this)
+                        .set_time_tv(event_time_tv)
+                        .set_time_format(date_time_provider.H24);
 
-                /*
-                time_picker_dialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
-                        .setTextColor(ResourcesCompat.getColor(getResources()
-                                ,R.color.gray_800,getTheme()));
-                */
+                time_provider.show_time_dialog();
             }
         });
 
@@ -542,8 +450,6 @@ public class main_activity extends AppCompatActivity implements
                 change_add_marker_on_map_ib_mode(true);
             }
         });
-
-
     }
 
 
@@ -648,18 +554,7 @@ public class main_activity extends AppCompatActivity implements
             }
         });
     }
-
-    private void update_date_picker_tv()
-    {
-        SimpleDateFormat us_date_format = new SimpleDateFormat("MMMM, dd, yyyy", Locale.US);
-        event_date_tv.setText(us_date_format.format(calendar_date_picker.getTime()));
-    }
-
-    private void update_time_picker_tv()
-    {
-        SimpleDateFormat time_24_format = new SimpleDateFormat("H : mm", Locale.US);
-        event_time_tv.setText(time_24_format.format(calendar_time_picker.getTime()));
-    }
+    
 
     @Override
     public boolean onMapClick(@NonNull LatLng point)
@@ -735,13 +630,7 @@ public class main_activity extends AppCompatActivity implements
                     getRoute(list_of_added_points);
 
             }
-
-
         }
-
-
-
-
 
         return false;
     }
@@ -831,7 +720,7 @@ public class main_activity extends AppCompatActivity implements
                 .coordinates(list)
                 .geometries(RouteUrl.GEOMETRY_POLYLINE6)
                 .voiceUnits(RouteUrl.METRIC)
-                .profile(RouteUrl.PROFILE_CYCLING)
+                .profile(RouteUrl.PROFILE_DRIVING)
                 .build(), new RoutesRequestCallback()
         {
             @Override
@@ -926,7 +815,7 @@ public class main_activity extends AppCompatActivity implements
             {
                 Log.d(TAG,"Post Test Code: "+responseCode);
                 Log.d(TAG,"Post Test Body: "+responseBody);
-                get_updated();
+                get_db_updated();
             }
         });
 
@@ -1181,15 +1070,11 @@ public class main_activity extends AppCompatActivity implements
                             {
                                 number_of_selected_cards--;
                                 if(number_of_selected_cards==0)
-                                    try
-                                    {
-                                        set_camera_position(0,null);
-                                        bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
-                                    }
-                                    catch (Exception e)
-                                    {
+                                {
+                                    set_camera_position(0, null);
+                                    bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
+                                }
 
-                                    }
 
                                 setFeatureSelectState(featureList.get(i), false);
                                 Log.v(TAG,"Item Deselected");
@@ -1219,7 +1104,9 @@ public class main_activity extends AppCompatActivity implements
                                     JSONObject geometry = new JSONObject(featureList.get(i).geometry().toJson());
                                     update_bottom_sheet_click(featureList.get(i));
                                     JSONArray point = new JSONArray(geometry.get("coordinates").toString());
-                                    set_camera_position(50,point);
+
+                                    set_camera_position(50,new LatLng(Double.parseDouble(point.get(1).toString())
+                                                                        ,Double.parseDouble(point.get(0).toString())));
                                 }
                                 catch (Exception e)
                                 {
@@ -1240,7 +1127,7 @@ public class main_activity extends AppCompatActivity implements
         }
     }
 
-    private void set_camera_position(int tilt,JSONArray point) throws JSONException
+    private void set_camera_position(int tilt,LatLng point)
     {
 
         if(mapboxMap!=null)
@@ -1248,7 +1135,7 @@ public class main_activity extends AppCompatActivity implements
             CameraPosition position = null;
             if (point != null)
                 position = new CameraPosition.Builder()
-                        .target(new LatLng((double) point.get(1), (double) point.get(0))) // Sets the new camera position
+                        .target(point) // Sets the new camera position
                         //.zoom(12) // Sets the zoom
                         //.bearing(degree) // Rotate the camera
                         .tilt(tilt) // Set the camera tilt
@@ -1268,6 +1155,20 @@ public class main_activity extends AppCompatActivity implements
     {
         JSONObject info = new JSONObject(feature.properties().toString());
         bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+        List<Point> list_received_points  = null;
+        list_received_points = new ArrayList<>();
+
+        int num_points = Integer.parseInt(info.get("num_points").toString());
+
+        for(int i=0; i<num_points;i++)
+        {
+            Point point = Point.fromLngLat(Double.parseDouble(info.get("longitude_"+i).toString())
+                                            ,Double.parseDouble(info.get("latitude_"+i).toString()));
+            list_received_points.add(point);
+        }
+        if(num_points>1)
+            getRoute(list_received_points);
 
         Button join_btn = findViewById(R.id.join_event);
         Button cancel_join_event_btn = findViewById(R.id.cancel_join_event);
@@ -1393,10 +1294,13 @@ public class main_activity extends AppCompatActivity implements
                 number_of_selected_cards--;
                 bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
                 if(number_of_selected_cards==0)
-                    try {set_camera_position(0,null);}
-                    catch (Exception ignored){}
+                    set_camera_position(0,null);
+
 
                 setFeatureSelectState(feature, false);
+
+                //symbol_manager.delete(li);
+                navigation_mapRoute.updateRouteVisibilityTo(false);
             }
         });
 
@@ -1417,13 +1321,13 @@ public class main_activity extends AppCompatActivity implements
                 //number_of_selected_cards--;
                 bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
                 if(number_of_selected_cards==0)
-                    try{set_camera_position(0,null);}
-                    catch (Exception ignored){}
+                    set_camera_position(0,null);
+
 
                 setFeatureSelectState(feature, false);
             }
         });
-        get_updated();
+        get_db_updated();
     }
 
     private Bitmap get_profile_bmp(String name)

@@ -1,5 +1,7 @@
 package com.soluk.belle_net_alpha.event_data_maker;
 
+import android.util.Log;
+
 import com.google.gson.JsonObject;
 import com.soluk.belle_net_alpha.main_activity;
 
@@ -55,9 +57,17 @@ public class geo_JSON_maker
             properties.put("profile_pic", feature.get("user_picture"));
             properties.put("is_user_joined", feature.get("is_user_joined"));
             properties.put("count", feature.get("count"));
-            properties.put("longitude_0", feature.get("longitude_0"));
-            properties.put("latitude_0", feature.get("latitude_0"));
+            //properties.put("longitude_0", feature.get("longitude_0"));
+            //properties.put("latitude_0", feature.get("latitude_0"));
             properties.put("event_type", feature.get("event_type"));
+            properties.put("num_points", feature.get("num_points"));
+
+            int num_points = Integer.parseInt(feature.get("num_points").toString());
+            for(int i=0;i<num_points;i++)
+            {
+                properties.put("longitude_"+i,feature.get("longitude_"+i));
+                properties.put("latitude_"+i,feature.get("latitude_"+i));
+            }
         }
         catch (JSONException e)
         {
@@ -65,6 +75,7 @@ public class geo_JSON_maker
             e.printStackTrace();
         }
 
+        /*
         try
         {
             properties.put("longitude_end", feature.get("longitude_end"));
@@ -75,15 +86,22 @@ public class geo_JSON_maker
 
         }
 
+         */
+
         ////// GeoJson Geometry ///////
 
         JSONObject geometry = new JSONObject();
         JSONArray geo_lat_long = new JSONArray();
 
+
         try
         {
+
+
             geo_lat_long.put(feature.get("longitude_0"));
             geo_lat_long.put(feature.get("latitude_0"));
+
+
             geometry.put("type", "Point");
             geometry.put("coordinates",geo_lat_long);
 
