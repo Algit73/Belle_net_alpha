@@ -4,49 +4,37 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.Settings;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.gson.JsonObject;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
 import com.mapbox.android.core.location.LocationEngine;
@@ -86,6 +74,7 @@ import com.soluk.belle_net_alpha.event_data_maker.file_maker;
 import com.soluk.belle_net_alpha.event_data_maker.geo_JSON_maker;
 import com.soluk.belle_net_alpha.http_requests.SimpleHttp;
 import com.soluk.belle_net_alpha.http_requests.SimpleHttpResponseHandler;
+import com.soluk.belle_net_alpha.model.event_db_vm;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -99,10 +88,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.ref.WeakReference;
-import java.nio.charset.Charset;
-import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -112,16 +98,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.mapbox.mapboxsdk.style.expressions.Expression.eq;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.get;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.literal;
-import static com.mapbox.mapboxsdk.style.expressions.Expression.switchCase;
 import static com.mapbox.mapboxsdk.style.layers.Property.ICON_ANCHOR_BOTTOM;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAnchor;
@@ -155,13 +137,9 @@ public class main_activity extends AppCompatActivity implements
     private MapView mapView;
     private MapboxMap mapboxMap;
     private SymbolManager symbol_manager;
-    private NavigationOptions navigation_options;
     private MapboxNavigation mapbox_navigation;
     private LocationComponent location_component;
-
     private NavigationMapRoute navigation_mapRoute;
-    ///
-    private PermissionsManager permissionsManager;
     private GeoJsonSource source;
     private FeatureCollection featureCollection;
     private int number_of_selected_cards;
@@ -175,7 +153,7 @@ public class main_activity extends AppCompatActivity implements
     private BottomSheetBehavior bottom_sheet_Choose_challenge;
     private TextView event_date_tv;
     private TextView event_time_tv;
-    private final Calendar calendar_date_picker = Calendar.getInstance();
+    //private final Calendar calendar_date_picker = Calendar.getInstance();
     private final Calendar calendar_time_picker = Calendar.getInstance();
     private ImageButton add_marker_on_map_ib;
     private ImageButton accept_marker_on_map_ib;
@@ -193,8 +171,6 @@ public class main_activity extends AppCompatActivity implements
     private boolean active_user_pin_mode;
     private static final String FILE_NAME = "geo_json_bellenet";
     private static String file_directory_static = "";
-    private geo_JSON_maker feature_maker = null;
-    private file_maker geo_json_holder = null;
     //private static final File file_dire = file_directory.st;
     private boolean add_postition_mode = false;
     private boolean is_marker_added = false;
@@ -205,11 +181,17 @@ public class main_activity extends AppCompatActivity implements
     private boolean join_status = false;
     private String  last_event_selected;
 
+    private FragmentTransaction fragment_transaction;
+    private map_fragment map_fragment_instance;
+    private event_list_fragment_parent event_list_parent_holder;
+
+    private BottomNavigationView bottom_navigation_view;
+
     void get_db_updated()
     {
         number_of_selected_cards = 0;
-        if((mapboxMap!=null)&&(mapView!=null))
-            set_camera_position(0,null);
+        //if((mapboxMap!=null)&&(mapView!=null))
+          //  set_camera_position(0,null);
         Map<String, String> params = new HashMap<>();
         params.put("user_id",USER_ID);
 
@@ -233,47 +215,99 @@ public class main_activity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
+        setContentView(R.layout.activity_main);
+
+
+        map_fragment_instance = new map_fragment();
+        event_list_parent_holder = new event_list_fragment_parent();
+        //map_fragment_instance.
+        //
+        if (savedInstanceState == null)
+        {
+            fragment_transaction =  getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+            //.show(map_fragment_instance);
+                    .add(R.id.fragment_map_view, map_fragment_instance, null)
+                    //.add(R.id.fragment_event_list_holder, event_list_holder,null)
+                    .add(R.id.fragment_event_list_parent, event_list_parent_holder,null)
+                    //.hide(event_list_holder);
+                    .hide(event_list_parent_holder);
+            //fragment_transaction.show(map_fragment_instance);
+            fragment_transaction.commit();
+        }
+
+        //map_fragment_instance = (map_fragment) getSupportFragmentManager()
+          //      .findFragmentById(R.id.fragment_map_view);
 
 
         //get_db_updated();
 
-        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
-        setContentView(R.layout.activity_main);
+        /// Initializing DB_Model
+
+        String file_directory = main_activity.this.getFilesDir().toString();
+        ContextWrapper context_wrapper = new ContextWrapper(getApplicationContext());
+        File image_directory = context_wrapper.getDir("Profile_Pictures", Context.MODE_PRIVATE);
+        event_db_vm model_db = new ViewModelProvider(this).get(event_db_vm.class);
+        model_db.set_db_handler(this::update_map_fragment);
+        model_db.init_db(file_directory,image_directory);
+
+
+
+        /// Registering MapBox
+
+
+
 
         /// Initializing and configuring Bottom Navigation
-        BottomNavigationView bottom_navigation_view = findViewById(R.id.bottom_navigation);
+        bottom_navigation_view = findViewById(R.id.bottom_navigation);
 
         bottom_navigation_view.setOnNavigationItemSelectedListener(item ->
         {
            switch (item.getItemId())
            {
-               case R.id.page_map:
+
+               //assert map_fragment_instance != null;
+               case R.id.page_map: //bottom_navigation_view.
+
+                   fragment_transaction = getSupportFragmentManager().beginTransaction();
+                   //fragment_transaction.detach(map_fragment_instance);
+                   fragment_transaction.show(map_fragment_instance).hide(event_list_parent_holder).commit();
                    break;
-               case R.id.page_events:
+               case R.id.page_events: //bottom_navigation_view.setSelectedItemId(R.id.page_events);
+
+                   //fragment_transaction.detach(map_fragment_instance);
+                   fragment_transaction = getSupportFragmentManager().beginTransaction();
+                   fragment_transaction.show(event_list_parent_holder).hide(map_fragment_instance).commit();
                    break;
-               case R.id.page_profile:
+               case R.id.page_profile: //bottom_navigation_view.setSelectedItemId(R.id.page_profile);
                    break;
            }
-            return false;
+            return true;
         });
 
 
+        /*
         /// Initialize the map view
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
+         */
+        /*
         /// Configuring BottomSheet_Choose_Challenge in the BelleNet
         View bottom_sheet_click_join_view = findViewById(R.id.bottom_sheet_click_to_join);
         bottom_sheet_click_join = BottomSheetBehavior.from(bottom_sheet_click_join_view);
         bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+
 
         /// Configuring BottomSheet_Choose_Challenge in the BelleNet
         View bottom_sheet_challenges_veiw = findViewById(R.id.bottom_sheet_challenges);
         bottom_sheet_Choose_challenge = BottomSheetBehavior.from(bottom_sheet_challenges_veiw);
         bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-
+         */
 
         /// Set camera on the user location
         set_cam_on_location_fab = findViewById(R.id.fab_pin_on_maps);
@@ -291,16 +325,52 @@ public class main_activity extends AppCompatActivity implements
         });
 
 
-        button_sheet_add_event_init();
-        pin_event_sd_init();
+        //button_sheet_add_event_init();
+        //pin_event_sd_init();
 
-        if (savedInstanceState == null)
+
+        /*
+
+        Button send_request = findViewById(R.id.send_request);
+        send_request.setOnClickListener(new View.OnClickListener()
         {
-            getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .add(R.id.fragment_map_view, map_fragment.class, null)
-                    .commit();
-        }
+            @Override
+            public void onClick(View v)
+            {
+                update_map_fragment();
+            }
+        });
+
+         */
+
+    }
+
+    void update_map_fragment()
+    {
+        Log.d(TAG,"Request From Activity to Fragment Sent");
+
+        new Handler(Looper.getMainLooper()).postDelayed(()->
+        {
+            map_fragment_instance.update_map();
+            /*
+            Log.d(TAG,"After One Second");
+            map_fragment fragment = (map_fragment) getSupportFragmentManager().findFragmentById(R.id.fragment_map_view);
+            assert fragment != null;
+            fragment.update_map();
+
+             */
+            //map_fragment_instance.update_map();
+            //fragment.
+        }, 500);
+
+    }
+
+    void bottom_navigation_visibility(boolean visible)
+    {
+        if(visible)
+            bottom_navigation_view.setVisibility(View.VISIBLE);
+        else
+            bottom_navigation_view.setVisibility(View.GONE);
 
     }
 
@@ -512,7 +582,7 @@ public class main_activity extends AppCompatActivity implements
         add_postition_mode = false;
     }
 
-    // Removing route and pinned points on the map on demand
+    /// Removing route and pinned points on the map on demand
     void remove_points_routes()
     {
         if(list_of_of_added_points_symbol!=null)
@@ -681,7 +751,7 @@ public class main_activity extends AppCompatActivity implements
     void mapbox_navigation_configuration(Style style)
     {
         LocationEngine locationEngine = LocationEngineProvider.getBestLocationEngine(main_activity.this);
-        navigation_options = MapboxNavigation.defaultNavigationOptionsBuilder(main_activity.this,
+        NavigationOptions navigation_options = MapboxNavigation.defaultNavigationOptionsBuilder(main_activity.this,
                 getString(R.string.mapbox_access_token))
                 .locationEngine(locationEngine)
                 .build();
@@ -722,7 +792,8 @@ public class main_activity extends AppCompatActivity implements
         }
         else
         {
-            permissionsManager = new PermissionsManager(this);
+            ///
+            PermissionsManager permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(this);
         }
     }
@@ -846,9 +917,10 @@ public class main_activity extends AppCompatActivity implements
 
     private void add_received_events(JSONArray received_events)
     {
+
         String file_directory = main_activity.this.getFilesDir().toString();
         file_directory_static = file_directory;
-        feature_maker = new geo_JSON_maker();
+        geo_JSON_maker feature_maker = new geo_JSON_maker();
         for (int i=0;i<received_events.length();i++)
         {
             try
@@ -865,8 +937,9 @@ public class main_activity extends AppCompatActivity implements
 
         }
 
-        geo_json_holder = new file_maker(file_directory,FILE_NAME);
+        file_maker geo_json_holder = new file_maker(file_directory, FILE_NAME);
         geo_json_holder.write(feature_maker.get_features_object());
+
 
         update_map();
 
@@ -1568,7 +1641,6 @@ public class main_activity extends AppCompatActivity implements
 
         private Bitmap get_profile_bmp(String name)
         {
-
             ContextWrapper cw = new ContextWrapper(context);
             File directory = cw.getDir("Profile_Pictures", Context.MODE_PRIVATE);
             try
@@ -1576,14 +1648,12 @@ public class main_activity extends AppCompatActivity implements
                 File file =new File(directory, name);
                 Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
                 return bitmap;
-
             }
             catch (FileNotFoundException e)
             {
                 e.printStackTrace();
                 return null;
             }
-
         }
 
 
@@ -1643,9 +1713,6 @@ public class main_activity extends AppCompatActivity implements
 
                     /// Is User Joined Section
                     String is_user_joined = feature.getStringProperty(PROPERTY_IS_USER_JOINED);
-
-
-
 
 
                     int measureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
@@ -1717,53 +1784,56 @@ public class main_activity extends AppCompatActivity implements
     protected void onStart()
     {
         super.onStart();
-        mapView.onStart();
+        //mapView.onStart();
     }
 
     @Override
     public void onResume()
     {
         super.onResume();
-        mapView.onResume();
+        //mapView.onResume();
     }
 
     @Override
     public void onPause()
     {
         super.onPause();
-        mapView.onPause();
+        //mapView.onPause();
     }
 
     @Override
     protected void onStop()
     {
         super.onStop();
-        mapView.onStop();
+        //mapView.onStop();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
+        //mapView.onSaveInstanceState(outState);
     }
 
     @Override
     public void onLowMemory()
     {
         super.onLowMemory();
-        mapView.onLowMemory();
+        //mapView.onLowMemory();
     }
 
     @Override
     protected void onDestroy()
     {
         super.onDestroy();
+        /*
         if (mapboxMap != null)
         {
             mapboxMap.removeOnMapClickListener(this);
         }
         mapView.onDestroy();
         mapbox_navigation.onDestroy();
+
+         */
     }
 }

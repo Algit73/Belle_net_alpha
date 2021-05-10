@@ -1,18 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".map_fragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.mapbox.mapboxsdk.maps.MapView
+                android:id="@+id/mapView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_anchorGravity="center"
+                app:mapbox_cameraTargetLat="42.149683"
+                app:mapbox_cameraTargetLng="-119.155770"
+                app:mapbox_cameraZoom="12" />
+
+            <View
+                android:id="@+id/horizontal_splitter"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent" />
+
+            <ImageButton
+                android:id="@+id/accept_pinned_markers_ib"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="32dp"
+                android:background="@drawable/ib_circle_background"
+                android:backgroundTint="@color/green_500"
+                android:src="@drawable/check"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/horizontal_splitter"
+                app:tint="@color/white" />
+
+            <ImageButton
+                android:id="@+id/reject_pinned_markers_ib"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginBottom="32dp"
+                android:background="@drawable/ib_circle_background"
+                android:backgroundTint="@color/red_500"
+                android:src="@drawable/close"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/horizontal_splitter"
+                app:tint="@color/white" />
+
+
+            <com.leinardi.android.speeddial.SpeedDialView
+                android:id="@+id/pin_event_sd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="18dp"
+                app:layout_constraintBottom_toTopOf="@id/boundary_1"
+                app:layout_constraintRight_toRightOf="parent"
+                app:sdMainFabClosedBackgroundColor="@color/light_green_a700"
+                app:sdMainFabClosedIconColor="@color/white"
+                app:sdMainFabClosedSrc="@drawable/plus"
+                app:sdMainFabOpenedBackgroundColor="@color/light_green_a400" />
+
+            <View
+                android:id="@+id/boundary_1"
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                app:layout_constraintBottom_toTopOf="@id/fab_pin_on_maps"
+                app:layout_constraintLeft_toLeftOf="@id/fab_pin_on_maps"
+                app:layout_constraintRight_toRightOf="@id/fab_pin_on_maps" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_pin_on_maps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginEnd="36dp"
+                android:layout_marginBottom="36dp"
+                android:backgroundTint="@color/blue_800"
+                android:src="@drawable/crosshairs_gps"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:tint="@color/cardview_light_background" />
+
+
+            <!--ImageView
+                android:id="@+id/loading_screen"
+                android:layout_width="match_parent"
+                android:layout_height="1000dp"
+                android:src="@color/gray_800"
+                android:alpha=".5"
+                app:layout_anchor="@+id/constraintLayout2"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                 />
 
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ProgressBar
+                android:id="@+id/loading_wheel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" /-->
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+        <include layout="@layout/bellenet_bottom_sheet_pin_to_add" />
+        <include layout="@layout/bellenet_bottom_sheet_click_to_join" />
+
+        <!--ImageView
+            android:id="@+id/loading_screen"
+            android:layout_width="400dp"
+            android:layout_height="100dp"
+
+            android:src="@drawable/bellenet_bottom_sheet_background"
+            app:layout_anchor="@+id/constraintLayout2"
+            app:layout_anchorGravity="center" /-->
+
+        <ImageView
+            android:id="@+id/loading_screen"
+            android:layout_width="match_parent"
+            android:layout_height="1000dp"
+            android:src="@color/gray_800"
+            android:alpha=".5"
+            app:layout_anchor="@+id/constraintLayout2"
+            app:layout_anchorGravity="center"
+            />
+
+
+
+
+        <ProgressBar
+            android:id="@+id/loading_wheel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/teal_500"
+            />
+
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
 
 

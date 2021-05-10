@@ -56,7 +56,7 @@ public class date_time_provider
         date_picker_dialog.getDatePicker().setMinDate((System.currentTimeMillis() - 1000));
         date_picker_dialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
                 .setTextColor(ResourcesCompat.getColor(context.getResources()
-                        ,R.color.gray_800,context.getTheme()));
+                        , R.color.gray_800,context.getTheme()));
         date_picker_dialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
                 .setTextColor(ResourcesCompat.getColor(context.getResources()
                         ,R.color.gray_800,context.getTheme()));

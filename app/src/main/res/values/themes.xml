@@ -6,7 +6,7 @@
         <item name="colorPrimaryVariant">@color/gray_100</item>
         <item name="android:windowLightStatusBar">true</item>
 
-        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowTranslucentNavigation">false</item>
         <item name="colorOnPrimary">@color/gray_800</item>
         <item name="windowNoTitle">true</item>
         <!-- Secondary brand color. -->
@@ -25,5 +25,17 @@
 
     <style name="stockBottomNavigationView.Active" parent="@style/TextAppearance.AppCompat.Caption">
         <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="GenericProgressBackground" parent="android:Theme">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:background">#DD111111</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="GenericProgressIndicator" parent="@android:style/Widget.ProgressBar.Large">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:indeterminate">true</item>
     </style>
 </resources>

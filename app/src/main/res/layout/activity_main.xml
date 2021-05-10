@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:background="#E7E7E7"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
     tools:context=".main_activity">
 
 
@@ -33,14 +35,39 @@
             android:id="@+id/fragment_map_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+
+
             app:layout_constraintBottom_toTopOf="@id/bottom_navigation"/>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragment_event_list_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            app:layout_constraintBottom_toTopOf="@id/bottom_navigation"/>
+
+        <!--Button
+            android:id="@+id/send_request"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:text="SEND"
+            android:backgroundTint="@color/teal_500"
+            android:textColor="@color/gray_100"
+            /-->
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="8dp"
+
             app:itemTextAppearanceActive="@style/stockBottomNavigationView.Active"
             app:itemTextAppearanceInactive="@style/stockBottomNavigationView.InActive"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -63,7 +90,12 @@
             app:sdMainFabClosedBackgroundColor="@color/light_green_a700"
             app:sdMainFabOpenedBackgroundColor="@color/light_green_a400"
             app:sdMainFabClosedIconColor="@color/white"
-            app:sdMainFabClosedSrc="@drawable/plus" />
+            app:sdMainFabClosedSrc="@drawable/plus"
+            android:visibility="invisible"
+            />
+
+
+
 
         <View
             android:id="@+id/boundary_1"
@@ -84,7 +116,7 @@
             android:layout_marginEnd="36dp"
             app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
             app:layout_constraintRight_toRightOf="parent"
-
+            android:visibility="invisible"
             app:tint="@color/cardview_light_background" />
 
         <ImageView
@@ -136,8 +168,8 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <include layout="@layout/bellenet_bottom_sheet_pin_to_add" />
-    <include layout="@layout/bellenet_bottom_sheet_click_to_join" />
+    <!--include layout="@layout/bellenet_bottom_sheet_pin_to_add" /-->
+    <!--include layout="@layout/bellenet_bottom_sheet_click_to_join" /-->
 
 
 

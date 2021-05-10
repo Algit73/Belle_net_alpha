@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".event_list_fragment_parent"
+    android:fitsSystemWindows="false"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/event_list_parent_tab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/gray_100"
+            app:tabSelectedTextColor="@color/gray_800"
+            app:tabIndicatorColor="@color/gray_800"
+            app:tabTextColor="@color/gray_500"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="visible"
+            >
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/all_events_list_tab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ALL EVENTS"
+                />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/feed_list_tab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="FEED"
+                />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/offers_tab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OFFERS"
+                />
+        </com.google.android.material.tabs.TabLayout>
+
+
+
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/all_events_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/event_list_parent_tab"
+            android:layout_marginTop="4dp"
+            />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/feed_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/event_list_parent_tab"
+            android:layout_marginTop="4dp"
+            />
+
+
+
+
+
+        <!--TextView
+            android:id="@+id/page_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/event_list_parent_tab"
+            android:text="Events around you:"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="24dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/all_events_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/page_hint"
+            android:layout_marginTop="4dp"
+            />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/feed_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/page_hint"
+            android:layout_marginTop="4dp"
+            /-->
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
