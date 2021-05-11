@@ -35,6 +35,7 @@ public class event_db_vm extends ViewModel
     private boolean is_process_finished = false;
     private String db_file_directory;
     private File image_file_directory;
+    private static File image_file_directory_static;
     public static String file_directory_static = "";
     private static final String FILE_NAME = "geo_json_bellenet";
     protected db_update_handler db_handler;
@@ -52,7 +53,13 @@ public class event_db_vm extends ViewModel
             refresh_db();
             this.db_file_directory = db_file_directory;
             this.image_file_directory = image_file_directory;
+            image_file_directory_static = image_file_directory;
         }
+    }
+
+    public static File get_image_file()
+    {
+        return image_file_directory_static;
     }
 
     public void refresh_db()

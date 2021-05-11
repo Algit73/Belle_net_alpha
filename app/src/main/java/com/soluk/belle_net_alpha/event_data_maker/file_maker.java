@@ -3,6 +3,7 @@ package com.soluk.belle_net_alpha.event_data_maker;
 import android.content.ContextWrapper;
 import android.util.Log;
 
+import com.mapbox.geojson.FeatureCollection;
 import com.soluk.belle_net_alpha.main_activity;
 
 import org.json.JSONObject;
@@ -75,6 +76,11 @@ public class file_maker
             Log.d(TAG, "file_maker output of read: "+e.getMessage());
             return null;
         }
+    }
+
+    public FeatureCollection read_features()
+    {
+        return FeatureCollection.fromJson(read().toString());
     }
 
     public void write(JSONObject object)

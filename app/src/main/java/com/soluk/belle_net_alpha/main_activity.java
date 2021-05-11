@@ -352,6 +352,8 @@ public class main_activity extends AppCompatActivity implements
         new Handler(Looper.getMainLooper()).postDelayed(()->
         {
             map_fragment_instance.update_map();
+            event_list_parent_holder.refresh_fragments();
+
             /*
             Log.d(TAG,"After One Second");
             map_fragment fragment = (map_fragment) getSupportFragmentManager().findFragmentById(R.id.fragment_map_view);

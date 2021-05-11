@@ -3,6 +3,7 @@ package com.soluk.belle_net_alpha.all_events_list_fragment;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -10,12 +11,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
+import com.soluk.belle_net_alpha.CustomTouchListener;
 import com.soluk.belle_net_alpha.R;
 import com.soluk.belle_net_alpha.dummy.DummyContent;
+import com.soluk.belle_net_alpha.event_data_maker.file_maker;
+import com.soluk.belle_net_alpha.onItemClickListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -25,8 +36,13 @@ public class all_events_list_fragment extends Fragment
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+    private static final String FILE_NAME = "geo_json_bellenet";
+
+
     // TODO: Customize parameters
-    private int mColumnCount = 2;
+    private int mColumnCount = 1;
+
+    private RecyclerView recycler_view;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -66,20 +82,44 @@ public class all_events_list_fragment extends Fragment
         View v = inflater.inflate(R.layout.fragment_all_events_list, container, false);
 
         Context context = v.getContext();
-        RecyclerView recyclerView = v.findViewById(R.id.event_list_recycler);//(RecyclerView) view;
+        recycler_view = v.findViewById(R.id.event_list_recycler);//(RecyclerView) view;
         if (mColumnCount <= 1)
         {
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            recycler_view.setLayoutManager(new LinearLayoutManager(context));
         }
         else
         {
-            recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+            recycler_view.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
-        recyclerView.setAdapter(new all_events_list_recycler_view_adapter(DummyContent.ITEMS));
-        //recyclerView.setHasFixedSize(false);
+
+        recycler_view.addOnItemTouchListener(new CustomTouchListener(getContext(), new onItemClickListener()
+        {
+            @Override
+            public void onClick(View view, int index)
+            {
+                Toast.makeText(getContext(),"Index: "+index,Toast.LENGTH_SHORT).show();
+
+            }
+        }));
+        //recycler_view.setAdapter(new all_events_list_recycler_view_adapter(DummyContent.ITEMS));
+        //recycler_view.setHasFixedSize(false);
         //ViewCompat.setNestedScrollingEnabled(recyclerView, false);
         //v.setNestedScrollingEnabled(false);
 
         return v;
+    }
+
+    public void refresh_list()
+    {
+        String dir = getActivity().getFilesDir().toString();
+        file_maker geo_json_holder = new file_maker(dir,FILE_NAME);
+        FeatureCollection feature_collection = geo_json_holder.read_features();
+        List<Feature> feature_list = feature_collection.features();
+
+        recycler_view.setAdapter(new all_events_list_recycler_view_adapter(feature_list));
+
+
+
+
     }
 }

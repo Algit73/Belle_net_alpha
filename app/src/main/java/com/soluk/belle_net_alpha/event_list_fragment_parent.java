@@ -12,8 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.tabs.TabLayout;
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
 import com.soluk.belle_net_alpha.all_events_list_fragment.all_events_list_fragment;
+import com.soluk.belle_net_alpha.event_data_maker.file_maker;
 import com.soluk.belle_net_alpha.feed_list_fragment.feed_list_fragment;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -131,5 +136,22 @@ public class event_list_fragment_parent extends Fragment
         });
 
         return v;
+    }
+
+    public void refresh_fragments()
+    {
+        /*
+        String dir = getActivity().getFilesDir().toString();
+        String FILE_NAME = "geo_json_bellenet";
+        file_maker geo_json_holder = new file_maker(dir,FILE_NAME);
+        FeatureCollection feature_collection = geo_json_holder.read_features();
+        List<Feature> feature_list = feature_collection.features();
+
+         */
+        all_events_list.refresh_list();
+
+
+
+
     }
 }

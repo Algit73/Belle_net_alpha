@@ -1,53 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollView"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:overScrollMode="never"
-        android:fillViewport="true"
+        android:orientation="vertical"
         >
-
-        <LinearLayout
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/text_dummy"
-                android:text="Text1"
-                />
-
-            <androidx.recyclerview.widget.RecyclerView
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/event_list_recycler"
-                android:name="com.soluk.belle_net_alpha.all_events_list_fragment"
+            android:fadeScrollbars="true"
+            android:scrollbars="none"
+            >
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
+                android:orientation="horizontal"
+                >
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ALL"
+                    android:backgroundTint="@color/blue_700"
+                    android:textColor="@color/gray_100"
+                    app:cornerRadius="36dp"
+                    android:drawableLeft="@drawable/dots_square"
+                    android:drawableTint="@color/gray_100"
+                    android:layout_margin="8dp"
+                    />
 
-                tools:context=".all_events_list_fragment.all_events_list_fragment"
-                tools:listitem="@layout/fragment_all_events_list_fragment"
-                />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ensemble"
+                    android:backgroundTint="@color/blue_200"
+                    android:textColor="@color/gray_100"
+                    app:cornerRadius="36dp"
+                    android:drawableLeft="@drawable/bike"
+                    android:drawableTint="@color/gray_100"
+                    android:layout_margin="8dp"
+                    />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Challenges"
+                    android:backgroundTint="@color/blue_200"
+                    android:textColor="@color/gray_100"
+                    app:cornerRadius="36dp"
+                    android:drawableLeft="@drawable/map"
+                    android:drawableTint="@color/gray_100"
+                    android:layout_margin="8dp"
+                    />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Experience"
+                    android:backgroundTint="@color/blue_200"
+                    android:textColor="@color/gray_100"
+                    app:cornerRadius="36dp"
+                    android:drawableLeft="@drawable/image"
+                    android:drawableTint="@color/gray_100"
+                    android:layout_margin="8dp"
+                    />
 
-            <TextView
-                android:layout_width="wrap_content"
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fadeScrollbars="true"
+            android:scrollbars="none"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Text2"
-                />
+                android:orientation="horizontal"
+                >
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="nearest"
+                    android:backgroundTint="@color/blue_700"
+                    android:textColor="@color/gray_100"
+                    app:cornerRadius="12dp"
+                    android:drawableTint="@color/gray_100"
+                    android:layout_margin="8dp"
+                    android:textSize="12sp"
+                    />
 
-        </LinearLayout>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="top"
+                    app:cornerRadius="12dp"
+                    android:backgroundTint="@color/gray_300"
+                    android:textColor="@color/gray_700"
 
-    </androidx.core.widget.NestedScrollView>
+                    android:layout_margin="8dp"
+                    android:textSize="12sp"
+                    />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="hot"
+                    android:backgroundTint="@color/gray_300"
+                    android:textColor="@color/gray_700"
+                    app:cornerRadius="36dp"
+                    android:drawableTint="@color/gray_100"
+                    android:layout_margin="8dp"
+                    android:textSize="12sp"
+                    />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="recent"
+                    android:backgroundTint="@color/gray_300"
+                    android:textColor="@color/gray_700"
+                    app:cornerRadius="36dp"
+                    android:drawableTint="@color/gray_100"
+                    android:layout_margin="8dp"
+                    android:textSize="12sp"
+                    />
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            android:fillViewport="true"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/text_dummy"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginBottom="@dimen/mapbox_dimen_16dp"
+                    android:text="Events Around You:"
+                    android:textSize="24sp"
+                    android:textColor="@color/gray_800"
+                    />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/event_list_recycler"
+                    android:name="com.soluk.belle_net_alpha.all_events_list_fragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+
+                    tools:context=".all_events_list_fragment.all_events_list_fragment"
+                    tools:listitem="@layout/fragment_all_events_list_fragment"
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    />
+
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
 
 </FrameLayout>
 

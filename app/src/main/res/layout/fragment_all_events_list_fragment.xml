@@ -7,36 +7,231 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="4dp"
-    android:layout_margin="2dp"
+    android:layout_margin="4dp"
+    android:paddingTop="16dp"
     android:fitsSystemWindows="false"
+    android:focusable="true"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
     >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="8dp"
             >
 
-            <TextView
-                android:id="@+id/item_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:textAppearance="?attr/textAppearanceListItem"
-                app:layout_constraintTop_toTopOf="parent"
+            <View
+                android:id="@+id/vertical_splitter"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
                 app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_pic"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
+                android:src="@drawable/al_profile_300"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/event_id_card_circle_background"
+                app:civ_border_width="2dp"
+                app:civ_border_color="@color/blue_700"
                 />
 
             <TextView
-                android:id="@+id/content"
+                android:id="@+id/user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:textAppearance="?attr/textAppearanceListItem"
-                app:layout_constraintTop_toBottomOf="@id/item_number"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="16dp"
+                android:text="Alireza"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/profile_pic"
+                android:textSize="16sp"
+                android:textColor="@color/gray_800"
+                />
+
+            <TextView
+                android:id="@+id/user_family"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginStart="16dp"
+                app:layout_constraintTop_toBottomOf="@id/user_name"
+                app:layout_constraintLeft_toRightOf="@id/profile_pic"
+                android:text="Alikhani"
+                android:textSize="16sp"
+                android:textColor="@color/gray_800"
+                />
+
+            <ImageView
+                android:id="@+id/challenge_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/bike"
+                app:layout_constraintTop_toBottomOf="@id/profile_pic"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="8dp"
+                app:tint="@color/blue_500"
+                />
+
+            <TextView
+                android:id="@+id/challenge_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/challenge_icon"
+                app:layout_constraintLeft_toRightOf="@id/challenge_icon"
+                android:text="Ensemble Riding"
+                android:layout_marginStart="@dimen/mapbox_dimen_16dp"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/gray_800"
+                />
+
+            <ImageView
+                android:id="@+id/event_date_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                app:layout_constraintTop_toBottomOf="@id/challenge_icon"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/calendar"
+                app:tint="@color/blue_500"
+                />
+
+            <TextView
+                android:id="@+id/event_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/event_date_icon"
+                app:layout_constraintLeft_toRightOf="@id/event_date_icon"
+                android:text="May, 05"
+                android:layout_marginStart="8dp"
+                android:textSize="12sp"
+                android:textColor="@color/gray_800"
+                />
+
+            <ImageView
+                android:id="@+id/event_time_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                app:layout_constraintTop_toBottomOf="@id/event_date_icon"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/clock_outline"
+                app:tint="@color/blue_500"
+                />
+
+            <TextView
+                android:id="@+id/event_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/event_time_icon"
+                app:layout_constraintLeft_toRightOf="@id/event_time_icon"
+                android:text="16 : 05"
+                android:layout_marginStart="8dp"
+                android:textSize="12sp"
+                android:textColor="@color/gray_800"
+                />
+
+            <ImageView
+                android:id="@+id/event_joinees_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                app:layout_constraintTop_toBottomOf="@id/event_time_icon"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/account_group"
+                app:tint="@color/blue_500"
+                />
+
+            <TextView
+                android:id="@+id/event_joinees"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/event_joinees_icon"
+                app:layout_constraintLeft_toRightOf="@id/event_joinees_icon"
+                android:text="73"
+                android:layout_marginStart="8dp"
+                android:textSize="12sp"
+                android:textColor="@color/gray_800"
+                />
+
+            <ImageView
+                android:id="@+id/event_distance_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                app:layout_constraintTop_toTopOf="@id/event_joinees"
+                app:layout_constraintLeft_toLeftOf="@id/vertical_splitter"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/navigation_outline"
+                app:tint="@color/blue_500"
+                />
+
+
+
+            <TextView
+                android:id="@+id/event_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/event_distance_icon"
+                app:layout_constraintLeft_toRightOf="@id/event_distance_icon"
+                android:text="5 Km"
+                android:layout_marginStart="8dp"
+                android:textSize="12sp"
+                android:textColor="@color/gray_800"
+                />
+
+            <ImageView
+                android:id="@+id/event_explanation_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                app:layout_constraintTop_toBottomOf="@id/event_distance_icon"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/text"
+                app:tint="@color/blue_500"
+                />
+
+
+
+            <TextView
+                android:id="@+id/event_explanation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/event_explanation_icon"
+                app:layout_constraintLeft_toRightOf="@id/event_explanation_icon"
+                android:text="Oh! Come on!..."
+                android:layout_marginStart="@dimen/mapbox_dimen_16dp"
+                android:textSize="16sp"
+                android:textColor="@color/gray_800"
+                />
+
+            <Button
+                android:id="@+id/join_event"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/event_explanation_icon"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:text="join"
+                android:layout_margin="8dp"
+                android:backgroundTint="@color/blue_700"
+                android:textColor="@color/gray_100"
                 />
+
+
 
 
 
