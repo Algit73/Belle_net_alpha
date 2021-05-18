@@ -1,4 +1,4 @@
-package com.soluk.belle_net_alpha;
+package com.soluk.belle_net_alpha.recycler_view_get_index;
 
 import android.view.View;
 

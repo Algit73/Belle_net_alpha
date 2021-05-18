@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "246804646819",
+    "project_id": "bellenet-e9c6a",
+    "storage_bucket": "bellenet-e9c6a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:246804646819:android:dd1adc71092f88fd4be816",
+        "android_client_info": {
+          "package_name": "com.soluk.belle_net_alpha"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "246804646819-e867hat1bsm9kgqe5a77lt8lpjv57v3o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWluxSKj6NfSSQHbX7BIxHWLAWpmqqc0M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "246804646819-e867hat1bsm9kgqe5a77lt8lpjv57v3o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

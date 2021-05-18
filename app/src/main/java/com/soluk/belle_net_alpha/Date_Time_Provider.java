@@ -16,7 +16,7 @@ import java.util.Locale;
 
 
 
-public class date_time_provider
+public class Date_Time_Provider
 {
     public final static int US = 0;
     public final static int STANDARD = 1;
@@ -38,7 +38,7 @@ public class date_time_provider
 
     private final Context context;
 
-    date_time_provider(Context context)
+    Date_Time_Provider(Context context)
     {
         this.context = context;
 
@@ -62,7 +62,7 @@ public class date_time_provider
                         ,R.color.gray_800,context.getTheme()));
     }
 
-    public date_time_provider set_date_tv(TextView date_tv)
+    public Date_Time_Provider set_date_tv(TextView date_tv)
     {
         this.date_tv=date_tv;
         event_date = new DatePickerDialog.OnDateSetListener()
@@ -95,7 +95,7 @@ public class date_time_provider
         time_picker_dialog.show();
     }
 
-    public date_time_provider set_time_tv(TextView time_tv)
+    public Date_Time_Provider set_time_tv(TextView time_tv)
     {
         this.time_tv = time_tv;
         event_time = new TimePickerDialog.OnTimeSetListener()
@@ -114,7 +114,7 @@ public class date_time_provider
     }
 
 
-    public date_time_provider set_date_format(int format)
+    public Date_Time_Provider set_date_format(int format)
     {
         switch (format)
         {
@@ -135,7 +135,7 @@ public class date_time_provider
 
 
 
-    public date_time_provider set_time_format(int format)
+    public Date_Time_Provider set_time_format(int format)
     {
         switch (format)
         {

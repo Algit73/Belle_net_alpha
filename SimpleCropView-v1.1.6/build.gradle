@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('SimpleCropView-v1.1.6.aar'))

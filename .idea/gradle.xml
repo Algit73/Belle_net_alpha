@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-Regis  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleMigrationSettings" migrationVersion="1" />
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
@@ -11,7 +11,10 @@ Regis  <component name="GradleMigrationSettings" migrationVersion="1" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Android-Image-Cropper-3.1.0" />
+            <option value="$PROJECT_DIR$/SimpleCropView-v1.1.6" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/uCrop-2.2.6-native" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

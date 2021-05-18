@@ -3,29 +3,23 @@ package com.soluk.belle_net_alpha.all_events_list_fragment;
 import android.content.Context;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
-import com.soluk.belle_net_alpha.CustomTouchListener;
+import com.soluk.belle_net_alpha.recycler_view_get_index.CustomTouchListener;
 import com.soluk.belle_net_alpha.R;
-import com.soluk.belle_net_alpha.dummy.DummyContent;
 import com.soluk.belle_net_alpha.event_data_maker.file_maker;
-import com.soluk.belle_net_alpha.onItemClickListener;
+import com.soluk.belle_net_alpha.recycler_view_get_index.onItemClickListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

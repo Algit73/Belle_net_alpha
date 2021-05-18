@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
 
 import androidx.lifecycle.ViewModel;
 
@@ -140,7 +139,7 @@ public class event_db_vm extends ViewModel
         }
 
         file_maker geo_json_holder = new file_maker(db_file_directory, FILE_NAME);
-        geo_json_holder.write(feature_maker.get_features_object());
+        geo_json_holder.write_json(feature_maker.get_features_object());
         //geo_json_holder.read();
 
 
@@ -216,7 +215,7 @@ public class event_db_vm extends ViewModel
         try
         {
             fos = new FileOutputStream(path);
-            // Use the compress method on the BitMap object to write image to the OutputStream
+            // Use the compress method on the BitMap object to write_json image to the OutputStream
             bitmapImage.compress(Bitmap.CompressFormat.JPEG, 50, fos);
         }
         catch (Exception e)

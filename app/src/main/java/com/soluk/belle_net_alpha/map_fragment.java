@@ -14,7 +14,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
@@ -367,9 +366,9 @@ public class map_fragment extends Fragment implements
             public void onClick(View v)
             {
 
-                date_time_provider date_provider = new date_time_provider(getActivity())
+                Date_Time_Provider date_provider = new Date_Time_Provider(getActivity())
                         .set_date_tv(event_date_tv)
-                        .set_date_format(date_time_provider.US);
+                        .set_date_format(Date_Time_Provider.US);
 
                 date_provider.show_date_dialog();
             }
@@ -383,9 +382,9 @@ public class map_fragment extends Fragment implements
             @Override
             public void onClick(View v)
             {
-                date_time_provider time_provider = new date_time_provider(getActivity())
+                Date_Time_Provider time_provider = new Date_Time_Provider(getActivity())
                         .set_time_tv(event_time_tv)
-                        .set_time_format(date_time_provider.H24);
+                        .set_time_format(Date_Time_Provider.H24);
 
                 time_provider.show_time_dialog();
             }
@@ -1349,10 +1348,10 @@ public class map_fragment extends Fragment implements
             Log.v(TAG,"Feature Collection Returned");
 
             file_maker geo_json_holder = new file_maker(file_directory_static,FILE_NAME);
-            geo_json_holder.read();
+            geo_json_holder.read_json();
 
             Log.v(TAG,"LoadGeoJsonDataTask: doInBackground");
-            return FeatureCollection.fromJson(geo_json_holder.read().toString());
+            return FeatureCollection.fromJson(geo_json_holder.read_json().toString());
         }
 
         @Override

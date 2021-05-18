@@ -16,6 +16,9 @@
     <color name="blue_700">#1976D2</color>
     <color name="blue_800">#1565C0</color>
     <color name="blue_900">#0D47A1</color>
+    <color name="blue_gray_700">#455A64</color>
+    <color name="blue_gray_800">#37474F</color>
+    <color name="blue_gray_900">#263238</color>
     <color name="light_green_a400">#76FF03</color>
     <color name="light_green_a700">#64DD17</color>
     <color name="green_500">#4CAF50</color>

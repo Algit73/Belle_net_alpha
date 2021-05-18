@@ -1,6 +1,5 @@
 package com.soluk.belle_net_alpha.event_data_maker;
 
-import android.content.ContextWrapper;
 import android.util.Log;
 
 import com.mapbox.geojson.FeatureCollection;
@@ -53,7 +52,7 @@ public class file_maker
             Log.v("TAG","File Exists");
     }
 
-    public JSONObject read ()
+    public JSONObject read_json()
     {
         try
         {
@@ -80,14 +79,14 @@ public class file_maker
 
     public FeatureCollection read_features()
     {
-        return FeatureCollection.fromJson(read().toString());
+        return FeatureCollection.fromJson(read_json().toString());
     }
 
-    public void write(JSONObject object)
+    public void write_json(JSONObject object)
     {
         try
         {
-            Log.v(TAG, "file_maker: Writing 1");
+            //Log.v(TAG, "file_maker: Writing 1");
             file_writer = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(file_writer);
             bw.write(object.toString());
@@ -96,7 +95,24 @@ public class file_maker
         catch (IOException e)
         {
             e.printStackTrace();
-            Log.v(TAG, "file_maker: Writing 2 "+e.getMessage());
+            //Log.v(TAG, "file_maker: Writing 2 "+e.getMessage());
+        }
+    }
+
+    public void write(String string)
+    {
+        try
+        {
+            //Log.v(TAG, "file_maker: Writing 1");
+            file_writer = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(file_writer);
+            bw.write(string);
+            bw.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            //Log.v(TAG, "file_maker: Writing 2 "+e.getMessage());
         }
     }
 }
