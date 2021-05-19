@@ -5,6 +5,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -27,6 +29,7 @@ public class HTTP_Provider
 
     private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
     private static final MediaType MEDIA_TYPE_JPG = MediaType.parse("image/jpg");
+    private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
     private static final String IMGUR_CLIENT_ID = "...";
 
     private static final OkHttpClient client = new OkHttpClient();
@@ -38,6 +41,20 @@ public class HTTP_Provider
     public HTTP_Provider()
     {
 
+
+    }
+
+    public static void post_json(String sub_url, JSONObject json, Callback callback)
+    {
+        RequestBody body = RequestBody.create(json.toString(),MEDIA_TYPE_JSON);
+        String url = BASE_URL+sub_url;
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(callback);
 
     }
 

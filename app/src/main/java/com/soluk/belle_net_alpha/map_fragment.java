@@ -19,6 +19,7 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,7 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.JsonObject;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
 import com.mapbox.android.core.location.LocationEngine;
@@ -68,8 +70,6 @@ import com.mapbox.navigation.core.MapboxNavigation;
 import com.mapbox.navigation.core.directions.session.RoutesRequestCallback;
 import com.mapbox.navigation.ui.route.NavigationMapRoute;
 import com.soluk.belle_net_alpha.event_data_maker.file_maker;
-import com.soluk.belle_net_alpha.http_requests.SimpleHttp;
-import com.soluk.belle_net_alpha.http_requests.SimpleHttpResponseHandler;
 import com.soluk.belle_net_alpha.model.event_db_vm;
 
 import org.jetbrains.annotations.NotNull;
@@ -80,6 +80,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -92,7 +93,11 @@ import java.util.Locale;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
+import static android.os.Looper.getMainLooper;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.eq;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.get;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.literal;
@@ -491,50 +496,101 @@ public class map_fragment extends Fragment implements
         params.put("user_type",String.valueOf(1));
         params.put("user_picture",USER_PIC);
 
-        for(int i=0;i<list_of_added_points.size();i++)
+        JSONObject json = new JSONObject();
+        try
         {
-            String longitude_x = "longitude_"+ i;
-            String latitude_x = "latitude_"+ i;
-            params.put(longitude_x,String.valueOf(list_of_added_points.get(i).longitude()));
-            params.put(latitude_x,String.valueOf(list_of_added_points.get(i).latitude()));
-        }
 
-        SimpleHttp.post(getString(R.string.register_event), params, new SimpleHttpResponseHandler()
+            json.put("user_name",USER_NAME);
+            json.put("user_family",USER_FAMILY);
+            json.put("user_id",USER_ID);
+            json.put("user_password",USER_PASSWORD);
+            json.put("num_points",String.valueOf(list_of_added_points.size()));
+            json.put("event_type",String.valueOf(event_type));
+            json.put("date_created",standard_date_format.format(current_date));
+            json.put("date_of_event",standard_date_format.format(current_date));
+            json.put("event_time",time_24_format.format(calendar_time_picker.getTime()));
+            json.put("user_type",String.valueOf(1));
+            json.put("user_picture",USER_PIC);
+
+
+            for(int i=0;i<list_of_added_points.size();i++)
+            {
+                String longitude_x = "longitude_"+ i;
+                String latitude_x = "latitude_"+ i;
+                params.put(longitude_x,String.valueOf(list_of_added_points.get(i).longitude()));
+                params.put(latitude_x,String.valueOf(list_of_added_points.get(i).latitude()));
+                json.put(longitude_x,String.valueOf(list_of_added_points.get(i).longitude()));
+                json.put(latitude_x,String.valueOf(list_of_added_points.get(i).latitude()));
+            }
+        }
+        catch (Exception e) {}
+
+        Callback callback = new Callback()
         {
             @Override
-            public void onResponse(int responseCode, String responseBody)
+            public void onFailure(@NotNull Call call, @NotNull IOException e)
             {
-                Log.d(TAG,"Post Test Code: "+responseCode);
-                Log.d(TAG,"Post Test Body: "+responseBody);
+
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException
+            {
+
+                Log.d(TAG,"Post Test Code: "+response.code());
+                Log.d(TAG,"Post Test Body: "+response.body().string());
                 db_model.refresh_db();
             }
-        });
+        };
+
+        HTTP_Provider.post_json("belle_net_users_info/user_register_new_event.php",json,callback);
 
     }
 
     /// Sends Join, Opt out and Remove commands
-    void send_join_command(Map<String, String> params, Feature feature)
+    //void send_join_command(Map<String, String> params, Feature feature, JSONObject json)
+    void send_join_command(Feature feature, JSONObject json)
     {
-        Log.d(TAG,"Send join: "+params.get("request"));
-        wait_on_loading_data(false);
-        SimpleHttp.post(getString(R.string.event_join_status), params, new SimpleHttpResponseHandler()
+        //Log.d(TAG,"Send join: "+params);
+        Log.d(TAG,"Send join JSON: "+json);
+        Callback callback = new Callback()
         {
             @Override
-            public void onResponse(int responseCode, String responseBody)
+            public void onFailure(@NotNull Call call, @NotNull IOException e)
             {
-                Log.d(TAG, "Post Body: "+responseBody);
-                number_of_selected_cards--;
-                ((main_activity)getActivity()).bottom_navigation_visibility(true);
-                bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
-                if(number_of_selected_cards==0)
-                    set_camera_position(0,null);
 
-
-                setFeatureSelectState(feature, false);
             }
-        });
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException
+            {
+
+                Log.d(TAG, "Post Body: "+response.body().string());
+                send_join_command_response(feature);
+
+            }
+        };
+        wait_on_loading_data(false);
+
+        HTTP_Provider.post_json("belle_net_users_info/send_join_event_status.php",json,callback);
         db_model.refresh_db();
         remove_points_routes();
+    }
+
+    void send_join_command_response(Feature feature)
+    {
+        number_of_selected_cards--;
+
+        Handler mainHandler = new Handler(getMainLooper());
+        Runnable myRunnable = () ->
+        {
+            setFeatureSelectState(feature, false);
+            if(number_of_selected_cards==0)
+                set_camera_position(0,null);
+            ((main_activity)getActivity()).bottom_navigation_visibility(true);
+            bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
+        };
+        mainHandler.post(myRunnable);
     }
 
     /// Opens bottom_sheet_add_event
@@ -787,34 +843,43 @@ public class map_fragment extends Fragment implements
                 SimpleDateFormat standard_date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
                 Log.d(TAG, "Button Pressed");
-                Map<String, String> params = new HashMap<>();
+                //Map<String, String> params = new HashMap<>();
+                JSONObject json = new JSONObject();
 
-                try {params.put("event_unique_id",info.get("event_id").toString());}
-                catch (JSONException e) { e.printStackTrace(); }
-                params.put("joined_user_id",USER_ID);
+                try
+                {   json.put("joined_user_id",USER_ID);
+                    json.put("event_unique_id",info.get("event_id").toString());}
+                catch (Exception e) {Log.d(TAG, "event_unique_id catch " + e);}
+
+
 
                 if(!user_owns_event)
                 {
                     if (join_status)
                     {
-                        params.put("request", "out");
-                        send_join_command(params, feature);
+                        //params.put("request", "out");
+                        try {json.put("request","out");}
+                        catch (Exception ignored) {}
                     }
                     else
                     {
-                        params.put("request", "join");
-                        params.put("user_date_of_join", standard_date_format.format(current_date));
-                        send_join_command(params,feature);
+
+                        try {
+                            json.put("request","join");
+                            json.put("user_date_of_join",standard_date_format.format(current_date));}
+                        catch (Exception ignored) {}
                     }
+                    send_join_command(feature,json);
                 }
                 else
                 {
-                    params.put("request", "remove");
+                    try {json.put("request","remove");}
+                    catch (Exception ignored) {}
                     AlertDialog.Builder alert_dialog_bl = new AlertDialog.Builder(getActivity());
                     alert_dialog_bl.setMessage("Do you really want to remove this event?")
                             .setCancelable(true)
                             .setPositiveButton("YES", new DialogInterface.OnClickListener()
-                            {public void onClick(DialogInterface dialog, int id) {send_join_command(params, feature);}})
+                            {public void onClick(DialogInterface dialog, int id) {send_join_command(feature,json);}})
                             .setNegativeButton("CANCEL",new DialogInterface.OnClickListener()
                             {public void onClick(DialogInterface dialog, int id) {dialog.cancel();}});
 
@@ -914,7 +979,7 @@ public class map_fragment extends Fragment implements
         //Log.d(TAG,"Fragment Called");
 
 
-        new LoadGeoJsonDataTask(map_fragment.this).execute();
+        new Load_GeoJson_Data_Task(map_fragment.this).execute();
         mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded()
         {
             @Override
@@ -1323,12 +1388,12 @@ public class map_fragment extends Fragment implements
     }
 
 
-    private static class LoadGeoJsonDataTask extends AsyncTask<Void, Void, FeatureCollection>
+    private static class Load_GeoJson_Data_Task extends AsyncTask<Void, Void, FeatureCollection>
     {
 
         private final WeakReference<map_fragment> activityRef;
 
-        LoadGeoJsonDataTask(map_fragment activity)
+        Load_GeoJson_Data_Task(map_fragment activity)
         {
             this.activityRef = new WeakReference<>(activity);
             Log.v(TAG,"LoadGeoJsonDataTask: constructor");
@@ -1375,9 +1440,9 @@ public class map_fragment extends Fragment implements
             }
 
             activity.setUpData(featureCollection);
-            map_fragment.GenerateViewIconTask generateViewIconTask=null;
+            Generate_View_Icon_Task generateViewIconTask=null;
             Log.v(TAG,"LoadGeoJsonDataTask: onPostExecute");
-            new GenerateViewIconTask(activity).execute(featureCollection);
+            new Generate_View_Icon_Task(activity).execute(featureCollection);
 
         }
 
@@ -1401,7 +1466,7 @@ public class map_fragment extends Fragment implements
      * Generating Views on background thread since we are not going to be adding them to the view hierarchy.
      * </p>
      */
-    private static class GenerateViewIconTask extends AsyncTask<FeatureCollection, Void, HashMap<String, Bitmap>>
+    private static class Generate_View_Icon_Task extends AsyncTask<FeatureCollection, Void, HashMap<String, Bitmap>>
     {
 
         private final HashMap<String, View> viewMap = new HashMap<>();
@@ -1411,7 +1476,7 @@ public class map_fragment extends Fragment implements
         private final Context context;
         private boolean is_user_joined;
 
-        GenerateViewIconTask(map_fragment activity, boolean refreshSource)
+        Generate_View_Icon_Task(map_fragment activity, boolean refreshSource)
         {
             this.activityRef = new WeakReference<>(activity);
             this.refreshSource = refreshSource;
@@ -1419,7 +1484,7 @@ public class map_fragment extends Fragment implements
             Log.v(TAG,"GenerateViewIconTask: Constructor_1");
         }
 
-        GenerateViewIconTask(map_fragment activity)
+        Generate_View_Icon_Task(map_fragment activity)
         {
             this(activity, false);
             Log.v(TAG,"GenerateViewIconTask: Constructor_2");

@@ -30,6 +30,7 @@ import com.yalantis.ucrop.UCrop;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import java.util.List;
@@ -55,6 +56,7 @@ public class main_activity extends AppCompatActivity implements
     private BottomNavigationView bottom_navigation_view;
 
     private Bitmap image_profile_bitmap;
+    private event_db_vm model_db;
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -63,9 +65,7 @@ public class main_activity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_main);
-        HTTP_Provider.get_file_dir(this.getFilesDir());
-
-
+        //HTTP_Provider.get_file_dir(this.getFilesDir());
 
         map_fragment_instance = new map_fragment();
         event_list_parent_holder = new event_list_fragment_parent();
@@ -88,7 +88,7 @@ public class main_activity extends AppCompatActivity implements
         String file_directory = main_activity.this.getFilesDir().toString();
         ContextWrapper context_wrapper = new ContextWrapper(getApplicationContext());
         File image_directory = context_wrapper.getDir("Profile_Pictures", Context.MODE_PRIVATE);
-        event_db_vm model_db = new ViewModelProvider(this).get(event_db_vm.class);
+        model_db = new ViewModelProvider(this).get(event_db_vm.class);
         model_db.set_db_handler(this::update_map_fragment);
         model_db.init_db(file_directory,image_directory);
 
@@ -128,10 +128,6 @@ public class main_activity extends AppCompatActivity implements
            }
             return true;
         });
-
-
-
-
 
     }
 

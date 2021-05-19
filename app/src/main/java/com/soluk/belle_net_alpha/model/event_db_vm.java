@@ -8,40 +8,48 @@ import android.util.Log;
 
 import androidx.lifecycle.ViewModel;
 
+import com.soluk.belle_net_alpha.HTTP_Provider;
 import com.soluk.belle_net_alpha.event_data_maker.file_maker;
 import com.soluk.belle_net_alpha.event_data_maker.geo_JSON_maker;
-import com.soluk.belle_net_alpha.http_requests.SimpleHttp;
+import com.soluk.belle_net_alpha.main_activity;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+
+import static android.os.Looper.getMainLooper;
 
 public class event_db_vm extends ViewModel
 {
 
-    private static final String TAG = event_db_vm.class.getSimpleName();
+    private static final String TAG = main_activity.class.getSimpleName();
     private static final String URL = "https://soluk.org/belle_net_users_info/depict_database.php";
-    private static final String profile_pic_url = "https://soluk.org/belle_net_users_info/profile_pictures/%23";
+    private static final String REQUEST_DB_SURL = "belle_net_users_info/depict_database.php";
+    public static final String profile_pic_url = "https://soluk.org/belle_net_users_info/profile_pictures/%23";
     private static final String USER_ID = "#ahdx98!s5kjxsp";
     private boolean is_initiated = false;
     private boolean is_process_finished = false;
     private String db_file_directory;
-    private File image_file_directory;
+    public File image_file_directory;
     private static File image_file_directory_static;
     public static String file_directory_static = "";
     private static final String FILE_NAME = "geo_json_bellenet";
     protected db_update_handler db_handler;
+    protected DB_Image_Callback db_image_callback;
 
-    private int num_until_updating;
-    private boolean is_data_received;
-    private boolean is_callback_called;
+    public int num_until_updating;
+    public boolean is_data_received;
+    public boolean is_callback_called;
 
 
     public void init_db(String db_file_directory,File image_file_directory)
@@ -64,6 +72,32 @@ public class event_db_vm extends ViewModel
     public void refresh_db()
     {
 
+        Callback callback = new Callback()
+        {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e)
+            {
+
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException
+            {
+                call(response);
+
+            }
+        };
+
+        //String json = "{\"user_id\":\"#ahdx98!s5kjxsp\"}";
+        try
+        {
+            JSONObject json = new JSONObject();
+            json.put("user_id",USER_ID);
+            HTTP_Provider.post_json(REQUEST_DB_SURL,json,callback);
+        }
+        catch (Exception e){};
+
+        /*
         Map<String, String> params = new HashMap<>();
         params.put("user_id", USER_ID);
 
@@ -112,6 +146,58 @@ public class event_db_vm extends ViewModel
             }
         });
 
+         */
+
+    }
+
+    private void call(Response response)
+    {
+        try
+        {
+            String response_body = response.body().string();
+            Log.d(TAG, "Post Code: " + response.code());
+            Log.d(TAG, "Post Body: " + response_body );
+
+            if (response.code() != 200)
+                return;
+            Log.d(TAG, "Response: OK");
+            JSONArray received_events = new JSONArray(response_body);
+            is_initiated = true;
+            is_data_received = false;
+            is_callback_called = false;
+            add_received_events(received_events);
+
+
+            // TODO: Finding the problem with unusual unsuccessful image loading
+            new Handler(Looper.getMainLooper()).postDelayed(()->
+            {
+                Log.d(TAG, "Requesting Data Once Again: ");
+                if(!is_data_received)
+                {
+                    Log.d(TAG, "Requesting Data Once Again: Requested");
+                    add_received_events(received_events);
+                }
+                else
+                {
+
+                    if(!is_callback_called)
+                    {
+                        Log.d(TAG, "CallBack Called");
+                        is_callback_called = true;
+                        db_handler.on_db_updated();
+                    }
+                }
+            },5000);
+
+
+
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG, "on Post Response: " + e.getMessage());
+        }
+
+
     }
 
     private void add_received_events(JSONArray received_events)
@@ -121,13 +207,16 @@ public class event_db_vm extends ViewModel
         file_directory_static = db_file_directory;
         geo_JSON_maker feature_maker = new geo_JSON_maker();
         num_until_updating = received_events.length();
+        Log.d(TAG,"received_events.length: "+received_events.length());
         for (int i=0;i<received_events.length();i++)
         {
             try
             {
                 JSONObject event = new JSONObject(received_events.get(i).toString());
+
                 catch_profile_images(event.get("user_picture").toString().substring(1));
-                Log.d(TAG,"profile prefix: "+event.get("user_picture").toString().substring(1));
+                //db_image_callback.on_db_callback(event.get("user_picture").toString().substring(1));
+                //Log.d(TAG,"profile prefix: "+event.get("user_picture").toString().substring(1));
                 feature_maker.add_feature(event);
 
             }
@@ -135,6 +224,8 @@ public class event_db_vm extends ViewModel
             {
                 Log.d(TAG,"data received: "+e.getMessage());
             }
+            Log.d(TAG,"db_image_callback: ");
+            //db_image_callback.on_db_callback("123");
 
         }
 
@@ -197,7 +288,12 @@ public class event_db_vm extends ViewModel
         String path = profile_pic_url + postfix+ ".jpg";
         Log.d(TAG,"profile path: "+path);
 
-        Picasso.get().load(path).into(target);
+        /// Accessing Main UI Thread
+        Handler mainHandler = new Handler(getMainLooper());
+        Runnable myRunnable = () -> Picasso.get().load(path).into(target);
+        mainHandler.post(myRunnable);
+
+        //Picasso.get().load(path).into(target);
 
         Log.d(TAG,"catch_profile_images: Exited");
     }
@@ -242,6 +338,11 @@ public class event_db_vm extends ViewModel
     public void set_db_handler(db_update_handler db_handler)
     {
         this.db_handler = db_handler;
+    }
+
+    public void set_catch_images_callback(DB_Image_Callback db_image_callback)
+    {
+        this.db_image_callback = db_image_callback;
     }
 
 }

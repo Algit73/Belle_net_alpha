@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -26,24 +27,34 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.soluk.belle_net_alpha.HTTP_Provider;
 import com.soluk.belle_net_alpha.R;
 import com.soluk.belle_net_alpha.event_data_maker.file_maker;
 import com.soluk.belle_net_alpha.http_requests.SimpleHttp;
 import com.soluk.belle_net_alpha.main_activity;
 import com.soluk.belle_net_alpha.map_fragment;
+import com.squareup.picasso.Picasso;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+
+import static android.os.Looper.getMainLooper;
 
 public class Login_Activity extends AppCompatActivity
 {
 
     private LoginViewModel loginViewModel;
     private static final String TAG = Login_Activity.class.getSimpleName();
-    private static final String URL = "https://soluk.org/belle_net_users_info/user_login_check.php";
+    private static final String LOGIN_SUBURL = "belle_net_users_info/user_login_check.php";
     private final String user_credentials = "cred";
     private final String USER_EMAIL = "user_email";
     private final String USER_NAME = "user_name";
@@ -74,6 +85,9 @@ public class Login_Activity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        HTTP_Provider.get_file_dir(this.getFilesDir());
+
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
@@ -126,7 +140,6 @@ public class Login_Activity extends AppCompatActivity
         }
         catch (JSONException e) {e.printStackTrace();}
 
-
         ///
         user_name_et = findViewById(R.id.user_name_su_et);
         user_family_et = findViewById(R.id.user_family_su_et);
@@ -136,8 +149,6 @@ public class Login_Activity extends AppCompatActivity
         EditText user_pass_confirm_et = findViewById(R.id.user_password_confirm_su);
         register_user_btn.setOnClickListener(v->
         {
-            //Log.d(TAG,"name: "+user_name_et.getText());
-            //Log.d(TAG,"family: "+user_family_et.getText());
 
             if(user_name_et.getText().toString().matches(""))
             {
@@ -175,9 +186,6 @@ public class Login_Activity extends AppCompatActivity
             try { send_user_register_request();}
             catch (JSONException e) {e.printStackTrace();}
 
-
-
-
         });
 
         TextView sign_up_tv = findViewById(R.id.sign_up_tv);
@@ -195,121 +203,112 @@ public class Login_Activity extends AppCompatActivity
             card_view_sign_up.setVisibility(View.VISIBLE);
         });
 
-
-
-
     }
 
     void send_user_creds()
     {
-
-
         loading_screen_1.setVisibility(View.VISIBLE);
         loading_screen_2.setVisibility(View.VISIBLE);
         loading_wheel.setVisibility(View.VISIBLE);
 
-        Map<String, String> params = new HashMap<>();
         user_creds = credentials_file.read_json();
         Log.d("Login_Activity","user_creds: "+user_creds);
+
+        Callback callback = new Callback()
+        {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e)
+            {
+                Log.d("Login_Activity_login","onFailure "+ e);
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException
+            {
+                String response_body = response.body().string();
+                Log.d("Login_Activity","response_body: "+response_body);
+
+                /// Accessing Main UI Thread
+                Handler mainHandler = new Handler(getMainLooper());
+                Runnable myRunnable = () -> loading_ui_handling(response_body);
+                mainHandler.post(myRunnable);
+
+                if(response_body.equals("Granted"))
+                {
+                    Intent home = new Intent(Login_Activity.this,
+                            main_activity.class);
+                    startActivity(home);
+                    Login_Activity.this.finish();
+                }
+                else
+                    Toast.makeText(Login_Activity.this,"User or Pass is wrong",Toast.LENGTH_LONG).show();
+
+            }
+        };
+
+        JSONObject json = new JSONObject();
         try
         {
-
-            params.put(USER_REQUEST, SIGN_IN_REQUEST);
-            params.put(USER_PASS, user_creds.get(USER_PASS).toString());
-            params.put(USER_EMAIL, user_creds.get(USER_EMAIL).toString());
-
+            json.put(USER_REQUEST, SIGN_IN_REQUEST);
+            json.put(USER_PASS, user_creds.get(USER_PASS).toString());
+            json.put(USER_EMAIL, user_creds.get(USER_EMAIL).toString());
         }
         catch (JSONException e) {e.printStackTrace();}
+        HTTP_Provider.post_json(LOGIN_SUBURL,json,callback);
 
-        SimpleHttp.post(URL, params, (result_code, response_body) ->
-        {
-            Log.d("Login_Activity","response_body: "+response_body);
-            loading_screen_1.setVisibility(View.GONE);
-            loading_screen_2.setVisibility(View.GONE);
-            loading_wheel.setVisibility(View.GONE);
-            if(response_body.equals("Granted"))
-            {
-                Intent home = new Intent(Login_Activity.this,
-                        main_activity.class);
-                startActivity(home);
-                Login_Activity.this.finish();
-            }
-            else
-                Toast.makeText(this,"User or Pass is wrong",Toast.LENGTH_LONG).show();
-
-
-        });
     }
 
     void send_user_register_request() throws JSONException
     {
 
-        //
+        JSONObject json = new JSONObject();
+        json.put(USER_REQUEST,SIGN_UP_REQUEST);
+        json.put(USER_NAME,user_name_et.getText().toString());
+        json.put(USER_FAMILY,user_family_et.getText().toString());
+        json.put(USER_EMAIL,user_email_et.getText().toString());
+        json.put(USER_PASS, user_pass_et.getText().toString());
+        Log.d("Login_Activity","json "+json);
 
-        JSONObject user_infos = new JSONObject();
-        user_infos.put(USER_NAME,user_name_et.getText().toString());
-        user_infos.put(USER_FAMILY,user_family_et.getText().toString());
-        user_infos.put(USER_EMAIL,user_email_et.getText().toString());
-        user_infos.put(USER_PASS,user_pass_et.getText().toString());
-        //credentials_file.write_json();
-        loading_screen_1.setVisibility(View.VISIBLE);
-        loading_screen_3.setVisibility(View.VISIBLE);
-        loading_wheel.setVisibility(View.VISIBLE);
-
-        Map<String, String> params = new HashMap<>();
-
-        //Log.d("Login_Activity","user_creds: "+user_creds);
-
-        params.put(USER_REQUEST, SIGN_UP_REQUEST);
-
-        params.put(USER_PASS, user_pass_et.getText().toString());
-        params.put(USER_EMAIL, user_email_et.getText().toString());
-        params.put(USER_NAME, user_name_et.getText().toString());
-        params.put(USER_FAMILY, user_family_et.getText().toString());
-
-
-
-        Log.d("Login_Activity","params "+params);
-
-
-        SimpleHttp.post(URL, params, (result_code, response_body) ->
+        Callback callback = new Callback()
         {
-            Log.d("Login_Activity","response_body: "+response_body);
-            loading_screen_1.setVisibility(View.GONE);
-            loading_screen_3.setVisibility(View.GONE);
-            loading_wheel.setVisibility(View.GONE);
-
-            if(response_body.equals("Granted"))
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e)
             {
-                card_view_sign_up.setVisibility(View.GONE);
-                card_view_sign_in.setVisibility(View.VISIBLE);
+                Log.d("Login_Activity_register","onFailure "+ e);
             }
 
-            else if(response_body.equals("EX"))
-                Toast.makeText(getApplication(), "Email Exists", Toast.LENGTH_LONG).show();
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException
+            {
+                String response_body = response.body().string();
+                Log.d("Login_Activity","response_body: "+response_body);
+                Handler mainHandler = new Handler(getMainLooper());
+                Runnable myRunnable = () -> loading_ui_handling(response_body);
+                mainHandler.post(myRunnable);
 
+                if(response_body.equals("EX"))
+                    Toast.makeText(getApplication(), "Email Exists", Toast.LENGTH_LONG).show();
 
+            }
+        };
 
-
-
-        });
-
-
-
-
+        HTTP_Provider.post_json(LOGIN_SUBURL,json,callback);
 
 
     }
-
-    private void updateUiWithUser(LoggedInUserView model)
+    private void loading_ui_handling(String response)
     {
-        String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // TODO : initiate successful logged in experience
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+        loading_screen_1.setVisibility(View.GONE);
+        loading_screen_2.setVisibility(View.GONE);
+        loading_screen_3.setVisibility(View.GONE);
+        loading_wheel.setVisibility(View.GONE);
+
+        if(response.equals("Granted"))
+        {
+            card_view_sign_up.setVisibility(View.GONE);
+            card_view_sign_in.setVisibility(View.VISIBLE);
+        }
+
     }
 
-    private void showLoginFailed(@StringRes Integer errorString)
-    {
-        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
-    }
 }
