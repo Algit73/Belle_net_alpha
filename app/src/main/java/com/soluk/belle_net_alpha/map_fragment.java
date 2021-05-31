@@ -122,11 +122,15 @@ public class map_fragment extends Fragment implements
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private static final String MARKER_LAYER_ID = "MARKER_LAYER_ID";
+    private static final String MARKER_LAYER_ID_RED = "MARKER_LAYER_ID_RED";
+    private static final String MARKER_LAYER_ID_BLUE = "MARKER_LAYER_ID_BLUE";
     private static final String PROPERTY_SELECTED = "selected";
-    private static final String GEOJSON_SOURCE_ID = "GEOJSON_SOURCE_ID";
-    private static final String MARKER_IMAGE_ID = "MARKER_IMAGE_ID";
-    private static final String CALLOUT_LAYER_ID = "CALLOUT_LAYER_ID";
+    private static final String GEOJSON_SOURCE_ID_RED = "GEOJSON_SOURCE_ID_RED";
+    private static final String GEOJSON_SOURCE_ID_BLUE = "GEOJSON_SOURCE_ID_BLUE";
+    private static final String MARKER_IMAGE_ID_RED = "MARKER_IMAGE_ID_RED";
+    private static final String MARKER_IMAGE_ID_BLUE = "MARKER_IMAGE_ID_BLUE";
+    private static final String CALLOUT_LAYER_ID_RED = "CALLOUT_LAYER_ID_RED";
+    private static final String CALLOUT_LAYER_ID_BLUE = "CALLOUT_LAYER_ID_BLUE";
 
     private static final String PROPERTY_NAME = "name";
     private static final String PROPERTY_DATE_CREATED = "date_created";
@@ -153,6 +157,8 @@ public class map_fragment extends Fragment implements
     private String  last_event_selected;
     private boolean join_status = false;
     private GeoJsonSource source;
+    private GeoJsonSource source_red;
+    private GeoJsonSource source_blue;
     private event_db_vm db_model;
 
     Button join_btn;
@@ -979,7 +985,7 @@ public class map_fragment extends Fragment implements
         //Log.d(TAG,"Fragment Called");
 
 
-        new Load_GeoJson_Data_Task(map_fragment.this).execute();
+        new Load_GeoJson_Data_Task(map_fragment.this,0).execute();
         mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded()
         {
             @Override
@@ -1176,7 +1182,10 @@ public class map_fragment extends Fragment implements
 
     private boolean handleClickIcon(PointF screenPoint)
     {
-        List<Feature> features = mapboxMap.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID);
+        List<Feature> features = new ArrayList<>();
+        //List<Feature> features = mapboxMap.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID_RED);
+        features.addAll(mapboxMap.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID_RED));
+        features.addAll(mapboxMap.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID_BLUE));
         if (!features.isEmpty())
         {
             String event_id = features.get(0).getStringProperty(PROPERTY_EVENT_ID);
@@ -1184,6 +1193,7 @@ public class map_fragment extends Fragment implements
             List<Feature> featureList = featureCollection.features();
             if (featureList != null)
             {
+
                 Log.v(TAG,"Feature Size: "+featureList.size());
                 for (int i = 0; i < featureList.size(); i++)
                 {
@@ -1191,6 +1201,7 @@ public class map_fragment extends Fragment implements
                     {
                         Log.v(TAG,"featureList.get(i): "+featureList.get(i));
                         Log.d(TAG,"number_of_selected_cards: "+number_of_selected_cards);
+
 
                         if (featureSelectStatus(i))
                         {
@@ -1218,6 +1229,7 @@ public class map_fragment extends Fragment implements
                         }
                         else
                         {
+
                             last_event_selected = featureList.get(i).getStringProperty(PROPERTY_EVENT_ID);
                             number_of_selected_cards++;
                             if(number_of_selected_cards>0)
@@ -1238,10 +1250,17 @@ public class map_fragment extends Fragment implements
                                 }
 
                             }
+
+
                             setSelected(i);
+
+
                         }
+
                     }
                 }
+
+
             }
             return true;
         }
@@ -1284,10 +1303,82 @@ public class map_fragment extends Fragment implements
      */
     private void refreshSource()
     {
-        if (source != null && featureCollection != null)
+
+        /*
+        if (source_red != null && featureCollection != null)
         {
-            source.setGeoJson(featureCollection);
+            source_red.setGeoJson(featureCollection);
         }
+
+         */
+
+
+        Log.d(TAG, "refreshSource(): Called");
+
+
+        if(featureCollection != null)
+        {
+            //source_red.setGeoJson(featureCollection);
+
+
+            FeatureCollection feature_collection_ensemble;
+            FeatureCollection feature_collection_others;
+            List<Feature> features_ensemble = new ArrayList<>();
+            List<Feature> features_others = new ArrayList<>();
+
+
+            for (Feature singleFeature : featureCollection.features())
+            {
+
+
+                //singleFeature.addBooleanProperty(PROPERTY_SELECTED, false);
+                //feature_collection_ensemble.features() = FeatureCollection.fromFeature(singleFeature)
+                Log.d(TAG, "singleFeature.properties(): " + singleFeature.properties().get("event_type").toString());
+                if (singleFeature.properties().get("event_type").toString().equals("\"0\""))
+                {
+                    //feature_collection_ensemble.features().add(singleFeature);
+                    Log.d(TAG, "event_type = 0");
+                    features_ensemble.add(singleFeature);
+                }
+                else
+                {
+                    //feature_collection_others.features().add(singleFeature);
+                    Log.d(TAG, "event_type = 1");
+                    features_others.add(singleFeature);
+                }
+                Log.d(TAG, "Sing_Feature: " + singleFeature.properties());
+                Log.d(TAG, "PROPERTY_SELECTED, False");
+
+
+            }
+
+
+            if (source_red != null && (features_ensemble.size() != 0))
+            {
+                Log.d(TAG, "source_red, called");
+                feature_collection_ensemble = FeatureCollection.fromFeatures(features_ensemble);
+                //activity.setUpData(feature_collection_ensemble, 0);
+                source_red.setGeoJson(feature_collection_ensemble);
+                //source_red.setGeoJson(featureCollection);
+            }
+
+
+
+
+            if (source_blue != null && (features_others.size() != 0))
+            {
+                Log.d(TAG, "source_blue, called");
+                feature_collection_others = FeatureCollection.fromFeatures(features_others);
+                source_blue.setGeoJson(feature_collection_others);
+
+            }
+
+
+        }
+
+
+
+
     }
 
     /**
@@ -1295,55 +1386,104 @@ public class map_fragment extends Fragment implements
      *
      * @param collection the FeatureCollection to set equal to the globally-declared FeatureCollection
      */
-    public void setUpData(final FeatureCollection collection)
+    public void setUpData(final FeatureCollection collection, int type)
     {
-        featureCollection = collection;
+        //featureCollection = collection;
+
         if (mapboxMap != null)
         {
-            mapboxMap.getStyle(style ->
+            Log.d(TAG,"setUpData: mapboxMap != null");
+            if(type==EVENT_TYPE_ENSEMBLE)
             {
-                style.removeSource(GEOJSON_SOURCE_ID);
-                style.removeLayer(GEOJSON_SOURCE_ID);
-                setupSource(style);
-                setUpImage(style);
-                setUpMarkerLayer(style);
-                setUpInfoWindowLayer(style);
-            });
-
+                Log.d(TAG,"setUpData: EVENT_TYPE_ENSEMBLE");
+                mapboxMap.getStyle(style ->
+                {
+                    style.removeSource(GEOJSON_SOURCE_ID_RED);
+                    style.removeLayer(GEOJSON_SOURCE_ID_RED);
+                    setupSource(style, collection, type);
+                    setUpImage(style, type);
+                    setUpMarkerLayer(style, type);
+                    setUpInfoWindowLayer(style, type);
+                });
+            }
+            else
+            {
+                Log.d(TAG,"setUpData: Others");
+                mapboxMap.getStyle(style ->
+                {
+                    style.removeSource(GEOJSON_SOURCE_ID_BLUE);
+                    style.removeLayer(GEOJSON_SOURCE_ID_BLUE);
+                    setupSource(style, collection, type);
+                    setUpImage(style, type);
+                    setUpMarkerLayer(style, type);
+                    setUpInfoWindowLayer(style, type);
+                });
+            }
         }
+
+    }
+    public void set_feature_collection(final FeatureCollection collection)
+    {
+        featureCollection = collection;
     }
 
     /**
      * Adds the GeoJSON source to the map
      */
-    private void setupSource(@NonNull Style loadedStyle)
+    private void setupSource(@NonNull Style loadedStyle,final FeatureCollection collection, int type)
     {
         Log.v(TAG,"source was not null");
-        source = new GeoJsonSource(GEOJSON_SOURCE_ID, featureCollection);
-        loadedStyle.addSource(source);
+        if(type==EVENT_TYPE_ENSEMBLE)
+        {
+            //source = new GeoJsonSource(GEOJSON_SOURCE_ID_RED, collection);
+            source_red = new GeoJsonSource(GEOJSON_SOURCE_ID_RED, collection);
+            loadedStyle.addSource(source_red);
+        }
+        else
+        {
+            source = new GeoJsonSource(GEOJSON_SOURCE_ID_BLUE, collection);
+            source_blue = new GeoJsonSource(GEOJSON_SOURCE_ID_BLUE, collection);
+            loadedStyle.addSource(source_blue);
+            //loadedStyle.addSource(source);
+        }
+        //loadedStyle.addSource(source);
 
     }
 
     /**
      * Adds the marker image to the map for use as a SymbolLayer icon
      */
-    private void setUpImage(@NonNull Style loadedStyle)
+    private void setUpImage(@NonNull Style loadedStyle, int type)
     {
-        loadedStyle.addImage(MARKER_IMAGE_ID, BitmapFactory.decodeResource(
-                this.getResources(), R.drawable.red_marker));
+        Log.d(TAG,"setUpImage called");
+        if(type==EVENT_TYPE_ENSEMBLE)
+            loadedStyle.addImage(MARKER_IMAGE_ID_RED, BitmapFactory.decodeResource(
+                    this.getResources(), R.drawable.red_marker));
+        else
+            loadedStyle.addImage(MARKER_IMAGE_ID_BLUE, BitmapFactory.decodeResource(
+                    this.getResources(), R.drawable.blue_marker));
     }
 
     /**
      * Setup a layer with maki icons, eg. west coast city.
      */
-    private void setUpMarkerLayer(@NonNull Style loadedStyle)
+    private void setUpMarkerLayer(@NonNull Style loadedStyle, int type)
     {
-        loadedStyle.addLayer(new SymbolLayer(MARKER_LAYER_ID, GEOJSON_SOURCE_ID)
-                .withProperties(
-                        iconImage(MARKER_IMAGE_ID),
-                        iconAllowOverlap(true),
-                        iconOffset(new Float[] {0f, -8f})
-                ));
+        if(type==EVENT_TYPE_ENSEMBLE)
+            loadedStyle.addLayer(new SymbolLayer(MARKER_LAYER_ID_RED, GEOJSON_SOURCE_ID_RED)
+                    .withProperties(
+                            iconImage(MARKER_IMAGE_ID_RED),
+                            iconAllowOverlap(true),
+                            iconOffset(new Float[] {0f, -8f})
+                    ));
+        else
+            loadedStyle.addLayer(new SymbolLayer(MARKER_LAYER_ID_BLUE, GEOJSON_SOURCE_ID_BLUE)
+                    .withProperties(
+                            iconImage(MARKER_IMAGE_ID_BLUE),
+                            iconAllowOverlap(true),
+                            iconOffset(new Float[] {0f, -8f})
+                    ));
+
     }
 
     /**
@@ -1367,24 +1507,42 @@ public class map_fragment extends Fragment implements
      * name of the feature is used as key for the iconImage
      * </p>
      */
-    private void setUpInfoWindowLayer(@NonNull Style loadedStyle)
+    private void setUpInfoWindowLayer(@NonNull Style loadedStyle, int type)
     {
-        loadedStyle.addLayer(new SymbolLayer(CALLOUT_LAYER_ID, GEOJSON_SOURCE_ID)
-                .withProperties(
-                        /* show image with id title based on the value of the name feature property */
-                        iconImage("{name}"),
+        if(type==EVENT_TYPE_ENSEMBLE)
+            loadedStyle.addLayer(new SymbolLayer(CALLOUT_LAYER_ID_RED, GEOJSON_SOURCE_ID_RED)
+                    .withProperties(
+                            /* show image with id title based on the value of the name feature property */
+                            iconImage("{name}"),
 
-                        /* set anchor of icon to bottom-left */
-                        iconAnchor(ICON_ANCHOR_BOTTOM),
+                            /* set anchor of icon to bottom-left */
+                            iconAnchor(ICON_ANCHOR_BOTTOM),
 
-                        /* all info window and marker image to appear at the same time*/
-                        iconAllowOverlap(true),
+                            /* all info window and marker image to appear at the same time*/
+                            iconAllowOverlap(true),
 
-                        /* offset the info window to be above the marker */
-                        iconOffset(new Float[] {-2f, -28f})
-                )
-                /* add a filter to show only when selected feature property is true */
-                .withFilter(eq((get(PROPERTY_SELECTED)), literal(true))));
+                            /* offset the info window to be above the marker */
+                            iconOffset(new Float[] {-2f, -28f})
+                    )
+                    /* add a filter to show only when selected feature property is true */
+                    .withFilter(eq((get(PROPERTY_SELECTED)), literal(true))));
+        else
+            loadedStyle.addLayer(new SymbolLayer(CALLOUT_LAYER_ID_BLUE, GEOJSON_SOURCE_ID_BLUE)
+                    .withProperties(
+                            /* show image with id title based on the value of the name feature property */
+                            iconImage("{name}"),
+
+                            /* set anchor of icon to bottom-left */
+                            iconAnchor(ICON_ANCHOR_BOTTOM),
+
+                            /* all info window and marker image to appear at the same time*/
+                            iconAllowOverlap(true),
+
+                            /* offset the info window to be above the marker */
+                            iconOffset(new Float[] {-2f, -28f})
+                    )
+                    /* add a filter to show only when selected feature property is true */
+                    .withFilter(eq((get(PROPERTY_SELECTED)), literal(true))));
     }
 
 
@@ -1393,7 +1551,7 @@ public class map_fragment extends Fragment implements
 
         private final WeakReference<map_fragment> activityRef;
 
-        Load_GeoJson_Data_Task(map_fragment activity)
+        Load_GeoJson_Data_Task(map_fragment activity, int type)
         {
             this.activityRef = new WeakReference<>(activity);
             Log.v(TAG,"LoadGeoJsonDataTask: constructor");
@@ -1413,7 +1571,7 @@ public class map_fragment extends Fragment implements
             Log.v(TAG,"Feature Collection Returned");
 
             file_maker geo_json_holder = new file_maker(file_directory_static,FILE_NAME);
-            geo_json_holder.read_json();
+            //geo_json_holder.read_json();
 
             Log.v(TAG,"LoadGeoJsonDataTask: doInBackground");
             return FeatureCollection.fromJson(geo_json_holder.read_json().toString());
@@ -1433,13 +1591,50 @@ public class map_fragment extends Fragment implements
             // This example runs on the premise that each GeoJSON Feature has a "selected" property,
             // with a boolean value. If your data's Features don't have this boolean property,
             // add it to the FeatureCollection 's features with the following code:
+
+            FeatureCollection feature_collection_ensemble = null;
+            FeatureCollection feature_collection_others = null;
+            List<Feature> features_ensemble= new ArrayList<>();
+            List<Feature> features_others= new ArrayList<>();
+
             for (Feature singleFeature : featureCollection.features())
             {
+
                 singleFeature.addBooleanProperty(PROPERTY_SELECTED, false);
+                //feature_collection_ensemble.features() = FeatureCollection.fromFeature(singleFeature)
+                Log.d(TAG,"singleFeature.properties(): "+singleFeature.properties().get("event_type").toString());
+                if(singleFeature.properties().get("event_type").toString().equals("\"0\""))
+                {
+                    //feature_collection_ensemble.features().add(singleFeature);
+                    Log.d(TAG,"event_type = 0");
+                    features_ensemble.add(singleFeature);
+                }
+                else
+                {
+                    //feature_collection_others.features().add(singleFeature);
+                    Log.d(TAG,"event_type = 1");
+                    features_others.add(singleFeature);
+                }
+                Log.v(TAG,"Sing_Feature: "+singleFeature.properties());
                 Log.v(TAG,"PROPERTY_SELECTED, False");
             }
+            activity.set_feature_collection(featureCollection);
+            if(features_ensemble.size()!=0)
+            {
+                feature_collection_ensemble = FeatureCollection.fromFeatures(features_ensemble);
+                activity.setUpData(feature_collection_ensemble, 0);
+            }
 
-            activity.setUpData(featureCollection);
+            if(features_others.size()!=0)
+            {
+                feature_collection_others = FeatureCollection.fromFeatures(features_others);
+                activity.setUpData(feature_collection_others, 1);
+            }
+
+
+
+            //activity.setUpData(featureCollection,0);
+
             Generate_View_Icon_Task generateViewIconTask=null;
             Log.v(TAG,"LoadGeoJsonDataTask: onPostExecute");
             new Generate_View_Icon_Task(activity).execute(featureCollection);
@@ -1612,10 +1807,13 @@ public class map_fragment extends Fragment implements
             if (activity != null && bitmapHashMap != null)
             {
                 activity.setImageGenResults(bitmapHashMap);
+                /*
                 if (refreshSource)
                 {
                     activity.refreshSource();
                 }
+
+                 */
             }
             Log.v(TAG,"GenerateViewIconTask: onPostExecute");
             //Toast.makeText(activity, R.string.tap_on_marker_instruction, Toast.LENGTH_SHORT).show();
