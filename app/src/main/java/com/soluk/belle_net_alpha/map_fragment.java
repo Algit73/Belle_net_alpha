@@ -122,15 +122,15 @@ public class map_fragment extends Fragment implements
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private static final String MARKER_LAYER_ID_RED = "MARKER_LAYER_ID_RED";
-    private static final String MARKER_LAYER_ID_BLUE = "MARKER_LAYER_ID_BLUE";
+    private static final String MARKER_LAYER_ID_ENSEMBLE = "MARKER_LAYER_ID_ENSEMBLE";
+    private static final String MARKER_LAYER_ID_CHALLENGE = "MARKER_LAYER_ID_CHALLENGE";
     private static final String PROPERTY_SELECTED = "selected";
-    private static final String GEOJSON_SOURCE_ID_RED = "GEOJSON_SOURCE_ID_RED";
-    private static final String GEOJSON_SOURCE_ID_BLUE = "GEOJSON_SOURCE_ID_BLUE";
-    private static final String MARKER_IMAGE_ID_RED = "MARKER_IMAGE_ID_RED";
-    private static final String MARKER_IMAGE_ID_BLUE = "MARKER_IMAGE_ID_BLUE";
-    private static final String CALLOUT_LAYER_ID_RED = "CALLOUT_LAYER_ID_RED";
-    private static final String CALLOUT_LAYER_ID_BLUE = "CALLOUT_LAYER_ID_BLUE";
+    private static final String GEOJSON_SOURCE_ID_ENSEMBLE = "GEOJSON_SOURCE_ID_ENSEMBLE";
+    private static final String GEOJSON_SOURCE_ID_CHALLENGE = "GEOJSON_SOURCE_ID_CHALLENGE";
+    private static final String MARKER_IMAGE_ID_ENSEMBLE = "MARKER_IMAGE_ID_ENSEMBLE";
+    private static final String MARKER_IMAGE_ID_CHALLENGE = "MARKER_IMAGE_ID_CHALLENGE";
+    private static final String CALLOUT_LAYER_ID_ENSEMBLE = "CALLOUT_LAYER_ID_ENSEMBLE";
+    private static final String CALLOUT_LAYER_ID_CHALLENGE = "CALLOUT_LAYER_ID_CHALLENGE";
 
     private static final String PROPERTY_NAME = "name";
     private static final String PROPERTY_DATE_CREATED = "date_created";
@@ -157,8 +157,8 @@ public class map_fragment extends Fragment implements
     private String  last_event_selected;
     private boolean join_status = false;
     private GeoJsonSource source;
-    private GeoJsonSource source_red;
-    private GeoJsonSource source_blue;
+    private GeoJsonSource source_ensemble;
+    private GeoJsonSource source_challenge;
     private event_db_vm db_model;
 
     Button join_btn;
@@ -1183,9 +1183,9 @@ public class map_fragment extends Fragment implements
     private boolean handleClickIcon(PointF screenPoint)
     {
         List<Feature> features = new ArrayList<>();
-        //List<Feature> features = mapboxMap.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID_RED);
-        features.addAll(mapboxMap.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID_RED));
-        features.addAll(mapboxMap.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID_BLUE));
+        //List<Feature> features = mapboxMap.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID_ENSEMBLE);
+        features.addAll(mapboxMap.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID_ENSEMBLE));
+        features.addAll(mapboxMap.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID_CHALLENGE));
         if (!features.isEmpty())
         {
             String event_id = features.get(0).getStringProperty(PROPERTY_EVENT_ID);
@@ -1304,80 +1304,37 @@ public class map_fragment extends Fragment implements
     private void refreshSource()
     {
 
-        /*
-        if (source_red != null && featureCollection != null)
-        {
-            source_red.setGeoJson(featureCollection);
-        }
-
-         */
-
-
-        Log.d(TAG, "refreshSource(): Called");
-
-
         if(featureCollection != null)
         {
-            //source_red.setGeoJson(featureCollection);
-
 
             FeatureCollection feature_collection_ensemble;
             FeatureCollection feature_collection_others;
             List<Feature> features_ensemble = new ArrayList<>();
             List<Feature> features_others = new ArrayList<>();
 
-
             for (Feature singleFeature : featureCollection.features())
             {
-
-
-                //singleFeature.addBooleanProperty(PROPERTY_SELECTED, false);
-                //feature_collection_ensemble.features() = FeatureCollection.fromFeature(singleFeature)
-                Log.d(TAG, "singleFeature.properties(): " + singleFeature.properties().get("event_type").toString());
                 if (singleFeature.properties().get("event_type").toString().equals("\"0\""))
-                {
-                    //feature_collection_ensemble.features().add(singleFeature);
-                    Log.d(TAG, "event_type = 0");
                     features_ensemble.add(singleFeature);
-                }
                 else
-                {
-                    //feature_collection_others.features().add(singleFeature);
-                    Log.d(TAG, "event_type = 1");
                     features_others.add(singleFeature);
-                }
                 Log.d(TAG, "Sing_Feature: " + singleFeature.properties());
-                Log.d(TAG, "PROPERTY_SELECTED, False");
-
-
             }
 
 
-            if (source_red != null && (features_ensemble.size() != 0))
+            if (source_ensemble != null && (features_ensemble.size() != 0))
             {
-                Log.d(TAG, "source_red, called");
                 feature_collection_ensemble = FeatureCollection.fromFeatures(features_ensemble);
-                //activity.setUpData(feature_collection_ensemble, 0);
-                source_red.setGeoJson(feature_collection_ensemble);
-                //source_red.setGeoJson(featureCollection);
+                source_ensemble.setGeoJson(feature_collection_ensemble);
             }
 
-
-
-
-            if (source_blue != null && (features_others.size() != 0))
+            if (source_challenge != null && (features_others.size() != 0))
             {
-                Log.d(TAG, "source_blue, called");
                 feature_collection_others = FeatureCollection.fromFeatures(features_others);
-                source_blue.setGeoJson(feature_collection_others);
-
+                source_challenge.setGeoJson(feature_collection_others);
             }
-
 
         }
-
-
-
 
     }
 
@@ -1398,8 +1355,8 @@ public class map_fragment extends Fragment implements
                 Log.d(TAG,"setUpData: EVENT_TYPE_ENSEMBLE");
                 mapboxMap.getStyle(style ->
                 {
-                    style.removeSource(GEOJSON_SOURCE_ID_RED);
-                    style.removeLayer(GEOJSON_SOURCE_ID_RED);
+                    style.removeSource(GEOJSON_SOURCE_ID_ENSEMBLE);
+                    style.removeLayer(GEOJSON_SOURCE_ID_ENSEMBLE);
                     setupSource(style, collection, type);
                     setUpImage(style, type);
                     setUpMarkerLayer(style, type);
@@ -1411,8 +1368,8 @@ public class map_fragment extends Fragment implements
                 Log.d(TAG,"setUpData: Others");
                 mapboxMap.getStyle(style ->
                 {
-                    style.removeSource(GEOJSON_SOURCE_ID_BLUE);
-                    style.removeLayer(GEOJSON_SOURCE_ID_BLUE);
+                    style.removeSource(GEOJSON_SOURCE_ID_CHALLENGE);
+                    style.removeLayer(GEOJSON_SOURCE_ID_CHALLENGE);
                     setupSource(style, collection, type);
                     setUpImage(style, type);
                     setUpMarkerLayer(style, type);
@@ -1435,15 +1392,15 @@ public class map_fragment extends Fragment implements
         Log.v(TAG,"source was not null");
         if(type==EVENT_TYPE_ENSEMBLE)
         {
-            //source = new GeoJsonSource(GEOJSON_SOURCE_ID_RED, collection);
-            source_red = new GeoJsonSource(GEOJSON_SOURCE_ID_RED, collection);
-            loadedStyle.addSource(source_red);
+            //source = new GeoJsonSource(GEOJSON_SOURCE_ID_ENSEMBLE, collection);
+            source_ensemble = new GeoJsonSource(GEOJSON_SOURCE_ID_ENSEMBLE, collection);
+            loadedStyle.addSource(source_ensemble);
         }
-        else
+        else if(type==EVENT_TYPE_CHALLENGE)
         {
-            source = new GeoJsonSource(GEOJSON_SOURCE_ID_BLUE, collection);
-            source_blue = new GeoJsonSource(GEOJSON_SOURCE_ID_BLUE, collection);
-            loadedStyle.addSource(source_blue);
+            source = new GeoJsonSource(GEOJSON_SOURCE_ID_CHALLENGE, collection);
+            source_challenge = new GeoJsonSource(GEOJSON_SOURCE_ID_CHALLENGE, collection);
+            loadedStyle.addSource(source_challenge);
             //loadedStyle.addSource(source);
         }
         //loadedStyle.addSource(source);
@@ -1457,11 +1414,11 @@ public class map_fragment extends Fragment implements
     {
         Log.d(TAG,"setUpImage called");
         if(type==EVENT_TYPE_ENSEMBLE)
-            loadedStyle.addImage(MARKER_IMAGE_ID_RED, BitmapFactory.decodeResource(
-                    this.getResources(), R.drawable.red_marker));
-        else
-            loadedStyle.addImage(MARKER_IMAGE_ID_BLUE, BitmapFactory.decodeResource(
-                    this.getResources(), R.drawable.blue_marker));
+            loadedStyle.addImage(MARKER_IMAGE_ID_ENSEMBLE, BitmapFactory.decodeResource(
+                    this.getResources(), R.drawable.bicycle_32));
+        else if(type==EVENT_TYPE_CHALLENGE)
+            loadedStyle.addImage(MARKER_IMAGE_ID_CHALLENGE, BitmapFactory.decodeResource(
+                    this.getResources(), R.drawable.goal_32));
     }
 
     /**
@@ -1470,16 +1427,16 @@ public class map_fragment extends Fragment implements
     private void setUpMarkerLayer(@NonNull Style loadedStyle, int type)
     {
         if(type==EVENT_TYPE_ENSEMBLE)
-            loadedStyle.addLayer(new SymbolLayer(MARKER_LAYER_ID_RED, GEOJSON_SOURCE_ID_RED)
+            loadedStyle.addLayer(new SymbolLayer(MARKER_LAYER_ID_ENSEMBLE, GEOJSON_SOURCE_ID_ENSEMBLE)
                     .withProperties(
-                            iconImage(MARKER_IMAGE_ID_RED),
+                            iconImage(MARKER_IMAGE_ID_ENSEMBLE),
                             iconAllowOverlap(true),
                             iconOffset(new Float[] {0f, -8f})
                     ));
-        else
-            loadedStyle.addLayer(new SymbolLayer(MARKER_LAYER_ID_BLUE, GEOJSON_SOURCE_ID_BLUE)
+        else if(type==EVENT_TYPE_CHALLENGE)
+            loadedStyle.addLayer(new SymbolLayer(MARKER_LAYER_ID_CHALLENGE, GEOJSON_SOURCE_ID_CHALLENGE)
                     .withProperties(
-                            iconImage(MARKER_IMAGE_ID_BLUE),
+                            iconImage(MARKER_IMAGE_ID_CHALLENGE),
                             iconAllowOverlap(true),
                             iconOffset(new Float[] {0f, -8f})
                     ));
@@ -1510,7 +1467,7 @@ public class map_fragment extends Fragment implements
     private void setUpInfoWindowLayer(@NonNull Style loadedStyle, int type)
     {
         if(type==EVENT_TYPE_ENSEMBLE)
-            loadedStyle.addLayer(new SymbolLayer(CALLOUT_LAYER_ID_RED, GEOJSON_SOURCE_ID_RED)
+            loadedStyle.addLayer(new SymbolLayer(CALLOUT_LAYER_ID_ENSEMBLE, GEOJSON_SOURCE_ID_ENSEMBLE)
                     .withProperties(
                             /* show image with id title based on the value of the name feature property */
                             iconImage("{name}"),
@@ -1526,8 +1483,9 @@ public class map_fragment extends Fragment implements
                     )
                     /* add a filter to show only when selected feature property is true */
                     .withFilter(eq((get(PROPERTY_SELECTED)), literal(true))));
-        else
-            loadedStyle.addLayer(new SymbolLayer(CALLOUT_LAYER_ID_BLUE, GEOJSON_SOURCE_ID_BLUE)
+
+        else if(type==EVENT_TYPE_CHALLENGE)
+            loadedStyle.addLayer(new SymbolLayer(CALLOUT_LAYER_ID_CHALLENGE, GEOJSON_SOURCE_ID_CHALLENGE)
                     .withProperties(
                             /* show image with id title based on the value of the name feature property */
                             iconImage("{name}"),
