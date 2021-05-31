@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Belle_net_alpha</string>
+    <string name="app_name">BelleNet</string>
     <string name="mapbox_access_token">pk.eyJ1IjoiYWxtYXBib3g3MyIsImEiOiJjamVibHB2eXYxaWQ3MnlvMzBjdDc3OHgwIn0.7K_axUKMgFqI8Z3lk7RFmQ</string>
     <string name="events_info_url">https://soluk.org/belle_net_users_info/depict_database.php</string>
     <string name="event_join_status">https://soluk.org/belle_net_users_info/send_join_event_status.php</string>
@@ -24,6 +24,12 @@
         <item>Share an Experience</item>
         <item>Offer a Place</item>
     </string-array>
+    
+    <string name="bellenet_notification_id">bellenet_notifications_id</string>
+    <string name="bellenet_notification_name">bellenet_notifications_name</string>
+    <string name="bellenet_cloud_messaging_public">bellenet_public_topic_all</string>
+    
+    
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_login_">Login_Activity</string>

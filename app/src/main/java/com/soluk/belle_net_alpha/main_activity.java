@@ -1,11 +1,14 @@
 package com.soluk.belle_net_alpha;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -21,7 +24,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.soluk.belle_net_alpha.model.event_db_vm;
@@ -94,11 +100,6 @@ public class main_activity extends AppCompatActivity implements
 
 
 
-        /// Registering MapBox
-
-
-
-
         /// Initializing and configuring Bottom Navigation
         bottom_navigation_view = findViewById(R.id.bottom_navigation);
 
@@ -128,6 +129,14 @@ public class main_activity extends AppCompatActivity implements
            }
             return true;
         });
+
+        /// FireBase
+        Fire_Base_Configuring();
+
+
+
+
+
 
     }
 
@@ -223,6 +232,54 @@ public class main_activity extends AppCompatActivity implements
             bottom_navigation_view.setVisibility(View.VISIBLE);
         else
             bottom_navigation_view.setVisibility(View.GONE);
+
+    }
+
+    private void Fire_Base_Configuring()
+    {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        {
+            // Create channel to show notifications.
+            String channelId  = getString(R.string.bellenet_notification_id);
+            String channelName = getString(R.string.bellenet_notification_name);
+            NotificationManager notificationManager =
+                    getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(new NotificationChannel(channelId,
+                    channelName, NotificationManager.IMPORTANCE_LOW));
+        }
+
+
+        /// Get device token
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task ->
+        {
+            //String deviceToken = task.getResult();
+            Log.d(TAG, "Device Token: " +  task.getResult());
+        });
+
+
+        if (getIntent().getExtras() != null)
+        {
+            for (String key : getIntent().getExtras().keySet())
+            {
+                Object value = getIntent().getExtras().get(key);
+                Log.d(TAG, "Key: " + key + " Value: " + value);
+            }
+        }
+        // [END handle_data_extras]
+
+        Log.d(TAG, "Subscribing to: "+getString(R.string.bellenet_cloud_messaging_public));
+        // [START subscribe_topics]
+        FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.bellenet_cloud_messaging_public))
+                .addOnCompleteListener(task ->
+                {
+                    String msg = "Subscribe Was Successful";
+                    if (!task.isSuccessful())
+                    {
+                        msg = "Subscribe Was Not Successful";
+                    }
+                    Log.d(TAG, msg);
+                    Toast.makeText(main_activity.this, msg, Toast.LENGTH_SHORT).show();
+                });
 
     }
 
