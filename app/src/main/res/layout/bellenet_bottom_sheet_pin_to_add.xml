@@ -15,7 +15,7 @@
         android:id="@+id/user_profile_image"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:src="@drawable/al_profile_300"
+        android:src="@drawable/default_profile_pic"
         android:background="@drawable/event_id_card_circle_background"
         app:civ_border_width="2dp"
         app:civ_border_color="@color/teal_200"

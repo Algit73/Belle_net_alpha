@@ -1,17 +1,26 @@
 package com.soluk.belle_net_alpha;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.ImageDecoder;
 import android.net.Uri;
@@ -24,21 +33,26 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.mapboxsdk.Mapbox;
-import com.soluk.belle_net_alpha.model.event_db_vm;
+import com.soluk.belle_net_alpha.main_fragments.Profile_Fragment;
+import com.soluk.belle_net_alpha.main_fragments.events_hub_feed_fragment;
+import com.soluk.belle_net_alpha.main_fragments.map_fragment;
+import com.soluk.belle_net_alpha.model.Events_DB_VM;
+import com.soluk.belle_net_alpha.ui.login.User_Credentials;
 import com.yalantis.ucrop.UCrop;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
@@ -56,25 +70,105 @@ public class main_activity extends AppCompatActivity implements
 
     private FragmentTransaction fragment_transaction;
     private map_fragment map_fragment_instance;
-    private event_list_fragment_parent event_list_parent_holder;
+    private events_hub_feed_fragment event_list_parent_holder;
     private Profile_Fragment profile_fragment;
 
     private BottomNavigationView bottom_navigation_view;
 
     private Bitmap image_profile_bitmap;
-    private event_db_vm model_db;
+    private Events_DB_VM model_db;
+
+    private static final String[] REQUIRED_PERMISSION_LIST = new String[]{
+            Manifest.permission.ACCESS_FINE_LOCATION
+    };
+    private List<String> missingPermission = new ArrayList<>();
+    private static final int REQUEST_PERMISSION_CODE = 731;
+    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
+
+    private ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted)
+                {
+                    // Permission is granted. Continue the action or workflow in your
+                    // app.
+                    Log.d(TAG,"requestPermissionLauncher: Granted");
+                }
+                else
+                {
+                    // Explain to the user that the feature is unavailable because the
+                    // features requires a permission that the user has denied. At the
+                    // same time, respect the user's decision. Don't link to system
+                    // settings in an effort to convince the user to change their
+                    // decision.
+                    Log.d(TAG,"requestPermissionLauncher: Not Granted");
+                }
+            });
+
+    private void request_permission()
+    {
+        if (ContextCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED)
+        {
+            // You can use the API that requires the permission.
+            Log.d(TAG,"request_permission: Granted");
+
+        }
+        //else if (shouldShowRequestPermissionRationale(...))
+        //{
+        // In an educational UI, explain to the user why your app requires this
+        // permission for a specific feature to behave as expected. In this UI,
+        // include a "cancel" or "no thanks" button that allows the user to
+        // continue using your app without granting the permission.
+
+        //}
+        else
+        {
+            // You can directly ask for the permission.
+            // The registered ActivityResultCallback gets the result of this request.
+            Log.d(TAG,"request_permission: Not Granted");
+            requestPermissionLauncher.launch(
+                    Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+    }
+
+    void request_per_2()
+    {
+        if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("This app needs location access ");
+            builder.setMessage("Please grant location access so this app can detect devices.");
+            builder.setPositiveButton(android.R.string.ok, null);
+            builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                public void onDismiss(DialogInterface dialog) {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
+                }
+            });
+            builder.show();
+        }
+    }
 
     @SuppressLint("NonConstantResourceId")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_main);
+
+        //request_per_2();
+        //request_permission();
         //HTTP_Provider.get_file_dir(this.getFilesDir());
 
+        //Picasso.get().load().memoryPolicy()
+
+
+
         map_fragment_instance = new map_fragment();
-        event_list_parent_holder = new event_list_fragment_parent();
+        event_list_parent_holder = new events_hub_feed_fragment();
         profile_fragment = new Profile_Fragment();
 
         if (savedInstanceState == null)
@@ -94,9 +188,11 @@ public class main_activity extends AppCompatActivity implements
         String file_directory = main_activity.this.getFilesDir().toString();
         ContextWrapper context_wrapper = new ContextWrapper(getApplicationContext());
         File image_directory = context_wrapper.getDir("Profile_Pictures", Context.MODE_PRIVATE);
-        model_db = new ViewModelProvider(this).get(event_db_vm.class);
-        model_db.set_db_handler(this::update_map_fragment);
+        model_db = new ViewModelProvider(this).get(Events_DB_VM.class);
+        model_db.set_db_handler(this::update_children_fragments);
         model_db.init_db(file_directory,image_directory);
+
+
 
 
 
@@ -132,13 +228,68 @@ public class main_activity extends AppCompatActivity implements
 
         /// FireBase
         Fire_Base_Configuring();
-
-
-
-
-
+        //check_and_request_permissions();
 
     }
+
+    private void check_and_request_permissions()
+    {
+        // Check for permissions
+
+        for (String each_permission : REQUIRED_PERMISSION_LIST)
+        {
+            if (ContextCompat.checkSelfPermission(this, each_permission) != PackageManager.PERMISSION_GRANTED)
+            {
+                missingPermission.add(each_permission);
+            }
+        }
+        // Request for missing permissions
+        if (missingPermission.isEmpty())
+        {
+
+        }
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            //showToast("Need to grant the permissions!");
+            Toast.makeText(getApplicationContext(),"Need to grant the permissions!",
+                    Toast.LENGTH_SHORT).show();
+            ActivityCompat.requestPermissions(this,
+                    missingPermission.toArray(new String[missingPermission.size()]),
+                    REQUEST_PERMISSION_CODE);
+        }
+
+    }
+
+    /*
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Check for granted permission and remove from missing list
+        if (requestCode == REQUEST_PERMISSION_CODE)
+        {
+            for (int i = grantResults.length - 1; i >= 0; i--)
+            {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED)
+                {
+                    missingPermission.remove(permissions[i]);
+                }
+            }
+        }
+        // If there is enough permission, we will start the registration
+        if (missingPermission.isEmpty())
+        {
+
+        }
+        else
+        {
+            //showToast("Missing permissions!!!");
+            Toast.makeText(getApplicationContext(),"Need to grant the permissions!",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+     */
 
 
 
@@ -146,6 +297,28 @@ public class main_activity extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
+
+        Log.i(TAG, "onActivityResult requestCode: " + requestCode);
+
+        if (requestCode== LocationRequest.PRIORITY_HIGH_ACCURACY||requestCode==LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+                ||requestCode== LocationRequest.PRIORITY_LOW_POWER)
+        {
+            Log.d(TAG, "onActivityResult: GPS asked");
+            switch (resultCode)
+            {
+                case Activity.RESULT_OK:
+                    // All required changes were successfully made
+                    Log.d(TAG, "onActivityResult: GPS Enabled by user");
+                    break;
+                case Activity.RESULT_CANCELED:
+                    // The user was asked to change settings, but chose not to
+                    Log.i(TAG, "onActivityResult: User rejected GPS request");
+                    main_activity.this.finish();
+                    break;
+                default:
+                    break;
+            }
+        }
 
         if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP)
         {
@@ -163,8 +336,13 @@ public class main_activity extends AppCompatActivity implements
                 }
                 else
                     image_profile_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), resultUri);
+
+                //saveToInternalStorage(image_profile_bitmap, User_Credentials.get_item("user_pic"));
+                Events_DB_VM.save_to_internal_storage(image_profile_bitmap, User_Credentials.get_item("user_pic"));
+
+
             }
-            catch (IOException e){e.printStackTrace();}
+            catch (IOException | JSONException e){e.printStackTrace();}
 
             Callback callback = new Callback()
             {
@@ -185,7 +363,14 @@ public class main_activity extends AppCompatActivity implements
                 }
 
             };
-            HTTP_Provider.upload_image_profile(image_profile_bitmap,"test1.jpg",callback);
+            try
+            {
+                HTTP_Provider.upload_image_profile(image_profile_bitmap,"user_profile_image.jpg",callback);
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
 
             Log.d(TAG,"Get REQUEST_CROP: ");
         }
@@ -195,7 +380,11 @@ public class main_activity extends AppCompatActivity implements
         }
 
         if(image_profile_bitmap!=null)
+        {
             profile_fragment.user_profile_image_civ.setImageBitmap(image_profile_bitmap);
+            refresh_db();
+        }
+
 
 
         /*
@@ -211,9 +400,45 @@ public class main_activity extends AppCompatActivity implements
          */
     }
 
+    public void refresh_db()
+    {
+        model_db.refresh_db();
+    }
+
+    private String saveToInternalStorage(Bitmap bitmapImage, String name)
+    {
+        File path=new File(Events_DB_VM.get_image_file(),name);
+        Log.d(TAG,"Profile pic address "+path);
+
+        FileOutputStream fos = null;
+        try
+        {
+            fos = new FileOutputStream(path);
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG,"Int Storage Create File failed: "+e.getMessage());
+            e.printStackTrace();
+        }
+        finally
+        {
+            try
+            {
+                fos.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        Log.d(TAG,"Directory: "+ Events_DB_VM.get_image_file().getAbsolutePath());
+        return Events_DB_VM.get_image_file().getAbsolutePath();
+    }
 
 
-    void update_map_fragment()
+
+    void update_children_fragments()
     {
         Log.d(TAG,"Request From Activity to Fragment Sent");
 
@@ -221,12 +446,13 @@ public class main_activity extends AppCompatActivity implements
         {
             map_fragment_instance.update_map();
             event_list_parent_holder.refresh_fragments();
+            profile_fragment.get_updated();
 
         }, 500);
 
     }
 
-    void bottom_navigation_visibility(boolean visible)
+    public void bottom_navigation_visibility(boolean visible)
     {
         if(visible)
             bottom_navigation_view.setVisibility(View.VISIBLE);
@@ -282,6 +508,8 @@ public class main_activity extends AppCompatActivity implements
                 });
 
     }
+
+
 
 
     @Override

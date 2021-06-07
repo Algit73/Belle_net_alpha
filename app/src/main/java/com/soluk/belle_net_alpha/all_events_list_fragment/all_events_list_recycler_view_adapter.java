@@ -2,8 +2,6 @@ package com.soluk.belle_net_alpha.all_events_list_fragment;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
@@ -14,7 +12,7 @@ import android.widget.TextView;
 import com.mapbox.geojson.Feature;
 import com.soluk.belle_net_alpha.R;
 import com.soluk.belle_net_alpha.dummy.DummyContent.DummyItem;
-import com.soluk.belle_net_alpha.model.event_db_vm;
+import com.soluk.belle_net_alpha.model.Events_DB_VM;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,7 +21,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -59,7 +56,7 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
         holder.event_date_tv.setText(date_reformat(feature_list.get(position).getStringProperty("event_date")));
         holder.event_joinees_tv.setText(feature_list.get(position).getStringProperty("count"));
 
-        String profile_pic_name = feature_list.get(position).getStringProperty("profile_pic").substring(1);
+        String profile_pic_name = feature_list.get(position).getStringProperty("profile_pic");
 
         Bitmap profile_pic = get_profile_bmp(profile_pic_name);
         if(profile_pic!=null)
@@ -74,7 +71,7 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
 
         try
         {
-            File file =new File(event_db_vm.get_image_file(), name);
+            File file =new File(Events_DB_VM.get_image_file(), name);
             Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
             return bitmap;
         }

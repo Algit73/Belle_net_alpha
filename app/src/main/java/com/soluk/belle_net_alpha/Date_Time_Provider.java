@@ -9,6 +9,7 @@ import android.widget.TimePicker;
 
 import androidx.core.content.res.ResourcesCompat;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,7 +39,7 @@ public class Date_Time_Provider
 
     private final Context context;
 
-    Date_Time_Provider(Context context)
+    public Date_Time_Provider(Context context)
     {
         this.context = context;
 
@@ -162,6 +163,25 @@ public class Date_Time_Provider
     public Date get_time()
     {
         return calendar_time_picker.getTime();
+    }
+
+    public static String date_reformat(String time)
+    {
+        String inputPattern = "yyyy-MM-dd";
+        String outputPattern = "MMMM,dd,yy";
+        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
+
+        Date date = null;
+        String str = null;
+
+        try {
+            date = inputFormat.parse(time);
+            str = outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return str;
     }
 
 

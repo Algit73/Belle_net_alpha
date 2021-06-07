@@ -1,8 +1,5 @@
 package com.soluk.belle_net_alpha.event_data_maker;
 
-import android.util.Log;
-
-import com.google.gson.JsonObject;
 import com.soluk.belle_net_alpha.main_activity;
 
 import org.json.JSONArray;

@@ -17,19 +17,19 @@
     <string name="hint_user_the_marks_added">You have marked the map successfully</string>
     <string name="hint_user_to_remove_the_marks">Tap remove button to remove marks</string>
 
-    <string name="profile_pic_url">https://soluk.org/belle_net_users_info/profile_pictures/%23</string>
+    <string name="profile_pic_url">https://soluk.org/belle_net_users_info/profile_pictures/</string>
     <string name="register_event">https://soluk.org/belle_net_users_info/user_register_new_event.php</string>
     <string-array name="list_of_challenges_items">
         <item>Invite for a Challenge</item>
         <item>Share an Experience</item>
         <item>Offer a Place</item>
     </string-array>
-    
+
     <string name="bellenet_notification_id">bellenet_notifications_id</string>
     <string name="bellenet_notification_name">bellenet_notifications_name</string>
     <string name="bellenet_cloud_messaging_public">bellenet_public_topic_all</string>
-    
-    
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_login_">Login_Activity</string>
@@ -44,4 +44,7 @@
     <string name="login_failed">"Login failed"</string>
     <string name="sign_up_hint"><u>Don\'t have an account? Sign-up here.</u></string>
     <string name="sign_in_hint"><u>Already have an account? Sign-in here.</u></string>
+    <string name="title_activity_test">test</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
 </resources>

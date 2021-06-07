@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_200"
+    tools:context=".user_followx.User_FollowX_List_Activity">
+
+
+    <LinearLayout
+        android:id="@+id/title_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:orientation="horizontal"
+        android:background="@color/gray_100"
+        android:padding="8dp"
+        >
+
+        <ImageButton
+            android:id="@+id/back_button_ib"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_margin="8dp"
+            android:src="@drawable/arrow_left"
+            android:background="@drawable/background_circular"
+            android:backgroundTint="@color/gray_100"
+            android:padding="8dp"
+            />
+
+        <TextView
+            android:id="@+id/followx_type_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Followings"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:textSize="24sp"
+            android:textColor="@color/gray_800"
+            />
+
+
+
+    </LinearLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/followx_tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/gray_100"
+        app:tabSelectedTextColor="@color/gray_800"
+        app:tabIndicatorColor="@color/gray_800"
+        app:tabTextColor="@color/gray_500"
+        app:layout_constraintTop_toBottomOf="@id/title_holder"
+        android:visibility="visible"
+        >
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/followings_tab_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Followings"
+            />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/followers_tab_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="followers"
+            />
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_user_followx"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/followx_tab"
+        />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/pager_user_followx"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/followx_tab"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

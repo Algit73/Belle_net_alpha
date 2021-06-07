@@ -1,4 +1,4 @@
-package com.soluk.belle_net_alpha;
+package com.soluk.belle_net_alpha.main_fragments;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -12,23 +12,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.tabs.TabLayout;
-import com.mapbox.geojson.Feature;
-import com.mapbox.geojson.FeatureCollection;
+import com.soluk.belle_net_alpha.R;
 import com.soluk.belle_net_alpha.all_events_list_fragment.all_events_list_fragment;
-import com.soluk.belle_net_alpha.event_data_maker.file_maker;
 import com.soluk.belle_net_alpha.feed_list_fragment.feed_list_fragment;
-
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link event_list_fragment_parent#newInstance} factory method to
+ * Use the {@link events_hub_feed_fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class event_list_fragment_parent extends Fragment
+public class events_hub_feed_fragment extends Fragment
 {
 
-    private static final String TAG = event_list_fragment_parent.class.getSimpleName();
+    private static final String TAG = events_hub_feed_fragment.class.getSimpleName();
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -41,10 +37,9 @@ public class event_list_fragment_parent extends Fragment
     private all_events_list_fragment all_events_list;
     private feed_list_fragment feed_list;
 
-    private TabLayout tab_layout;
     private FragmentTransaction fragment_transaction;
 
-    public event_list_fragment_parent()
+    public events_hub_feed_fragment()
     {
         // Required empty public constructor
     }
@@ -58,9 +53,9 @@ public class event_list_fragment_parent extends Fragment
      * @return A new instance of fragment event_list_fragment_parent.
      */
     // TODO: Rename and change types and number of parameters
-    public static event_list_fragment_parent newInstance(String param1, String param2)
+    public static events_hub_feed_fragment newInstance(String param1, String param2)
     {
-        event_list_fragment_parent fragment = new event_list_fragment_parent();
+        events_hub_feed_fragment fragment = new events_hub_feed_fragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -84,8 +79,8 @@ public class event_list_fragment_parent extends Fragment
                              Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_event_list_parent, container, false);
-        tab_layout = v.findViewById(R.id.event_list_parent_tab);
+        View v = inflater.inflate(R.layout.fragment_events_hub_feed, container, false);
+        TabLayout tab_layout = v.findViewById(R.id.event_list_parent_tab);
 
         all_events_list = new all_events_list_fragment();
         feed_list = new feed_list_fragment();

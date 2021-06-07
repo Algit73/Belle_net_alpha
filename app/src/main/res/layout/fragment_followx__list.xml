@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/user_followx_list_rv"
+    android:name="com.soluk.belle_net_alpha.user_followx.Followx_Fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layoutManager="LinearLayoutManager"
+    tools:context=".user_followx.FollowX_Fragment"
+    tools:listitem="@layout/fragment_followx"
+    android:background="@color/gray_200"
+    />

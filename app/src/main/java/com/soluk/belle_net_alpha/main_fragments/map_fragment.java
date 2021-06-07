@@ -1,10 +1,12 @@
-package com.soluk.belle_net_alpha;
+package com.soluk.belle_net_alpha.main_fragments;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -13,13 +15,17 @@ import android.graphics.PointF;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,11 +40,11 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.gson.JsonObject;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineProvider;
+import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.api.directions.v5.models.RouteOptions;
@@ -69,8 +75,13 @@ import com.mapbox.navigation.base.options.NavigationOptions;
 import com.mapbox.navigation.core.MapboxNavigation;
 import com.mapbox.navigation.core.directions.session.RoutesRequestCallback;
 import com.mapbox.navigation.ui.route.NavigationMapRoute;
+import com.soluk.belle_net_alpha.Date_Time_Provider;
+import com.soluk.belle_net_alpha.HTTP_Provider;
+import com.soluk.belle_net_alpha.R;
 import com.soluk.belle_net_alpha.event_data_maker.file_maker;
-import com.soluk.belle_net_alpha.model.event_db_vm;
+import com.soluk.belle_net_alpha.main_activity;
+import com.soluk.belle_net_alpha.model.Events_DB_VM;
+import com.soluk.belle_net_alpha.ui.login.User_Credentials;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -113,7 +124,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
  * create an instance of this fragment.
  */
 public class map_fragment extends Fragment implements
-        OnMapReadyCallback, MapboxMap.OnMapClickListener,MapboxMap.OnMapLongClickListener
+        OnMapReadyCallback, MapboxMap.OnMapClickListener,MapboxMap.OnMapLongClickListener, PermissionsListener
 {
 
     private static final String TAG = map_fragment.class.getSimpleName();
@@ -132,6 +143,7 @@ public class map_fragment extends Fragment implements
     private static final String CALLOUT_LAYER_ID_ENSEMBLE = "CALLOUT_LAYER_ID_ENSEMBLE";
     private static final String CALLOUT_LAYER_ID_CHALLENGE = "CALLOUT_LAYER_ID_CHALLENGE";
 
+    private final String USER_CREDENTIALS = "user_cred";
     private static final String PROPERTY_NAME = "name";
     private static final String PROPERTY_DATE_CREATED = "date_created";
     private static final String PROPERTY_EVENT_DATE = "event_date";
@@ -140,11 +152,12 @@ public class map_fragment extends Fragment implements
     private static final String PROPERTY_PIC = "profile_pic";
     private static final String PROPERTY_NUM_OF_JOINED = "count";
 
-    private static final String USER_NAME = "Alireza";
-    private static final String USER_FAMILY = "Alikhani";
-    private static final String USER_PIC = "#loncle";
-    private static final String USER_ID = "#ahdx98!s5kjxsp";
-    private static final String USER_PASSWORD = "alirezalovesbellenet";
+    private static  String USER_NAME = "";
+    private static  String USER_FAMILY = "";
+    private static  String USER_PIC = "";
+    private static  String USER_ID = "";
+    private static  String USER_PASSWORD = "";
+    private static  String USER_EMAIL = "";
 
     private static String file_directory_static = "";
     private static final String FILE_NAME = "geo_json_bellenet";
@@ -159,7 +172,7 @@ public class map_fragment extends Fragment implements
     private GeoJsonSource source;
     private GeoJsonSource source_ensemble;
     private GeoJsonSource source_challenge;
-    private event_db_vm db_model;
+    private PermissionsManager permissionsManager;
 
     Button join_btn;
     Button cancel_join_event_btn;
@@ -187,6 +200,7 @@ public class map_fragment extends Fragment implements
 
     private boolean add_postition_mode = false;
     private boolean is_marker_added = false;
+    private boolean enable_access_location = false;
     private Symbol user_marker_pinned;
 
     private TextView event_date_tv;
@@ -235,23 +249,78 @@ public class map_fragment extends Fragment implements
         return fragment;
     }
 
+    private ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted)
+                {
+                    // Permission is granted. Continue the action or workflow in your
+                    // app.
+
+                    //enable_location_component(style_global);
+                    //mapbox_navigation_configuration(style_global);
+                    Log.d(TAG,"requestPermissionLauncher: Granted");
+                }
+                else
+                {
+                    // Explain to the user that the feature is unavailable because the
+                    // features requires a permission that the user has denied. At the
+                    // same time, respect the user's decision. Don't link to system
+                    // settings in an effort to convince the user to change their
+                    // decision.
+                    Log.d(TAG,"requestPermissionLauncher: Not Granted");
+                }
+            });
+
+    private void request_permission()
+    {
+        if (ContextCompat.checkSelfPermission(
+                getContext(), Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED)
+        {
+            // You can use the API that requires the permission.
+            Log.d(TAG,"request_permission: Granted");
+
+        }
+        //else if (shouldShowRequestPermissionRationale(...))
+        //{
+        // In an educational UI, explain to the user why your app requires this
+        // permission for a specific feature to behave as expected. In this UI,
+        // include a "cancel" or "no thanks" button that allows the user to
+        // continue using your app without granting the permission.
+
+        //}
+        else
+        {
+            // You can directly ask for the permission.
+            // The registered ActivityResultCallback gets the result of this request.
+            Log.d(TAG,"request_permission: Not Granted");
+            requestPermissionLauncher.launch(
+                    Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        /*
-        if (getArguments() != null)
-        {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
 
-         */
+        Log.d(TAG,"user_creds: "+User_Credentials.get_items());
+
+        try
+        {
+            USER_NAME = User_Credentials.get_item("user_name");
+            USER_FAMILY = User_Credentials.get_item("user_family");
+            USER_PIC = User_Credentials.get_item("user_pic");
+            USER_ID = User_Credentials.get_item("user_id");
+            USER_PASSWORD = User_Credentials.get_item("user_password");
+            USER_EMAIL = User_Credentials.get_item("user_email");
+        }catch (JSONException e){e.printStackTrace();}
+
 
         file_directory_static = getActivity().getFilesDir().toString();
         Log.d(TAG,"map Fragment dir: "+file_directory_static);
         Mapbox.getInstance(getActivity(), getString(R.string.mapbox_access_token));
-        db_model = new ViewModelProvider(getActivity()).get(event_db_vm.class);
+        request_permission();
 
     }
 
@@ -292,9 +361,35 @@ public class map_fragment extends Fragment implements
             public void onClick(View v)
             {
 
-                LatLng current_position = new LatLng(location_component.getLastKnownLocation().getLatitude()
-                        ,location_component.getLastKnownLocation().getLongitude()) ;
-                set_camera_position(0,current_position);
+
+                if (PermissionsManager.areLocationPermissionsGranted(getActivity()))
+                {
+                    if(enable_access_location)
+                    {
+                        LatLng current_position = new LatLng(location_component.getLastKnownLocation().getLatitude()
+                                , location_component.getLastKnownLocation().getLongitude());
+                        set_camera_position(0, current_position);
+                    }
+                    else
+                    {
+                        set_mapbox_style(mapboxMap);
+                        ((main_activity) getActivity()).refresh_db();
+
+                        new Handler(Looper.getMainLooper()).postDelayed(()->
+                        {
+                            LatLng current_position = new LatLng(location_component.getLastKnownLocation().getLatitude()
+                                    , location_component.getLastKnownLocation().getLongitude());
+                            set_camera_position(0, current_position);
+                            enable_access_location = true;
+                        },500);
+                    }
+                    /*
+                    LatLng current_position = new LatLng(location_component.getLastKnownLocation().getLatitude()
+                            , location_component.getLastKnownLocation().getLongitude());
+                    set_camera_position(0, current_position);
+
+                     */
+                }
 
             }
         });
@@ -312,60 +407,57 @@ public class map_fragment extends Fragment implements
     void button_sheet_add_event_init(View v)
     {
 
+        CircleImageView user_profile_image = v.findViewById(R.id.user_profile_image);
+        Bitmap selected_profile_image_bmp = get_profile_bmp(USER_PIC);
+        if(selected_profile_image_bmp!=null)
+            user_profile_image.setImageBitmap(selected_profile_image_bmp);
+
         // Configuring Buttons in the BottomSheet of BelleNet
         Button save_challenge_btn = v.findViewById(R.id.save_challenge);
         Button cancel_challenge_btn = v.findViewById(R.id.cancel_challenge);
 
-        cancel_challenge_btn.setOnClickListener(new View.OnClickListener()
+        cancel_challenge_btn.setOnClickListener(v1 ->
         {
-            @Override
-            public void onClick(View v)
-            {
-                is_marker_added = false;
-                add_postition_mode = false;
-                change_add_marker_on_map_ib_mode(true);
-                remove_points_routes();
-                bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
-                ((main_activity)getActivity()).bottom_navigation_visibility(true);
-            }
+            is_marker_added = false;
+            add_postition_mode = false;
+            change_add_marker_on_map_ib_mode(true);
+            remove_points_routes();
+            bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
+            ((main_activity)getActivity()).bottom_navigation_visibility(true);
         });
 
-        save_challenge_btn.setOnClickListener(new View.OnClickListener()
+        save_challenge_btn.setOnClickListener(v1 ->
         {
-            @Override
-            public void onClick(View v)
+            if(list_of_added_points==null)
             {
-                if(list_of_added_points==null)
-                {
-                    Toast.makeText(getActivity(),
-                            "Please add your spots on the map",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                String date_value = event_date_tv.getText().toString();
-
-                if(!date_value.matches(".*\\d.*"))
-                {
-                    Toast.makeText(getActivity(),
-                            "Please input the event date",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                String time_value = event_time_tv.getText().toString();
-
-                if(!time_value.matches(".*\\d.*"))
-                {
-                    Toast.makeText(getActivity(),
-                            "Please input the event time",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                send_user_created_event();
-                ((main_activity)getActivity()).bottom_navigation_visibility(true);
-                bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
-                remove_points_routes();
-                change_add_marker_on_map_ib_mode(true);
+                Toast.makeText(getActivity(),
+                        "Please add your spots on the map",Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            String date_value = event_date_tv.getText().toString();
+
+            if(!date_value.matches(".*\\d.*"))
+            {
+                Toast.makeText(getActivity(),
+                        "Please input the event date",Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String time_value = event_time_tv.getText().toString();
+
+            if(!time_value.matches(".*\\d.*"))
+            {
+                Toast.makeText(getActivity(),
+                        "Please input the event time",Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            send_user_created_event();
+            ((main_activity)getActivity()).bottom_navigation_visibility(true);
+            bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
+            remove_points_routes();
+            change_add_marker_on_map_ib_mode(true);
         });
 
         /// Configuring DatePicker
@@ -545,7 +637,8 @@ public class map_fragment extends Fragment implements
 
                 Log.d(TAG,"Post Test Code: "+response.code());
                 Log.d(TAG,"Post Test Body: "+response.body().string());
-                db_model.refresh_db();
+                //db_model.refresh_db();
+                ((main_activity)getActivity()).refresh_db();
             }
         };
 
@@ -579,7 +672,8 @@ public class map_fragment extends Fragment implements
         wait_on_loading_data(false);
 
         HTTP_Provider.post_json("belle_net_users_info/send_join_event_status.php",json,callback);
-        db_model.refresh_db();
+        //db_model.refresh_db();
+        ((main_activity)getActivity()).refresh_db();
         remove_points_routes();
     }
 
@@ -590,7 +684,7 @@ public class map_fragment extends Fragment implements
         Handler mainHandler = new Handler(getMainLooper());
         Runnable myRunnable = () ->
         {
-            setFeatureSelectState(feature, false);
+            set_feature_select_state(feature, false);
             if(number_of_selected_cards==0)
                 set_camera_position(0,null);
             ((main_activity)getActivity()).bottom_navigation_visibility(true);
@@ -787,11 +881,11 @@ public class map_fragment extends Fragment implements
 
 
         /// Setting name of the user
-        String name_family = (String) (info.get("name")+ " " + info.get("family"));
+        String name_family = (info.get("name")+ " " + info.get("family"));
         selected_user_name.setText(name_family);
 
         /// Setting the profile image of the selected_user
-        Bitmap selected_profile_image_bmp = get_profile_bmp(info.get("profile_pic").toString().substring(1));
+        Bitmap selected_profile_image_bmp = get_profile_bmp(info.get("profile_pic").toString());
         if(selected_profile_image_bmp!=null)
             selected_user_profile_image.setImageBitmap(selected_profile_image_bmp);
 
@@ -916,7 +1010,7 @@ public class map_fragment extends Fragment implements
                     set_camera_position(0,null);
 
 
-                setFeatureSelectState(feature, false);
+                set_feature_select_state(feature, false);
 
                 //symbol_manager.delete(li);
                 navigation_mapRoute.updateRouteVisibilityTo(false);
@@ -1093,14 +1187,17 @@ public class map_fragment extends Fragment implements
     public void onMapReady(@NonNull MapboxMap mapboxMap)
     {
         this.mapboxMap = mapboxMap;
+        Log.v(TAG,"onMapReady ");
+        set_mapbox_style(mapboxMap);
+    }
 
+    void set_mapbox_style(@NonNull MapboxMap mapboxMap)
+    {
         mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded()
         {
             @Override
             public void onStyleLoaded(@NonNull Style style)
             {
-                //if(data_received_correctly)
-                  //  new main_activity.LoadGeoJsonDataTask(main_activity.this).execute();
                 mapboxMap.addOnMapClickListener(map_fragment.this);
                 mapboxMap.addOnMapLongClickListener(map_fragment.this);
                 enable_location_component(style);
@@ -1109,7 +1206,6 @@ public class map_fragment extends Fragment implements
                 symbol_manager.setIconAllowOverlap(true);
             }
         });
-
     }
 
     void mapbox_navigation_configuration(Style style)
@@ -1135,6 +1231,7 @@ public class map_fragment extends Fragment implements
         if (PermissionsManager.areLocationPermissionsGranted(getActivity()))
         {
 
+            enable_access_location = true;
             LocationComponentOptions locationComponentOptions =
                     LocationComponentOptions.builder(getActivity())
                             .pulseEnabled(true)
@@ -1156,8 +1253,8 @@ public class map_fragment extends Fragment implements
         }
         else
         {
-            //permissionsManager = new PermissionsManager(this);
-            //permissionsManager.requestLocationPermissions(this);
+            permissionsManager = new PermissionsManager(this);
+            permissionsManager.requestLocationPermissions(getActivity());
         }
     }
 
@@ -1203,7 +1300,8 @@ public class map_fragment extends Fragment implements
                         Log.d(TAG,"number_of_selected_cards: "+number_of_selected_cards);
 
 
-                        if (featureSelectStatus(i))
+                        /// Check if the selected point has been opened before
+                        if (feature_select_status(i))
                         {
 
                             if(featureList.get(i).getStringProperty(PROPERTY_EVENT_ID).equals(last_event_selected))
@@ -1217,7 +1315,7 @@ public class map_fragment extends Fragment implements
                                 }
 
 
-                                setFeatureSelectState(featureList.get(i), false);
+                                set_feature_select_state(featureList.get(i), false);
                                 Log.v(TAG,"Item Deselected");
                             }
                             else
@@ -1227,34 +1325,31 @@ public class map_fragment extends Fragment implements
                                 catch (Exception e){Log.d(TAG,"Closing Bottom: "+e.getMessage());}
                             }
                         }
+                        /// Open the selected point
                         else
                         {
 
+                            /// Set the last selected point equal to the current selected point
                             last_event_selected = featureList.get(i).getStringProperty(PROPERTY_EVENT_ID);
                             number_of_selected_cards++;
-                            if(number_of_selected_cards>0)
+                            //if(number_of_selected_cards>0)
+
+                            /// Set camera in the proper position
+                            try
                             {
+                                JSONObject geometry = new JSONObject(featureList.get(i).geometry().toJson());
+                                update_bottom_sheet_click(featureList.get(i));
+                                JSONArray point = new JSONArray(geometry.get("coordinates").toString());
 
-                                try
-                                {
-                                    JSONObject geometry = new JSONObject(featureList.get(i).geometry().toJson());
-                                    update_bottom_sheet_click(featureList.get(i));
-                                    JSONArray point = new JSONArray(geometry.get("coordinates").toString());
-
-                                    set_camera_position(50,new LatLng(Double.parseDouble(point.get(1).toString())
-                                            ,Double.parseDouble(point.get(0).toString())));
-                                }
-                                catch (Exception e)
-                                {
-                                    Log.d(TAG,"Feature selected Exception: "+e.getMessage());
-                                }
-
+                                set_camera_position(50,new LatLng(Double.parseDouble(point.get(1).toString())
+                                        ,Double.parseDouble(point.get(0).toString())));
+                            }
+                            catch (Exception e)
+                            {
+                                Log.d(TAG,"Feature selected Exception: "+e.getMessage());
                             }
 
-
-                            setSelected(i);
-
-
+                            set_active_event_to_selected_point(i);
                         }
 
                     }
@@ -1270,17 +1365,17 @@ public class map_fragment extends Fragment implements
         }
     }
 
-    private void setSelected(int index)
+    private void set_active_event_to_selected_point(int index)
     {
         if (featureCollection.features() != null)
         {
             Feature feature = featureCollection.features().get(index);
-            setFeatureSelectState(feature, true);
+            set_feature_select_state(feature, true);
             refreshSource();
         }
     }
 
-    private boolean featureSelectStatus(int index)
+    private boolean feature_select_status(int index)
     {
         if (featureCollection == null)
         {
@@ -1289,7 +1384,7 @@ public class map_fragment extends Fragment implements
         return featureCollection.features().get(index).getBooleanProperty(PROPERTY_SELECTED);
     }
 
-    private void setFeatureSelectState(Feature feature, boolean selectedState)
+    private void set_feature_select_state(Feature feature, boolean selectedState)
     {
         if (feature.properties() != null)
         {
@@ -1503,6 +1598,26 @@ public class map_fragment extends Fragment implements
                     .withFilter(eq((get(PROPERTY_SELECTED)), literal(true))));
     }
 
+    @Override
+    public void onExplanationNeeded(List<String> permissionsToExplain)
+    {
+
+    }
+
+    @Override
+    public void onPermissionResult(boolean granted)
+    {
+        if (granted)
+        {
+            //enable_location_component();
+        }
+        else
+        {
+            getActivity().finish();
+        }
+
+    }
+
 
     private static class Load_GeoJson_Data_Task extends AsyncTask<Void, Void, FeatureCollection>
     {
@@ -1669,7 +1784,8 @@ public class map_fragment extends Fragment implements
             File directory = cw.getDir("Profile_Pictures", Context.MODE_PRIVATE);
             try
             {
-                File file =new File(directory, name);
+                File file =new File(Events_DB_VM.get_image_file(), name);
+                Log.d(TAG,"profile cards image path:" + file);
                 Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
                 return bitmap;
             }
@@ -1716,7 +1832,7 @@ public class map_fragment extends Fragment implements
                     event_date.setText(date_reformat(date_of_event)); //
 
                     /// Profile Pix Section
-                    String profile_pic_name = feature.getStringProperty(PROPERTY_PIC).substring(1);
+                    String profile_pic_name = feature.getStringProperty(PROPERTY_PIC);
                     CircleImageView profile_image = constraint_layout.findViewById(R.id.profile_image);
                     Bitmap profile_pic = get_profile_bmp(profile_pic_name);
                     if(profile_pic!=null)

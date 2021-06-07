@@ -5,6 +5,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.soluk.belle_net_alpha.ui.login.User_Credentials;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -58,17 +61,22 @@ public class HTTP_Provider
 
     }
 
-    public static String upload_image_profile(Bitmap bitmap, String name, Callback callback)
+    public static String upload_image_profile(Bitmap bitmap, String name, Callback callback) throws JSONException
     {
         File file = generate_local_image(bitmap,name);
         request_body = new MultipartBody.Builder()
                                     .setType(MultipartBody.FORM)
-                                    .addPart(Headers.of("Content-Disposition", "form-data; name=\"fileToUpload\"; filename=\"user_profile_image.jpg\""),
-                                        RequestBody.create(MEDIA_TYPE_JPG, file))
+                                    //.addPart(Headers.of("Content-Disposition", "form-data; name=\"fileToUpload\"; filename=\"user_profile_image.jpg\""),
+                                    .addPart(Headers.of("Content-Disposition", "form-data; name=\"fileToUpload\"; filename=\""+
+                                                    User_Credentials.get_item("user_pic")+".jpg\""),
+                                        RequestBody.create(file, MEDIA_TYPE_JPG))
                                     .build();
+
 
         request = new Request.Builder()
                 .header("Authorization", "Client-ID " + IMGUR_CLIENT_ID)
+                .header("user_email",User_Credentials.get_item("user_email"))
+                .header("user_password",User_Credentials.get_item("user_password"))
                 .url(UPLOAD_URL)
                 .post(request_body)
                 .build();
@@ -81,10 +89,9 @@ public class HTTP_Provider
         return"";
     }
 
-    public static void get_file_dir(File dir)
-    {
-        local_dir = dir;
-    }
+    public static void set_file_dir(File dir) {local_dir = dir;}
+
+    public static File get_file_dir() {return local_dir;}
 
     private static File generate_local_image (Bitmap bitmap, String name)
     {
