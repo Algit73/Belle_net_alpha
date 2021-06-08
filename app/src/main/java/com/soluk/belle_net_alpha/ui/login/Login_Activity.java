@@ -37,7 +37,7 @@ import okhttp3.Response;
 public class Login_Activity extends AppCompatActivity
 {
 
-    private LoginViewModel loginViewModel;
+
     private static final String TAG = Login_Activity.class.getSimpleName();
     private static final String LOGIN_SUBURL = "belle_net_users_info/user_login_check.php";
     private final String USER_CREDENTIALS = "user_cred";

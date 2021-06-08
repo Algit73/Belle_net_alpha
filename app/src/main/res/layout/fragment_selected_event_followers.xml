@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".selected_event.Selected_Event_Followers_Fragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fadeScrollbars="true"
+                    android:scrollbars="none"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginBottom="16dp"
+                    >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        >
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/fan1"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="16dp"
+                            android:src="@drawable/al_profile_300"/>
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/fan2"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="16dp"
+                            android:src="@drawable/al_profile_300"/>
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/fan3"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="16dp"
+                            android:src="@drawable/al_profile_300"/>
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/fan4"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="16dp"
+                            android:src="@drawable/al_profile_300"/>
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/fan5"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="16dp"
+                            android:src="@drawable/al_profile_300"/>
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/fan6"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="16dp"
+                            android:src="@drawable/al_profile_300"/>
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/fan7"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="16dp"
+                            android:src="@drawable/al_profile_300"/>
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/fan8"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="16dp"
+                            android:src="@drawable/al_profile_300"/>
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/fan9"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="16dp"
+                            android:src="@drawable/al_profile_300"/>
+
+                        <View
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="16dp"
+                            />
+
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+
+
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dp"/>
+
+    </LinearLayout>
+
+
+
+
+
+</FrameLayout>

@@ -1,18 +1,24 @@
 package com.soluk.belle_net_alpha.all_events_list_fragment;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mapbox.geojson.Feature;
 import com.soluk.belle_net_alpha.R;
 import com.soluk.belle_net_alpha.dummy.DummyContent.DummyItem;
 import com.soluk.belle_net_alpha.model.Events_DB_VM;
+import com.soluk.belle_net_alpha.selected_event.Selected_Event_Activity;
+import com.soluk.belle_net_alpha.user_followx.User_FollowX_List_Activity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -61,6 +67,19 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
         Bitmap profile_pic = get_profile_bmp(profile_pic_name);
         if(profile_pic!=null)
             holder.profile_pic_civ.setImageBitmap(profile_pic);
+
+        holder.join_event.setOnClickListener(v ->
+        {
+            Toast.makeText(holder.join_event.getContext(),feature_list.get(position).getStringProperty("name"),Toast.LENGTH_SHORT).show();
+
+        });
+
+        holder.card_layout.setOnClickListener(v ->
+        {
+            Toast.makeText(holder.card_layout.getContext(),feature_list.get(position).getStringProperty("family"),Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(holder.card_layout.getContext(), Selected_Event_Activity.class);
+            holder.join_event.getContext().startActivity(intent);
+        });
 
     }
 
@@ -119,6 +138,8 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
         public final TextView event_explanation_tv;
         public final TextView event_joinees_tv;
         public final CircleImageView profile_pic_civ;
+        public final Button join_event;
+        public final ConstraintLayout card_layout;
         public Feature mItem;
 
         public ViewHolder(View view)
@@ -134,6 +155,8 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
             event_explanation_tv = view.findViewById(R.id.event_explanation);
             event_joinees_tv = view.findViewById(R.id.event_joinees);
             profile_pic_civ = view.findViewById(R.id.profile_pic);
+            join_event = view.findViewById(R.id.join_event);
+            card_layout = view.findViewById(R.id.card_layout);
         }
 
 

@@ -104,50 +104,6 @@ public class main_activity extends AppCompatActivity implements
                 }
             });
 
-    private void request_permission()
-    {
-        if (ContextCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION) ==
-                PackageManager.PERMISSION_GRANTED)
-        {
-            // You can use the API that requires the permission.
-            Log.d(TAG,"request_permission: Granted");
-
-        }
-        //else if (shouldShowRequestPermissionRationale(...))
-        //{
-        // In an educational UI, explain to the user why your app requires this
-        // permission for a specific feature to behave as expected. In this UI,
-        // include a "cancel" or "no thanks" button that allows the user to
-        // continue using your app without granting the permission.
-
-        //}
-        else
-        {
-            // You can directly ask for the permission.
-            // The registered ActivityResultCallback gets the result of this request.
-            Log.d(TAG,"request_permission: Not Granted");
-            requestPermissionLauncher.launch(
-                    Manifest.permission.ACCESS_FINE_LOCATION);
-        }
-    }
-
-    void request_per_2()
-    {
-        if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-        {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("This app needs location access ");
-            builder.setMessage("Please grant location access so this app can detect devices.");
-            builder.setPositiveButton(android.R.string.ok, null);
-            builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                public void onDismiss(DialogInterface dialog) {
-                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
-                }
-            });
-            builder.show();
-        }
-    }
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -159,11 +115,6 @@ public class main_activity extends AppCompatActivity implements
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_main);
 
-        //request_per_2();
-        //request_permission();
-        //HTTP_Provider.get_file_dir(this.getFilesDir());
-
-        //Picasso.get().load().memoryPolicy()
 
 
 
@@ -228,68 +179,9 @@ public class main_activity extends AppCompatActivity implements
 
         /// FireBase
         Fire_Base_Configuring();
-        //check_and_request_permissions();
 
     }
 
-    private void check_and_request_permissions()
-    {
-        // Check for permissions
-
-        for (String each_permission : REQUIRED_PERMISSION_LIST)
-        {
-            if (ContextCompat.checkSelfPermission(this, each_permission) != PackageManager.PERMISSION_GRANTED)
-            {
-                missingPermission.add(each_permission);
-            }
-        }
-        // Request for missing permissions
-        if (missingPermission.isEmpty())
-        {
-
-        }
-        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-        {
-            //showToast("Need to grant the permissions!");
-            Toast.makeText(getApplicationContext(),"Need to grant the permissions!",
-                    Toast.LENGTH_SHORT).show();
-            ActivityCompat.requestPermissions(this,
-                    missingPermission.toArray(new String[missingPermission.size()]),
-                    REQUEST_PERMISSION_CODE);
-        }
-
-    }
-
-    /*
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-    {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // Check for granted permission and remove from missing list
-        if (requestCode == REQUEST_PERMISSION_CODE)
-        {
-            for (int i = grantResults.length - 1; i >= 0; i--)
-            {
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED)
-                {
-                    missingPermission.remove(permissions[i]);
-                }
-            }
-        }
-        // If there is enough permission, we will start the registration
-        if (missingPermission.isEmpty())
-        {
-
-        }
-        else
-        {
-            //showToast("Missing permissions!!!");
-            Toast.makeText(getApplicationContext(),"Need to grant the permissions!",
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
-
-     */
 
 
 
@@ -298,27 +190,8 @@ public class main_activity extends AppCompatActivity implements
     {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Log.i(TAG, "onActivityResult requestCode: " + requestCode);
+        Log.d(TAG, "onActivityResult requestCode: " + requestCode);
 
-        if (requestCode== LocationRequest.PRIORITY_HIGH_ACCURACY||requestCode==LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
-                ||requestCode== LocationRequest.PRIORITY_LOW_POWER)
-        {
-            Log.d(TAG, "onActivityResult: GPS asked");
-            switch (resultCode)
-            {
-                case Activity.RESULT_OK:
-                    // All required changes were successfully made
-                    Log.d(TAG, "onActivityResult: GPS Enabled by user");
-                    break;
-                case Activity.RESULT_CANCELED:
-                    // The user was asked to change settings, but chose not to
-                    Log.i(TAG, "onActivityResult: User rejected GPS request");
-                    main_activity.this.finish();
-                    break;
-                default:
-                    break;
-            }
-        }
 
         if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP)
         {

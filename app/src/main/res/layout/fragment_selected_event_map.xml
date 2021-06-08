@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".selected_event.Selected_Event_Map_Fragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <com.mapbox.mapboxsdk.maps.MapView
+            android:id="@+id/mapview_event"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_anchorGravity="center"
+            app:mapbox_cameraTargetLat="42.149683"
+            app:mapbox_cameraTargetLng="-119.155770"
+            app:mapbox_cameraZoom="12" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/locate_event_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/code_brackets"
+            app:backgroundTint="@color/gray_200"
+            app:tint="@color/gray_800"
+            />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</FrameLayout>

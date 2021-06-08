@@ -22,7 +22,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -890,10 +889,11 @@ public class map_fragment extends Fragment implements
             selected_user_profile_image.setImageBitmap(selected_profile_image_bmp);
 
         /// Setting event date
-        selected_event_date.setText(date_reformat(info.get("event_date").toString()));
+        selected_event_date.setText(Date_Time_Provider.
+                date_reformat(info.get("event_date").toString()));
+
 
         /// Setting event type
-
         String event_type = info.get("event_type").toString();
         if(event_type.equals("1"))
             selected_event_type.setText("Ensemble Riding");
@@ -1022,26 +1022,6 @@ public class map_fragment extends Fragment implements
 
     }
 
-    private String date_reformat(String time)
-    {
-        String inputPattern = "yyyy-MM-dd";
-        String outputPattern = "MMMM,dd,yy";
-        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
-        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
-
-        Date date = null;
-        String str = null;
-
-        try {
-            date = inputFormat.parse(time);
-            str = outputFormat.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return str;
-    }
-
-
     private Bitmap get_profile_bmp(String name)
     {
         ContextWrapper cw = new ContextWrapper(getContext());
@@ -1076,40 +1056,17 @@ public class map_fragment extends Fragment implements
 
     public void update_map()
     {
-        //Log.d(TAG,"Fragment Called");
-
-
         new Load_GeoJson_Data_Task(map_fragment.this,0).execute();
-        mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded()
-        {
-            @Override
-            public void onStyleLoaded(@NonNull Style style)
-            {
-
-                //mapboxMap.addOnMapClickListener(main_activity.this);
-                //mapboxMap.addOnMapLongClickListener(main_activity.this);
-                symbol_manager = new SymbolManager(mapView, mapboxMap, style);
-                symbol_manager.setIconAllowOverlap(true);
-                style.addImage("marker_guide_pin", BitmapFactory.decodeResource(getResources(),R.drawable.blue_marker));
-                style.addImage("marker_start_flag", BitmapFactory.decodeResource(getResources(),R.drawable.start_64));
-                if (navigation_mapRoute!=null)
-                    navigation_mapRoute.updateRouteVisibilityTo(false);
-                wait_on_loading_data(true);
-
-
-            }
-        });
-
-
+        set_mapbox_style(mapboxMap);
+        wait_on_loading_data(true);
     }
 
 
     /// Configuring Map Interactions
-
     @Override
     public boolean onMapClick(@NonNull LatLng point)
     {
-        return handleClickIcon(mapboxMap.getProjection().toScreenLocation(point));
+        return on_event_icon_clicked(mapboxMap.getProjection().toScreenLocation(point));
     }
 
     @Override
@@ -1187,7 +1144,6 @@ public class map_fragment extends Fragment implements
     public void onMapReady(@NonNull MapboxMap mapboxMap)
     {
         this.mapboxMap = mapboxMap;
-        Log.v(TAG,"onMapReady ");
         set_mapbox_style(mapboxMap);
     }
 
@@ -1277,7 +1233,7 @@ public class map_fragment extends Fragment implements
                 .newCameraPosition(position), 2000);
     }
 
-    private boolean handleClickIcon(PointF screenPoint)
+    private boolean on_event_icon_clicked(PointF screenPoint)
     {
         List<Feature> features = new ArrayList<>();
         //List<Feature> features = mapboxMap.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID_ENSEMBLE);

@@ -86,6 +86,7 @@ public class all_events_list_fragment extends Fragment
             recycler_view.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
 
+        /*
         recycler_view.addOnItemTouchListener(new CustomTouchListener(getContext(), new onItemClickListener()
         {
             @Override
@@ -95,6 +96,8 @@ public class all_events_list_fragment extends Fragment
 
             }
         }));
+
+         */
         //recycler_view.setAdapter(new all_events_list_recycler_view_adapter(DummyContent.ITEMS));
         //recycler_view.setHasFixedSize(false);
         //ViewCompat.setNestedScrollingEnabled(recyclerView, false);

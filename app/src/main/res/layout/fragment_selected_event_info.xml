@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".selected_event.Selected_Event_Info_Fragment"
+    android:paddingBottom="@dimen/mapbox_dimen_8dp"
+    >
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            android:layout_marginTop="4dp"
+            >
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/mapbox_dimen_16dp"
+                >
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/user_profile_image_civ"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="16dp"
+                    android:src="@drawable/al_profile_300"/>
+
+                <TextView
+                    android:id="@+id/user_name_family_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/user_profile_image_civ"
+                    app:layout_constraintBottom_toBottomOf="@id/user_profile_image_civ"
+                    app:layout_constraintLeft_toRightOf="@id/user_profile_image_civ"
+                    android:layout_marginStart="16dp"
+                    android:text="Alireza Alikhani"/>
+
+                <TextView
+                    android:id="@+id/event_name_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/user_profile_image_civ"
+                    android:layout_marginTop="24dp"
+                    android:textAlignment="center"
+                    android:textSize="24sp"
+                    android:text="Super Challenge"
+                    android:textColor="@color/gray_800"/>
+
+                <View
+                    android:id="@+id/vertical_splitter"
+                    android:layout_width="1dp"
+                    android:layout_height="10dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"/>
+
+                <ImageView
+                    android:id="@+id/challenge_icon_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/bike"
+                    app:layout_constraintTop_toBottomOf="@id/event_name_tv"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="8dp"
+                    app:tint="@color/blue_500"
+                    />
+
+
+                <TextView
+                    android:id="@+id/challenge_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/challenge_icon_iv"
+                    app:layout_constraintLeft_toRightOf="@id/challenge_icon_iv"
+                    android:text="Ensemble Riding"
+                    android:layout_marginStart="@dimen/mapbox_dimen_16dp"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/gray_800"
+                    />
+
+                <TextView
+                    android:id="@+id/event_start_date_holder_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/challenge_icon_iv"
+                    app:layout_constraintLeft_toLeftOf="@+id/challenge_icon_iv"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="16dp"
+                    android:textColor="@color/gray_800"
+                    android:textSize="14sp"
+                    android:text="Event scheduled on:"/>
+
+                <ImageView
+                    android:id="@+id/event_date_icon_im"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    app:layout_constraintTop_toBottomOf="@id/event_start_date_holder_tv"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/calendar"
+                    app:tint="@color/blue_500"
+                    />
+
+                <TextView
+                    android:id="@+id/event_date_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/event_date_icon_im"
+                    app:layout_constraintLeft_toRightOf="@id/event_date_icon_im"
+                    android:text="May, 05"
+                    android:layout_marginStart="8dp"
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_800"
+                    />
+
+                <ImageView
+                    android:id="@+id/event_start_time_icon_im"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    app:layout_constraintTop_toTopOf="@+id/event_date_icon_im"
+                    app:layout_constraintLeft_toRightOf="@+id/event_date_icon_im"
+                    android:layout_marginStart="96dp"
+                    android:src="@drawable/clock_outline"
+                    app:tint="@color/blue_500"
+                    />
+
+                <TextView
+                    android:id="@+id/event_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/event_start_time_icon_im"
+                    app:layout_constraintLeft_toRightOf="@id/event_start_time_icon_im"
+                    android:text="16 : 05"
+                    android:layout_marginStart="8dp"
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_800"
+                    />
+
+
+                <TextView
+                    android:id="@+id/event_end_date_holder_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/event_start_time_icon_im"
+                    app:layout_constraintLeft_toLeftOf="@+id/event_start_date_holder_tv"
+                    android:layout_marginTop="16dp"
+
+                    android:textColor="@color/gray_800"
+                    android:textSize="14sp"
+                    android:text="Estimated End Date:"/>
+
+                <ImageView
+                    android:id="@+id/event_end_date_icon_im"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    app:layout_constraintTop_toBottomOf="@id/event_end_date_holder_tv"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/calendar"
+                    app:tint="@color/blue_500"
+                    />
+
+                <TextView
+                    android:id="@+id/event_end_date_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/event_end_date_icon_im"
+                    app:layout_constraintLeft_toRightOf="@id/event_end_date_icon_im"
+                    android:text="May, 05"
+                    android:layout_marginStart="8dp"
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_800"
+                    />
+
+                <ImageView
+                    android:id="@+id/event_end_time_icon_im"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    app:layout_constraintTop_toTopOf="@+id/event_end_date_icon_im"
+                    app:layout_constraintRight_toRightOf="@+id/event_start_time_icon_im"
+                    android:src="@drawable/clock_outline"
+                    app:tint="@color/blue_500"
+                    />
+
+                <TextView
+                    android:id="@+id/event_end_time_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/event_end_time_icon_im"
+                    app:layout_constraintLeft_toRightOf="@+id/event_end_time_icon_im"
+                    android:layout_marginStart="8dp"
+                    android:text="16 : 05"
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_800"
+                    />
+
+                <TextView
+                    android:id="@+id/more_info_holder_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/event_end_date_icon_im"
+                    app:layout_constraintLeft_toLeftOf="@+id/event_start_date_holder_tv"
+                    android:layout_marginTop="16dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/gray_800"
+                    android:text="More about this event:"/>
+
+
+
+                <ImageView
+                    android:id="@+id/event_joinees_icon_im"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    app:layout_constraintTop_toBottomOf="@id/more_info_holder_tv"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/account_group"
+                    app:tint="@color/blue_500"
+                    />
+
+                <TextView
+                    android:id="@+id/event_joinees_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/event_joinees_icon_im"
+                    app:layout_constraintLeft_toRightOf="@id/event_joinees_icon_im"
+                    android:text="73"
+                    android:layout_marginStart="8dp"
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_800"
+                    />
+
+                <ImageView
+                    android:id="@+id/event_distance_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    app:layout_constraintTop_toTopOf="@id/event_joinees_tv"
+                    app:layout_constraintLeft_toLeftOf="@+id/event_start_time_icon_im"
+
+                    android:src="@drawable/navigation_outline"
+                    app:tint="@color/blue_500"
+                    />
+
+
+
+                <TextView
+                    android:id="@+id/event_distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/event_distance_icon"
+                    app:layout_constraintLeft_toRightOf="@id/event_distance_icon"
+                    android:text="5 Km"
+                    android:layout_marginStart="8dp"
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_800"
+                    />
+
+                <ImageView
+                    android:id="@+id/event_explanation_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    app:layout_constraintTop_toBottomOf="@id/event_joinees_icon_im"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/text"
+                    app:tint="@color/blue_500"
+                    />
+
+
+
+                <TextView
+                    android:id="@+id/event_explanation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/event_explanation_icon"
+                    app:layout_constraintLeft_toRightOf="@id/event_explanation_icon"
+                    android:text="I will start this journey to reach Chocolate Hills and to enjoy the beautiful horizons"
+                    android:layout_marginStart="48dp"
+                    android:layout_marginEnd="48dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/gray_800"
+                    />
+
+                <Button
+                    android:id="@+id/join_event_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    app:layout_constraintTop_toBottomOf="@+id/event_explanation"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:backgroundTint="@color/blue_900"
+                    android:textColor="@color/gray_100"
+                    android:text="join"/>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.cardview.widget.CardView>
+        
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dp"/>
+        
+    </LinearLayout>
+
+
+
+
+   
+
+
+</FrameLayout>

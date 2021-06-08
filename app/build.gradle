@@ -81,6 +81,8 @@ dependencies {
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
 
     implementation 'com.koushikdutta.ion:ion:3.0.8'
+
+    implementation 'me.zhanghai.android.materialratingbar:library:1.4.0'
     //implementation 'com.github.CanHub:Android-Image-Cropper:3.1.0'
     //implementation 'com.github.yalantis:ucrop:2.2.6'
     //implementation 'com.github.yalantis:ucrop:2.2.6'

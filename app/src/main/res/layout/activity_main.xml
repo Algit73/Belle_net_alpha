@@ -16,19 +16,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.mapbox.mapboxsdk.maps.MapView
-            android:id="@+id/mapView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_anchor="@+id/constraintLayout"
-            app:layout_anchorGravity="center"
-            app:mapbox_cameraTargetLat="42.149683"
-            app:mapbox_cameraTargetLng="-119.155770"
-            app:mapbox_cameraZoom="12"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
-            android:visibility="invisible"
-            />
 
         <!-- res/layout/example_activity.xml -->
         <androidx.fragment.app.FragmentContainerView
@@ -57,17 +44,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/bottom_navigation"/>
 
-        <!--Button
-            android:id="@+id/send_request"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:text="SEND"
-            android:backgroundTint="@color/teal_500"
-            android:textColor="@color/gray_100"
-            /-->
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
@@ -86,52 +62,6 @@
             app:menu="@menu/bottom_navigation_menu"/>
 
 
-        <com.leinardi.android.speeddial.SpeedDialView
-            android:id="@+id/pin_event_sd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/boundary_1"
-            android:layout_marginEnd="18dp"
-            app:layout_constraintRight_toRightOf="parent"
-            app:sdMainFabClosedBackgroundColor="@color/light_green_a700"
-            app:sdMainFabOpenedBackgroundColor="@color/light_green_a400"
-            app:sdMainFabClosedIconColor="@color/white"
-            app:sdMainFabClosedSrc="@drawable/plus"
-            android:visibility="invisible"
-            />
-
-
-
-
-        <View
-            android:id="@+id/boundary_1"
-            android:layout_width="wrap_content"
-            android:layout_height="1dp"
-            app:layout_constraintBottom_toTopOf="@id/fab_pin_on_maps"
-            app:layout_constraintLeft_toLeftOf="@id/fab_pin_on_maps"
-            app:layout_constraintRight_toRightOf="@id/fab_pin_on_maps" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_pin_on_maps"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_marginBottom="36dp"
-            android:backgroundTint="@color/blue_800"
-            android:src="@drawable/crosshairs_gps"
-            android:layout_marginEnd="36dp"
-            app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
-            app:layout_constraintRight_toRightOf="parent"
-            android:visibility="invisible"
-            app:tint="@color/cardview_light_background" />
-
-        <ImageView
-            android:id="@+id/test_profile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <View
             android:id="@+id/horizontal_splitter"
