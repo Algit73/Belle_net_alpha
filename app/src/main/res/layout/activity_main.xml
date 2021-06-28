@@ -7,105 +7,165 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="false"
     android:background="@color/gray_200"
-    tools:context=".main_activity">
+    tools:context=".Main_Activity">
 
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-
-        <!-- res/layout/example_activity.xml -->
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragment_map_view"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+        <!--include layout="@layout/gradient_toolbar"/-->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/bottom_navigation"/>
+            android:orientation="horizontal"
+            android:background="@color/teal_palette_light"
+            android:paddingBottom="@dimen/mapbox_dimen_8dp"
+            >
+            <ImageButton
+                android:id="@+id/settings_ib"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/cog_outline"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:tint="@color/gray_100"
+                android:background="@null"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragment_event_list_parent"
+                />
+            <ImageButton
+                android:id="@+id/find_friends_ib"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/account_multiple_outline"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/settings_ib"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:tint="@color/gray_100"
+                android:background="@null"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+
+                />
+
+            <ImageButton
+                android:id="@+id/notifications_center_ib"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/bell_outline"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/find_friends_ib"
+                android:tint="@color/gray_100"
+                android:background="@null"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/bottom_navigation"/>
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragment_user_profile"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/bottom_navigation"/>
+            android:layout_height="match_parent">
 
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_navigation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            <!-- res/layout/example_activity.xml -->
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragment_map_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/bottom_navigation"/>
 
-            app:itemTextAppearanceActive="@style/stockBottomNavigationView.Active"
-            app:itemTextAppearanceInactive="@style/stockBottomNavigationView.InActive"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            android:background="@color/gray_100"
-            app:itemIconTint="@drawable/bottom_navigation_change_item_color"
-            app:itemTextColor="@drawable/bottom_navigation_change_item_color"
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragment_event_list_parent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/bottom_navigation"/>
 
-            app:menu="@menu/bottom_navigation_menu"/>
-
-
-
-        <View
-            android:id="@+id/horizontal_splitter"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            />
-
-        <ImageButton
-            android:id="@+id/accept_pinned_markers_ib"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/check"
-            android:background="@drawable/ib_circle_background"
-            android:backgroundTint="@color/green_500"
-            app:tint="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/horizontal_splitter"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="32dp"
-            android:visibility="invisible"
-            />
-
-        <ImageButton
-            android:id="@+id/reject_pinned_markers_ib"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/close"
-            android:background="@drawable/ib_circle_background"
-            android:backgroundTint="@color/red_500"
-            app:tint="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/horizontal_splitter"
-            android:layout_marginStart="24dp"
-            android:layout_marginBottom="32dp"
-            android:visibility="invisible"
-            />
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragment_user_profile"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/bottom_navigation"/>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottom_navigation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
 
-    <!--include layout="@layout/bellenet_bottom_sheet_pin_to_add" /-->
-    <!--include layout="@layout/bellenet_bottom_sheet_click_to_join" /-->
+                app:itemTextAppearanceActive="@style/stockBottomNavigationView.Active"
+                app:itemTextAppearanceInactive="@style/stockBottomNavigationView.InActive"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:background="@color/gray_100"
+                app:itemIconTint="@drawable/bottom_navigation_change_item_color"
+                app:itemTextColor="@drawable/bottom_navigation_change_item_color"
+
+
+                app:menu="@menu/bottom_navigation_menu"/>
+
+
+
+            <View
+                android:id="@+id/horizontal_splitter"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                />
+
+            <ImageButton
+                android:id="@+id/accept_pinned_markers_ib"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/check"
+                android:background="@drawable/ib_circle_background"
+                android:backgroundTint="@color/green_500"
+                app:tint="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/horizontal_splitter"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="32dp"
+                android:visibility="invisible"
+                />
+
+            <ImageButton
+                android:id="@+id/reject_pinned_markers_ib"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/close"
+                android:background="@drawable/ib_circle_background"
+                android:backgroundTint="@color/red_500"
+                app:tint="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/horizontal_splitter"
+                android:layout_marginStart="24dp"
+                android:layout_marginBottom="32dp"
+                android:visibility="invisible"
+                />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
 
 
 

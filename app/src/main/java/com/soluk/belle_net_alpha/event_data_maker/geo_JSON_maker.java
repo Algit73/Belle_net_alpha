@@ -1,6 +1,8 @@
 package com.soluk.belle_net_alpha.event_data_maker;
 
-import com.soluk.belle_net_alpha.main_activity;
+import com.mapbox.geojson.Feature;
+import com.soluk.belle_net_alpha.Main_Activity;
+import com.soluk.belle_net_alpha.model.Events_DB_VM;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,7 +12,7 @@ public class geo_JSON_maker
 {
     private JSONObject features_object;
     private JSONArray features_child_array;
-    private static final String TAG = main_activity.class.getSimpleName();
+    private static final String TAG = Main_Activity.class.getSimpleName();
 
 
 
@@ -45,15 +47,17 @@ public class geo_JSON_maker
             properties.put("marker-color", "#D81B60");
             properties.put("marker-size", "medium");
             properties.put("marker-symbol", "");
-            properties.put("name", feature.get("user_name"));
-            properties.put("family", feature.get("user_family"));
-            properties.put("user_id", feature.get("user_id"));
-            properties.put("event_id", feature.get("event_unique_id"));
-            properties.put("date_created", feature.get("date_created"));
-            properties.put("event_date", feature.get("date_of_event"));
-            properties.put("profile_pic", feature.get("user_picture"));
-            properties.put("is_user_joined", feature.get("is_user_joined"));
-            properties.put("count", feature.get("count"));
+            properties.put(Events_DB_VM.USER_ID, feature.get(Events_DB_VM.USER_ID));
+            properties.put(Events_DB_VM.USER_NAME, feature.get(Events_DB_VM.USER_NAME));
+            properties.put(Events_DB_VM.USER_FAMILY, feature.get(Events_DB_VM.USER_FAMILY));
+
+            properties.put(Events_DB_VM.EVENT_ID, feature.get("event_unique_id"));
+            properties.put(Events_DB_VM.EVENT_DATE_CREATED, feature.get(Events_DB_VM.EVENT_DATE_CREATED));
+            properties.put(Events_DB_VM.EVENT_DATE, feature.get(Events_DB_VM.EVENT_DATE));
+            properties.put(Events_DB_VM.EVENT_TIME, feature.get(Events_DB_VM.EVENT_TIME));
+            properties.put(Events_DB_VM.USER_PIC, feature.get(Events_DB_VM.USER_PIC));
+            properties.put(Events_DB_VM.IS_USER_JOINED, feature.get(Events_DB_VM.IS_USER_JOINED));
+            properties.put(Events_DB_VM.NUM_OF_JOINED, feature.get(Events_DB_VM.NUM_OF_JOINED));
             //properties.put("longitude_0", feature.get("longitude_0"));
             //properties.put("latitude_0", feature.get("latitude_0"));
             properties.put("event_type", feature.get("event_type"));
@@ -71,19 +75,8 @@ public class geo_JSON_maker
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        Feature feature1;
 
-        /*
-        try
-        {
-            properties.put("longitude_end", feature.get("longitude_end"));
-            properties.put("latitude_end", feature.get("latitude_end"));
-        }
-        catch (Exception e)
-        {
-
-        }
-
-         */
 
         ////// GeoJson Geometry ///////
 

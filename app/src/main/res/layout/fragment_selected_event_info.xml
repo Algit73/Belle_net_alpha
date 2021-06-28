@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".selected_event.Selected_Event_Info_Fragment"
-    android:paddingBottom="@dimen/mapbox_dimen_8dp"
+
     >
     
     <LinearLayout
@@ -25,6 +25,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="@dimen/mapbox_dimen_16dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 >
 
                 <de.hdodenhof.circleimageview.CircleImageView
@@ -35,6 +37,8 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     android:layout_marginTop="16dp"
                     android:layout_marginStart="16dp"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="@color/teal_palette_light"
                     android:src="@drawable/al_profile_300"/>
 
                 <TextView
@@ -75,7 +79,7 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     android:layout_marginTop="16dp"
                     android:layout_marginStart="8dp"
-                    app:tint="@color/blue_500"
+                    app:tint="@color/teal_palette_light"
                     />
 
 
@@ -102,7 +106,7 @@
                     android:layout_marginStart="16dp"
                     android:textColor="@color/gray_800"
                     android:textSize="14sp"
-                    android:text="Event scheduled on:"/>
+                    android:text="Event Scheduled on:"/>
 
                 <ImageView
                     android:id="@+id/event_date_icon_im"
@@ -113,11 +117,11 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginStart="8dp"
                     android:src="@drawable/calendar"
-                    app:tint="@color/blue_500"
+                    app:tint="@color/teal_palette_light"
                     />
 
                 <TextView
-                    android:id="@+id/event_date_tv"
+                    android:id="@+id/event_start_date_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="@id/event_date_icon_im"
@@ -136,11 +140,11 @@
                     app:layout_constraintLeft_toRightOf="@+id/event_date_icon_im"
                     android:layout_marginStart="96dp"
                     android:src="@drawable/clock_outline"
-                    app:tint="@color/blue_500"
+                    app:tint="@color/teal_palette_light"
                     />
 
                 <TextView
-                    android:id="@+id/event_time"
+                    android:id="@+id/event_start_time_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="@id/event_start_time_icon_im"
@@ -173,7 +177,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginStart="8dp"
                     android:src="@drawable/calendar"
-                    app:tint="@color/blue_500"
+                    app:tint="@color/teal_palette_light"
                     />
 
                 <TextView
@@ -195,7 +199,7 @@
                     app:layout_constraintTop_toTopOf="@+id/event_end_date_icon_im"
                     app:layout_constraintRight_toRightOf="@+id/event_start_time_icon_im"
                     android:src="@drawable/clock_outline"
-                    app:tint="@color/blue_500"
+                    app:tint="@color/teal_palette_light"
                     />
 
                 <TextView
@@ -232,7 +236,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginStart="8dp"
                     android:src="@drawable/account_group"
-                    app:tint="@color/blue_500"
+                    app:tint="@color/teal_palette_light"
                     />
 
                 <TextView
@@ -255,7 +259,7 @@
                     app:layout_constraintLeft_toLeftOf="@+id/event_start_time_icon_im"
 
                     android:src="@drawable/navigation_outline"
-                    app:tint="@color/blue_500"
+                    app:tint="@color/teal_palette_light"
                     />
 
 
@@ -281,7 +285,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginStart="8dp"
                     android:src="@drawable/text"
-                    app:tint="@color/blue_500"
+                    app:tint="@color/teal_palette_light"
                     />
 
 
@@ -301,15 +305,17 @@
 
                 <Button
                     android:id="@+id/join_event_btn"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:layout_constraintTop_toBottomOf="@+id/event_explanation"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp"
-                    android:backgroundTint="@color/blue_900"
+                    android:padding="12dp"
+                    android:backgroundTint="@color/teal_palette_light"
                     android:textColor="@color/gray_100"
+                    app:cornerRadius="36dp"
                     android:text="join"/>
 
 

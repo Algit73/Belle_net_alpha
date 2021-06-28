@@ -3,7 +3,7 @@ package com.soluk.belle_net_alpha.event_data_maker;
 import android.util.Log;
 
 import com.mapbox.geojson.FeatureCollection;
-import com.soluk.belle_net_alpha.main_activity;
+import com.soluk.belle_net_alpha.Main_Activity;
 
 import org.json.JSONObject;
 
@@ -21,7 +21,7 @@ public class file_maker
     private FileWriter file_writer ;
     private BufferedReader buffered_reader ;
     private BufferedWriter buffered_writer;
-    private static final String TAG = main_activity.class.getSimpleName();
+    private static final String TAG = Main_Activity.class.getSimpleName();
 
 
     public file_maker(String parent, String file_name)
@@ -65,7 +65,7 @@ public class file_maker
             while ((line = buffered_reader.readLine()) != null)
             {
                 output.append(line + "\n");
-                Log.d(TAG, "file_maker output of read: "+line);
+                //Log.d(TAG, "file_maker output of read: "+line);
             }
             response = output.toString();
             return new JSONObject(response);
@@ -86,7 +86,6 @@ public class file_maker
     {
         try
         {
-            //Log.v(TAG, "file_maker: Writing 1");
             file_writer = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(file_writer);
             bw.write(object.toString());

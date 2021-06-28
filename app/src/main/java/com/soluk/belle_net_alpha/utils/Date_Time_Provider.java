@@ -1,4 +1,4 @@
-package com.soluk.belle_net_alpha;
+package com.soluk.belle_net_alpha.utils;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -8,6 +8,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import androidx.core.content.res.ResourcesCompat;
+
+import com.soluk.belle_net_alpha.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -165,14 +167,52 @@ public class Date_Time_Provider
         return calendar_time_picker.getTime();
     }
 
-    public static String date_reformat(String time)
+    public static String date_to_MDY(String time)
     {
         String inputPattern = "yyyy-MM-dd";
-        String outputPattern = "MMMM,dd,yy";
+        String outputPattern = "MMMM, dd, yy";
         SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
         SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
 
         Date date = null;
+        String str = null;
+
+        try {
+            date = inputFormat.parse(time);
+            str = outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return str;
+    }
+
+    public static String date_to_YMD(String time)
+    {
+        String inputPattern = "MMMM, dd, yy";
+        String outputPattern = "yyyy-MM-dd";
+        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
+
+        Date date;
+        String str = null;
+
+        try {
+            date = inputFormat.parse(time);
+            str = outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return str;
+    }
+
+    public static String time_reformat(String time)
+    {
+        String inputPattern = "HH:mm:ss";
+        String outputPattern = "HH : mm";
+        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
+
+        Date date;
         String str = null;
 
         try {

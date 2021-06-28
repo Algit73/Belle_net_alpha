@@ -11,8 +11,9 @@ import androidx.lifecycle.ViewModel;
 import com.soluk.belle_net_alpha.HTTP_Provider;
 import com.soluk.belle_net_alpha.event_data_maker.file_maker;
 import com.soluk.belle_net_alpha.event_data_maker.geo_JSON_maker;
-import com.soluk.belle_net_alpha.main_activity;
+import com.soluk.belle_net_alpha.Main_Activity;
 import com.soluk.belle_net_alpha.ui.login.User_Credentials;
+import com.soluk.belle_net_alpha.utils.Image_Provider;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -24,7 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
@@ -38,12 +38,12 @@ import static android.os.Looper.getMainLooper;
 public class Events_DB_VM extends ViewModel
 {
 
-    private static final String TAG = main_activity.class.getSimpleName();
+    private static final String TAG = Main_Activity.class.getSimpleName();
     private static final String URL = "https://soluk.org/belle_net_users_info/depict_database.php";
     private static final String REQUEST_DB_SUB_URL = "belle_net_users_info/depict_database.php";
-    private static final String REQUEST_PICS_SUB_URL = "belle_net_users_info/request_profile_images.php";
+    public static final String REQUEST_PICS_SUB_URL = "belle_net_users_info/request_profile_images.php";
     public static final String profile_pic_url = "https://soluk.org/belle_net_users_info/profile_pictures/";
-    private static final String USER_ID = "#ahdx98!s5kjxsp";
+    //private static final String USER_ID = "#ahdx98!s5kjxsp";
     private boolean is_initiated = false;
     private boolean is_process_finished = false;
     private String db_file_directory;
@@ -57,6 +57,29 @@ public class Events_DB_VM extends ViewModel
     public int num_until_updating;
     public boolean is_data_received;
     public boolean is_callback_called;
+
+    public static final String USER_NAME = "user_name";
+    public static final String USER_FAMILY = "user_family";
+    public static final String USER_NAME_FAMILY = "user_name_family";
+    public static final String USER_PIC = "user_picture";
+    public static final String USER_ID = "user_id";
+    public static final String USER_ID_FOLLOWING = "user_id_following";
+    public static final String USER_EMAIL = "user_email";
+    public static final String USER_PASSWORD = "user_password";
+    public static final String USER_JOIN_DATE = "user_join_date";
+    public static final String USER_FOLLOWINGS = "user_followings";
+    public static final String USER_FOLLOWERS = "user_followers";
+    public static final String USER_TYPE = "user_type";
+    public static final String USER_REQUEST = "user_request";
+    public static final String OWNER_USER_ID = "owner_user_id";
+    public static final String EVENT_DATE_CREATED = "date_created";
+    public static final String EVENT_DATE = "event_date";
+    public static final String EVENT_TIME = "event_time";
+    public static final String EVENT_TYPE = "event_type";
+    public static final String EVENT_ID = "event_id";
+    public static final String NUM_POINTS = "num_points";
+    public static final String IS_USER_JOINED = "is_user_joined";
+    public static final String NUM_OF_JOINED = "count";
 
 
     public void init_db(String db_file_directory,File image_file_directory)
@@ -98,7 +121,7 @@ public class Events_DB_VM extends ViewModel
         try
         {
             JSONObject json = new JSONObject();
-            json.put("user_id",USER_ID);
+            json.put("user_id",User_Credentials.get_item(USER_ID));
             HTTP_Provider.post_json(REQUEST_DB_SUB_URL,json,callback);
         }
         catch (Exception e){};
@@ -177,7 +200,7 @@ public class Events_DB_VM extends ViewModel
             {
                 Log.d(TAG,"data received: "+e.getMessage());
             }
-            Log.d(TAG,"db_image_callback: ");
+            //Log.d(TAG,"db_image_callback: ");
         }
 
 
@@ -250,7 +273,7 @@ public class Events_DB_VM extends ViewModel
 
                 Log.d(TAG,"BMP Received");
                 is_data_received = true;
-                save_to_internal_storage(bitmap,postfix);
+                Image_Provider.save_to_internal_storage(bitmap,postfix);
                 Log.d(TAG,"image postfix:"+postfix);
                 Log.d(TAG,"image num_until_updating:"+num_until_updating);
                 /// Check if the last image received
@@ -305,37 +328,7 @@ public class Events_DB_VM extends ViewModel
         Log.d(TAG,"catch_profile_images: Exited");
     }
 
-    public static String save_to_internal_storage(Bitmap bitmapImage, String name)
-    {
-        File path=new File(image_file_directory_static,name);
-        Log.d(TAG,"Profile pic address "+path);
 
-        FileOutputStream fos = null;
-        try
-        {
-            fos = new FileOutputStream(path);
-            // Use the compress method on the BitMap object to write_json image to the OutputStream
-            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-        }
-        catch (Exception e)
-        {
-            Log.d(TAG,"Int Strge Create File failed: "+e.getMessage());
-            e.printStackTrace();
-        }
-        finally
-        {
-            try
-            {
-                fos.close();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        Log.d(TAG,"Directory: "+ image_file_directory_static.getAbsolutePath());
-        return image_file_directory_static.getAbsolutePath();
-    }
 
     /// Callback function to inform when DB get updated
     public void set_db_handler(db_update_handler db_handler)

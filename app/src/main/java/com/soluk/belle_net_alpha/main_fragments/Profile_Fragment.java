@@ -1,10 +1,8 @@
 package com.soluk.belle_net_alpha.main_fragments;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -24,14 +22,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.soluk.belle_net_alpha.Date_Time_Provider;
+import com.soluk.belle_net_alpha.utils.Date_Time_Provider;
 import com.soluk.belle_net_alpha.HTTP_Provider;
 import com.soluk.belle_net_alpha.R;
 import com.soluk.belle_net_alpha.event_data_maker.file_maker;
@@ -59,6 +56,16 @@ import okhttp3.Response;
 
 import static android.app.Activity.RESULT_OK;
 import static android.os.Looper.getMainLooper;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_EMAIL;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_FAMILY;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_FOLLOWERS;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_FOLLOWINGS;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_ID;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_JOIN_DATE;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_NAME;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_PASSWORD;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_PIC;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_REQUEST;
 
 
 public class Profile_Fragment extends Fragment
@@ -223,78 +230,15 @@ public class Profile_Fragment extends Fragment
         JSONObject user_follow = new JSONObject();
         try
         {
-            user_follow.put("user_id", User_Credentials.get_item("user_id"));
-            user_follow.put("user_email",User_Credentials.get_item("user_email"));
-            user_follow.put("user_password",User_Credentials.get_item("user_password"));
-            user_follow.put("user_request","followx");
+            user_follow.put(USER_ID, User_Credentials.get_item(USER_ID));
+            user_follow.put(USER_EMAIL,User_Credentials.get_item(USER_EMAIL));
+            user_follow.put(USER_PASSWORD,User_Credentials.get_item(USER_PASSWORD));
+            user_follow.put(USER_REQUEST,"followx");
         }
         catch (JSONException e)
         {
             e.printStackTrace();
         }
-
-        HTTP_Provider.post_json(REQUEST_DB_USER_FOLLOWERS_SUB_URL,user_follow,callback);
-    }
-
-    private void update_followx_stat_tvs(JSONObject followx_stat)
-    {
-        Handler mainHandler = new Handler(getMainLooper());
-        Runnable myRunnable = () ->
-        {
-            try
-            {
-                user_followers_tv.setText(followx_stat.get("followers").toString());
-                user_followings_tv.setText(followx_stat.get("followings").toString());
-            }
-            catch (JSONException e) {e.printStackTrace();}
-
-        };
-        mainHandler.post(myRunnable);
-    }
-
-    private void update_followx_stat()
-    {
-        Callback callback = new Callback()
-        {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e)
-            {
-
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException
-            {
-                String body = response.body().string();
-
-                try
-                {
-                    JSONObject followx_stat = new JSONObject(body);
-                    update_followx_stat_tvs(followx_stat);
-                }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
-                }
-
-                Log.d(TAG,"Send onResponse: "+ body);
-
-            }
-        };
-
-        JSONObject user_follow = new JSONObject();
-        try
-        {
-            user_follow.put("user_id", User_Credentials.get_item("user_id"));
-            user_follow.put("user_email",User_Credentials.get_item("user_email"));
-            user_follow.put("user_password",User_Credentials.get_item("user_password"));
-            user_follow.put("user_request","numbers");
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-
 
         HTTP_Provider.post_json(REQUEST_DB_USER_FOLLOWERS_SUB_URL,user_follow,callback);
     }
@@ -302,7 +246,7 @@ public class Profile_Fragment extends Fragment
     public void get_updated()
     {
         try {request_user_id(get_user_id());} catch (Exception ignored){}
-        update_followx_stat();
+        //update_followx_stat();
     }
 
     private JSONObject get_user_id() throws JSONException
@@ -352,11 +296,13 @@ public class Profile_Fragment extends Fragment
         {
             try
             {
-                String user_name_family = profile.get("user_name")+" "+profile.get("user_family");
+                String user_name_family = profile.get(USER_NAME)+" "+profile.get(USER_FAMILY);
                 user_name_family_tv.setText(user_name_family);
                 user_join_date_tv.setText(Date_Time_Provider
-                                            .date_reformat(profile.get("user_join_date").toString()));
-                user_profile_image_civ.setImageBitmap(get_profile_bmp(profile.get("user_pic").toString()));
+                                            .date_to_MDY(profile.get(USER_JOIN_DATE).toString()));
+                user_profile_image_civ.setImageBitmap(get_profile_bmp(profile.get(USER_PIC).toString()));
+                user_followers_tv.setText(profile.get(USER_FOLLOWERS).toString());
+                user_followings_tv.setText(profile.get(USER_FOLLOWINGS).toString());
 
             }
             catch (JSONException e)
@@ -419,34 +365,6 @@ public class Profile_Fragment extends Fragment
 
     }
 
-    private void showImagePicDialog() {
-        String options[] = {"Camera", "Gallery"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Pick Image From");
-        builder.setItems(options, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                /*
-                if (which == 0) {
-                    if (!checkCameraPermission()) {
-                        requestCameraPermission();
-                    } else {
-                        pickFromGallery();
-                    }
-                } else if (which == 1) {
-                    if (!checkStoragePermission()) {
-                        requestStoragePermission();
-                    } else {
-                        pickFromGallery();
-                    }
-                }
-
-                 */
-
-            }
-        });
-        builder.create().show();
-    }
 
     /*
     @Override

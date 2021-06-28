@@ -40,7 +40,7 @@
                 android:layout_marginStart="16dp"
                 android:background="@drawable/event_id_card_circle_background"
                 app:civ_border_width="2dp"
-                app:civ_border_color="@color/blue_700"
+                app:civ_border_color="@color/teal_palette_light"
                 />
 
             <TextView
@@ -78,7 +78,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:layout_marginTop="16dp"
                 android:layout_marginStart="8dp"
-                app:tint="@color/blue_500"
+                app:tint="@color/teal_palette_light"
                 />
 
             <TextView
@@ -103,7 +103,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginStart="8dp"
                 android:src="@drawable/calendar"
-                app:tint="@color/blue_500"
+                app:tint="@color/teal_palette_light"
                 />
 
             <TextView
@@ -127,11 +127,11 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginStart="8dp"
                 android:src="@drawable/clock_outline"
-                app:tint="@color/blue_500"
+                app:tint="@color/teal_palette_light"
                 />
 
             <TextView
-                android:id="@+id/event_time"
+                android:id="@+id/event_start_time_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="@id/event_time_icon"
@@ -151,7 +151,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginStart="8dp"
                 android:src="@drawable/account_group"
-                app:tint="@color/blue_500"
+                app:tint="@color/teal_palette_light"
                 />
 
             <TextView
@@ -174,7 +174,7 @@
                 app:layout_constraintLeft_toLeftOf="@id/vertical_splitter"
                 android:layout_marginStart="8dp"
                 android:src="@drawable/navigation_outline"
-                app:tint="@color/blue_500"
+                app:tint="@color/teal_palette_light"
                 />
 
 
@@ -200,7 +200,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginStart="8dp"
                 android:src="@drawable/text"
-                app:tint="@color/blue_500"
+                app:tint="@color/teal_palette_light"
                 />
 
 
@@ -228,8 +228,10 @@
                 android:layout_marginEnd="4dp"
                 android:text="join"
                 android:layout_margin="8dp"
-                android:backgroundTint="@color/blue_700"
+                android:backgroundTint="@color/teal_palette_light"
                 android:textColor="@color/gray_100"
+                app:layout_constraintCircleRadius="50dp"
+                app:cornerRadius="36dp"
                 />
 
 

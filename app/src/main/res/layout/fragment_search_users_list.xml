@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp">
+
+        <EditText
+            android:id="@+id/search_input_et"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_marginTop="8dp"
+
+            android:hint="Type here"
+            />
+
+        <ImageButton
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/magnify"
+            android:background="@null"
+            android:layout_marginTop="8dp"
+            />
+
+    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/searched_users_list_rv"
+        android:name="com.soluk.belle_net_alpha.search_users.list_of_searched_users"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="8dp"
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".search_users.Search_Users_Fragment"
+        tools:listitem="@layout/fragment_search_users" />
+
+
+
+</LinearLayout>
+
+

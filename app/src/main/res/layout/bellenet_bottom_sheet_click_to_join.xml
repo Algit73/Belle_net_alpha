@@ -9,7 +9,8 @@
     android:id="@+id/bottom_sheet_click_to_join"
     app:behavior_hideable="true"
     app:behavior_peekHeight="16dp"
-    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    >
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/selected_user_profile_image"

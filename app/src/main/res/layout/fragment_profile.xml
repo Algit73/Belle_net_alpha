@@ -21,38 +21,35 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="8dp"
                 android:layout_margin="8dp"
-                android:padding="8dp"
+                android:paddingBottom="16dp"
+                app:cardCornerRadius="8dp"
                 >
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="16dp"
-                    >
+>
 
                     <View
                         android:id="@+id/vertical_splitter"
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
-                        app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
-                        />
-
+                        app:layout_constraintRight_toRightOf="parent" />
 
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/user_profile_image_civ"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
                         android:layout_marginTop="36dp"
                         android:src="@drawable/default_profile_pic"
+                        app:civ_border_color="@color/teal_palette_light"
                         app:civ_border_width="3dp"
-                        app:civ_border_color="@color/blue_300"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
 
                         />
 
@@ -60,62 +57,58 @@
                         android:id="@+id/add_user_profile_image"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:layout_constraintRight_toRightOf="@id/user_profile_image_civ"
-                        app:layout_constraintBottom_toBottomOf="@id/user_profile_image_civ"
-                        android:src="@drawable/plus"
                         android:background="@drawable/background_circular"
-                        android:backgroundTint="@color/blue_500"
-                        app:tint="@color/gray_100"
+                        android:backgroundTint="@color/teal_palette_light"
                         android:padding="4dp"
-                        />
+                        android:src="@drawable/plus"
+                        app:layout_constraintBottom_toBottomOf="@id/user_profile_image_civ"
+                        app:layout_constraintRight_toRightOf="@id/user_profile_image_civ"
+                        app:tint="@color/gray_100" />
 
                     <TextView
                         android:id="@+id/user_name_family_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:layout_constraintTop_toBottomOf="@id/user_profile_image_civ"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
                         android:layout_marginTop="8dp"
                         android:text="Alireza Alikhani"
-                        android:textSize="36sp"
                         android:textColor="@color/gray_800"
-                        />
+                        android:textSize="36sp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/user_profile_image_civ" />
 
                     <TextView
                         android:id="@+id/email_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:layout_constraintTop_toBottomOf="@id/user_name_family_tv"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        android:text="alireza.alikhani@bellenet.com"
                         android:layout_marginTop="8dp"
-                        />
+                        android:text="alireza.alikhani@bellenet.com"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/user_name_family_tv" />
 
 
                     <LinearLayout
                         android:id="@+id/join_date_holder"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:layout_constraintTop_toBottomOf="@id/email_address"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        android:orientation="horizontal"
                         android:layout_marginTop="8dp"
-                        >
+                        android:orientation="horizontal"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/email_address">
 
                         <TextView
                             android:id="@+id/join_date_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="You joined on: "/>
+                            android:text="You joined on: " />
+
                         <TextView
                             android:id="@+id/user_join_date_num_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Hey! I'm the creator :-{ "
-                            />
+                            android:text="Hey! I'm the creator :-{ " />
 
                     </LinearLayout>
 
@@ -123,42 +116,40 @@
                         android:id="@+id/achievements_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:layout_constraintTop_toBottomOf="@id/join_date_holder"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
                         android:layout_marginTop="16dp"
                         android:text="Achievements:"
-                        />
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/join_date_holder" />
 
                     <LinearLayout
                         android:id="@+id/achievement_holder"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:layout_constraintTop_toBottomOf="@id/achievements_text"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
                         android:orientation="horizontal"
-                        >
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/achievements_text">
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_margin="8dp"
                             android:src="@drawable/medal_gold"
-                            android:layout_margin="8dp"
 
                             />
+
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/medal_silver"
                             android:layout_margin="8dp"
-                            />
+                            android:src="@drawable/medal_silver" />
+
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/bronze_medal"
                             android:layout_margin="8dp"
-                            />
+                            android:src="@drawable/bronze_medal" />
 
                     </LinearLayout>
 
@@ -166,48 +157,48 @@
                         android:id="@+id/follow_holder"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:layout_constraintTop_toBottomOf="@id/achievement_holder"
                         android:orientation="horizontal"
-                        >
+                        app:layout_constraintTop_toBottomOf="@id/achievement_holder">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/followings_holder"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
                             android:layout_marginTop="16dp"
                             android:layout_marginEnd="8dp"
-                            android:layout_marginStart="8dp"
-                            android:background="@drawable/button_simple_stroked"
-                            >
+                            android:layout_marginBottom="16dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/button_simple_stroked">
 
                             <View
                                 android:id="@+id/vs_followings"
                                 android:layout_width="1dp"
                                 android:layout_height="match_parent"
-                                app:layout_constraintRight_toRightOf="parent"
                                 app:layout_constraintLeft_toLeftOf="parent"
-                                />
+                                app:layout_constraintRight_toRightOf="parent" />
 
                             <TextView
                                 android:id="@+id/user_followings_text"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:layout_constraintTop_toTopOf="parent"
+                                android:text="Followings:"
+                                android:textAlignment="center"
+                                android:textColor="@color/gray_100"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintRight_toLeftOf="@id/vs_followings"
-                                android:textAlignment="center"
-                                android:text="Followings:"/>
+                                app:layout_constraintTop_toTopOf="parent" />
 
                             <TextView
                                 android:id="@+id/user_followings_num_tv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:layout_constraintTop_toTopOf="parent"
+                                android:text="Infinite"
+                                android:textAlignment="center"
+                                android:textColor="@color/gray_100"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintLeft_toRightOf="@id/vs_followings"
-                                android:textAlignment="center"
-                                android:text="Infinite"/>
+                                app:layout_constraintTop_toTopOf="parent" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -215,39 +206,40 @@
                             android:id="@+id/followers_holder"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
                             android:layout_marginTop="16dp"
                             android:layout_marginEnd="8dp"
-                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
 
-                            android:background="@drawable/button_simple_stroked"
-                            >
+                            android:background="@drawable/button_simple_stroked">
 
                             <TextView
                                 android:id="@+id/user_followers_text"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:layout_constraintTop_toTopOf="parent"
+                                android:text="Followers: "
+                                android:textColor="@color/gray_100"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintRight_toLeftOf="@id/vs_followers"
-                                android:text="Followers: "/>
+                                app:layout_constraintTop_toTopOf="parent" />
 
                             <TextView
                                 android:id="@+id/user_followers_num_tv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:layout_constraintTop_toTopOf="parent"
+                                android:text="Infinite"
+                                android:textColor="@color/gray_100"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintLeft_toRightOf="@id/vs_followers"
-                                android:text="Infinite"/>
+                                app:layout_constraintTop_toTopOf="parent" />
 
                             <View
                                 android:id="@+id/vs_followers"
                                 android:layout_width="1dp"
                                 android:layout_height="match_parent"
-                                app:layout_constraintRight_toRightOf="parent"
+                                android:background="@color/teal_palette_dark"
                                 app:layout_constraintLeft_toLeftOf="parent"
-                                />
+                                app:layout_constraintRight_toRightOf="parent" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -257,15 +249,14 @@
                         android:id="@+id/request_follower_bt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:layout_constraintTop_toBottomOf="@id/follow_holder"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
                         android:layout_marginTop="@dimen/mapbox_dimen_16dp"
+                        android:backgroundTint="@color/blue_900"
                         android:text="SEND"
                         android:textColor="@color/gray_100"
-                        android:backgroundTint="@color/blue_900"
                         android:visibility="gone"
-                        />
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/follow_holder" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

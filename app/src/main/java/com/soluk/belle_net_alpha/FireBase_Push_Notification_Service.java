@@ -34,7 +34,7 @@ public class FireBase_Push_Notification_Service extends FirebaseMessagingService
 
     private void sendNotification(RemoteMessage remoteMessage)
     {
-        Intent intent = new Intent(this, main_activity.class);
+        Intent intent = new Intent(this, Main_Activity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 BELLENET_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
         String channelId = getString(R.string.bellenet_notification_id);

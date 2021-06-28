@@ -28,26 +28,19 @@ import java.util.List;
 public class all_events_list_fragment extends Fragment
 {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String FILE_NAME = "geo_json_bellenet";
 
-
-    // TODO: Customize parameters
     private int mColumnCount = 1;
 
     private RecyclerView recycler_view;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
+
     public all_events_list_fragment()
     {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
+
     public static all_events_list_fragment newInstance(int columnCount)
     {
         all_events_list_fragment fragment = new all_events_list_fragment();
@@ -114,9 +107,5 @@ public class all_events_list_fragment extends Fragment
         List<Feature> feature_list = feature_collection.features();
 
         recycler_view.setAdapter(new all_events_list_recycler_view_adapter(feature_list));
-
-
-
-
     }
 }

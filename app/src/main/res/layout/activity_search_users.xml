@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_200"
-    tools:context=".user_followx.User_FollowX_List_Activity">
+    tools:context=".search_users.Search_Users_Activity"
+    android:orientation="vertical">
 
 
     <LinearLayout
@@ -23,69 +23,55 @@
             android:id="@+id/back_button_ib"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_margin="8dp"
             android:src="@drawable/arrow_left"
             android:background="@null"
-            android:backgroundTint="@color/gray_100"
-            android:tint="@color/gray_100"
             android:padding="8dp"
+            android:tint="@color/gray_100"
             />
-
         <TextView
-            android:id="@+id/followx_type_tv"
+            android:id="@+id/find_friends_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Followings"
+            android:text="Find Friends"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
             android:textSize="24sp"
             android:textColor="@color/gray_100"
             />
-
-
-
     </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/followx_tab"
+        android:id="@+id/event_list_parent_tab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/teal_palette_light"
         app:tabSelectedTextColor="@color/gray_100"
         app:tabIndicatorColor="@color/teal_palette_dark"
         app:tabTextColor="@color/teal_palette_dark"
-        app:layout_constraintTop_toBottomOf="@id/title_holder"
+        app:layout_constraintTop_toTopOf="parent"
         android:visibility="visible"
         >
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/followings_tab_item"
+            android:id="@+id/all_events_list_tab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Followings"
+            android:text="Search"
             />
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/followers_tab_item"
+            android:id="@+id/feed_list_tab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="followers"
+            android:text="Invite"
             />
 
     </com.google.android.material.tabs.TabLayout>
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_user_followx"
+        android:id="@+id/fragment_searched_users"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/followx_tab"
-        />
+        android:layout_height="match_parent"
+        android:layout_marginTop="4dp"/>
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/pager_user_followx"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/followx_tab"
-        />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

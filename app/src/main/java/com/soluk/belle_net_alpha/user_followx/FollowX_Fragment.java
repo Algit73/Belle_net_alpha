@@ -1,6 +1,5 @@
 package com.soluk.belle_net_alpha.user_followx;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -14,13 +13,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 import com.soluk.belle_net_alpha.R;
-import com.soluk.belle_net_alpha.main_activity;
-import com.soluk.belle_net_alpha.user_followx.dummy.DummyContent;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -3,9 +3,7 @@ package com.soluk.belle_net_alpha.main_fragments;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.ContextWrapper;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -67,32 +65,31 @@ import com.mapbox.mapboxsdk.plugins.annotation.Symbol;
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
 import com.mapbox.mapboxsdk.style.layers.Property;
-import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.navigation.base.internal.route.RouteUrl;
 import com.mapbox.navigation.base.options.NavigationOptions;
 import com.mapbox.navigation.core.MapboxNavigation;
 import com.mapbox.navigation.core.directions.session.RoutesRequestCallback;
 import com.mapbox.navigation.ui.route.NavigationMapRoute;
-import com.soluk.belle_net_alpha.Date_Time_Provider;
+import com.soluk.belle_net_alpha.main_fragments.map_utils.Map_Event_Creator;
+import com.soluk.belle_net_alpha.selected_event.Selected_Event_Activity;
+import com.soluk.belle_net_alpha.selected_user_profile_page.User_Profile_Page_Activity;
+import com.soluk.belle_net_alpha.utils.Date_Time_Provider;
 import com.soluk.belle_net_alpha.HTTP_Provider;
 import com.soluk.belle_net_alpha.R;
 import com.soluk.belle_net_alpha.event_data_maker.file_maker;
-import com.soluk.belle_net_alpha.main_activity;
+import com.soluk.belle_net_alpha.Main_Activity;
 import com.soluk.belle_net_alpha.model.Events_DB_VM;
 import com.soluk.belle_net_alpha.ui.login.User_Credentials;
+import com.soluk.belle_net_alpha.utils.Image_Provider;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -100,7 +97,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
@@ -111,11 +107,17 @@ import static android.os.Looper.getMainLooper;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.eq;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.get;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.literal;
-import static com.mapbox.mapboxsdk.style.layers.Property.ICON_ANCHOR_BOTTOM;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAnchor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
+import static com.soluk.belle_net_alpha.main_fragments.map_utils.Map_Event_Creator.MARKER_LAYER_ID_CHALLENGE;
+import static com.soluk.belle_net_alpha.main_fragments.map_utils.Map_Event_Creator.MARKER_LAYER_ID_ENSEMBLE;
+import static com.soluk.belle_net_alpha.main_fragments.map_utils.Map_Event_Creator.PROPERTY_SELECTED;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_DATE;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_DATE_CREATED;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_TYPE;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_PIC;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -127,33 +129,15 @@ public class map_fragment extends Fragment implements
 {
 
     private static final String TAG = map_fragment.class.getSimpleName();
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private static final String MARKER_LAYER_ID_ENSEMBLE = "MARKER_LAYER_ID_ENSEMBLE";
-    private static final String MARKER_LAYER_ID_CHALLENGE = "MARKER_LAYER_ID_CHALLENGE";
-    private static final String PROPERTY_SELECTED = "selected";
-    private static final String GEOJSON_SOURCE_ID_ENSEMBLE = "GEOJSON_SOURCE_ID_ENSEMBLE";
-    private static final String GEOJSON_SOURCE_ID_CHALLENGE = "GEOJSON_SOURCE_ID_CHALLENGE";
-    private static final String MARKER_IMAGE_ID_ENSEMBLE = "MARKER_IMAGE_ID_ENSEMBLE";
-    private static final String MARKER_IMAGE_ID_CHALLENGE = "MARKER_IMAGE_ID_CHALLENGE";
-    private static final String CALLOUT_LAYER_ID_ENSEMBLE = "CALLOUT_LAYER_ID_ENSEMBLE";
-    private static final String CALLOUT_LAYER_ID_CHALLENGE = "CALLOUT_LAYER_ID_CHALLENGE";
 
-    private final String USER_CREDENTIALS = "user_cred";
-    private static final String PROPERTY_NAME = "name";
-    private static final String PROPERTY_DATE_CREATED = "date_created";
-    private static final String PROPERTY_EVENT_DATE = "event_date";
-    private static final String PROPERTY_EVENT_ID = "event_id";
-    private static final String PROPERTY_IS_USER_JOINED = "is_user_joined";
-    private static final String PROPERTY_PIC = "profile_pic";
-    private static final String PROPERTY_NUM_OF_JOINED = "count";
+    public Map_Event_Creator map_event_creator;
+
 
     private static  String USER_NAME = "";
     private static  String USER_FAMILY = "";
-    private static  String USER_PIC = "";
+    private static  String USER_PICTURE = "";
     private static  String USER_ID = "";
     private static  String USER_PASSWORD = "";
     private static  String USER_EMAIL = "";
@@ -161,9 +145,6 @@ public class map_fragment extends Fragment implements
     private static String file_directory_static = "";
     private static final String FILE_NAME = "geo_json_bellenet";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private FeatureCollection featureCollection;
     private int number_of_selected_cards;
     private String  last_event_selected;
@@ -184,8 +165,9 @@ public class map_fragment extends Fragment implements
 
 
     /// Mapbox Variables
-    private MapView mapView;
-    private MapboxMap mapboxMap;
+    private   MapView mapView;
+    //TODO: Change mapbox from static to normal
+    public static MapboxMap mapboxMap;
     private SymbolManager symbol_manager;
     private NavigationOptions navigation_options;
     private MapboxNavigation mapbox_navigation;
@@ -211,6 +193,8 @@ public class map_fragment extends Fragment implements
     private ImageButton add_marker_on_map_ib;
     private ImageButton accept_marker_on_map_ib;
     private ImageButton reject_marker_on_map_ib;
+
+    ConstraintLayout join_event_layout_cl;
 
     private ImageView loading_screen;
     private ProgressBar loading_wheel;
@@ -307,13 +291,16 @@ public class map_fragment extends Fragment implements
 
         try
         {
-            USER_NAME = User_Credentials.get_item("user_name");
-            USER_FAMILY = User_Credentials.get_item("user_family");
-            USER_PIC = User_Credentials.get_item("user_pic");
-            USER_ID = User_Credentials.get_item("user_id");
-            USER_PASSWORD = User_Credentials.get_item("user_password");
-            USER_EMAIL = User_Credentials.get_item("user_email");
+            USER_NAME = User_Credentials.get_item(Events_DB_VM.USER_NAME);
+            USER_FAMILY = User_Credentials.get_item(Events_DB_VM.USER_FAMILY);
+            USER_PICTURE = User_Credentials.get_item(USER_PIC);
+            USER_ID = User_Credentials.get_item(Events_DB_VM.USER_ID);
+            USER_PASSWORD = User_Credentials.get_item(Events_DB_VM.USER_PASSWORD);
+            USER_EMAIL = User_Credentials.get_item(Events_DB_VM.USER_EMAIL);
         }catch (JSONException e){e.printStackTrace();}
+
+        list_of_of_added_points_symbol = new ArrayList<>();
+        list_of_added_points = new ArrayList<>();
 
 
         file_directory_static = getActivity().getFilesDir().toString();
@@ -332,10 +319,6 @@ public class map_fragment extends Fragment implements
 
         loading_screen = v.findViewById(R.id.loading_screen);
         loading_wheel = v.findViewById(R.id.loading_wheel);
-
-
-        //model.set_db_handler(()->{Log.d("main_activity","Finally There Fragment");});
-
 
         mapView = v.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
@@ -371,8 +354,8 @@ public class map_fragment extends Fragment implements
                     }
                     else
                     {
-                        set_mapbox_style(mapboxMap);
-                        ((main_activity) getActivity()).refresh_db();
+                        refresh_map();
+                        ((Main_Activity) getActivity()).refresh_db();
 
                         new Handler(Looper.getMainLooper()).postDelayed(()->
                         {
@@ -382,14 +365,7 @@ public class map_fragment extends Fragment implements
                             enable_access_location = true;
                         },500);
                     }
-                    /*
-                    LatLng current_position = new LatLng(location_component.getLastKnownLocation().getLatitude()
-                            , location_component.getLastKnownLocation().getLongitude());
-                    set_camera_position(0, current_position);
-
-                     */
                 }
-
             }
         });
 
@@ -399,7 +375,6 @@ public class map_fragment extends Fragment implements
         bottom_sheet_join_event_init(v);
         pin_event_sd_init(v);
 
-
         return v;
     }
 
@@ -407,7 +382,7 @@ public class map_fragment extends Fragment implements
     {
 
         CircleImageView user_profile_image = v.findViewById(R.id.user_profile_image);
-        Bitmap selected_profile_image_bmp = get_profile_bmp(USER_PIC);
+        Bitmap selected_profile_image_bmp = Image_Provider.get_profile_bmp(USER_PICTURE);
         if(selected_profile_image_bmp!=null)
             user_profile_image.setImageBitmap(selected_profile_image_bmp);
 
@@ -422,12 +397,12 @@ public class map_fragment extends Fragment implements
             change_add_marker_on_map_ib_mode(true);
             remove_points_routes();
             bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
-            ((main_activity)getActivity()).bottom_navigation_visibility(true);
+            ((Main_Activity)getActivity()).bottom_navigation_visibility(true);
         });
 
         save_challenge_btn.setOnClickListener(v1 ->
         {
-            if(list_of_added_points==null)
+            if(list_of_added_points.size()==0)
             {
                 Toast.makeText(getActivity(),
                         "Please add your spots on the map",Toast.LENGTH_SHORT).show();
@@ -453,7 +428,7 @@ public class map_fragment extends Fragment implements
             }
 
             send_user_created_event();
-            ((main_activity)getActivity()).bottom_navigation_visibility(true);
+            ((Main_Activity)getActivity()).bottom_navigation_visibility(true);
             bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
             remove_points_routes();
             change_add_marker_on_map_ib_mode(true);
@@ -504,7 +479,7 @@ public class map_fragment extends Fragment implements
             public void onClick(View v)
             {
                 // Check if any point has been added previously: null if not
-                if(list_of_added_points!=null)
+                if(list_of_added_points.size()>0)
                 {
                     remove_points_routes();
                     change_add_marker_on_map_ib_mode(true);
@@ -535,7 +510,6 @@ public class map_fragment extends Fragment implements
                 if(list_of_of_added_points_symbol!=null)
                 {
                     // Only "Share Experience" accepts one point
-                    //if(event_type!=event_types.EVENT_TYPE_ENSEMBLE
                     if(event_type!=EVENT_TYPE_ENSEMBLE
                             ||list_of_of_added_points_symbol.size()>1)
                     {
@@ -579,43 +553,26 @@ public class map_fragment extends Fragment implements
         SimpleDateFormat standard_date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);    // Date Styles may should change to the getDefault()
         SimpleDateFormat time_24_format = new SimpleDateFormat("H:mm", Locale.US);
 
-        //symbol_manager.delete(user_marker_pinned);
-        Map<String, String> params = new HashMap<>();
-        params.put("user_name",USER_NAME);
-        params.put("user_family",USER_FAMILY);
-        params.put("user_id",USER_ID);
-        params.put("user_password",USER_PASSWORD);
-        params.put("num_points",String.valueOf(list_of_added_points.size()));
-        params.put("event_type",String.valueOf(event_type));
-        params.put("date_created",standard_date_format.format(current_date));
-        params.put("date_of_event",standard_date_format.format(current_date));
-        params.put("event_time",time_24_format.format(calendar_time_picker.getTime()));
-        params.put("user_type",String.valueOf(1));
-        params.put("user_picture",USER_PIC);
 
         JSONObject json = new JSONObject();
         try
         {
-
-            json.put("user_name",USER_NAME);
-            json.put("user_family",USER_FAMILY);
-            json.put("user_id",USER_ID);
-            json.put("user_password",USER_PASSWORD);
-            json.put("num_points",String.valueOf(list_of_added_points.size()));
-            json.put("event_type",String.valueOf(event_type));
-            json.put("date_created",standard_date_format.format(current_date));
-            json.put("date_of_event",standard_date_format.format(current_date));
-            json.put("event_time",time_24_format.format(calendar_time_picker.getTime()));
-            json.put("user_type",String.valueOf(1));
-            json.put("user_picture",USER_PIC);
-
+            json.put(Events_DB_VM.USER_NAME,USER_NAME);
+            json.put(Events_DB_VM.USER_FAMILY,USER_FAMILY);
+            json.put(Events_DB_VM.USER_ID,USER_ID);
+            json.put(Events_DB_VM.USER_PASSWORD,USER_PASSWORD);
+            json.put(Events_DB_VM.NUM_POINTS,String.valueOf(list_of_added_points.size()));
+            json.put(EVENT_TYPE,String.valueOf(event_type));
+            json.put(EVENT_DATE_CREATED,standard_date_format.format(current_date));
+            json.put(EVENT_DATE,Date_Time_Provider.date_to_YMD(event_date_tv.getText().toString()));
+            json.put(Events_DB_VM.EVENT_TIME,time_24_format.format(calendar_time_picker.getTime()));
+            json.put(Events_DB_VM.USER_TYPE,String.valueOf(1));
+            json.put(USER_PIC,USER_PICTURE);
 
             for(int i=0;i<list_of_added_points.size();i++)
             {
                 String longitude_x = "longitude_"+ i;
                 String latitude_x = "latitude_"+ i;
-                params.put(longitude_x,String.valueOf(list_of_added_points.get(i).longitude()));
-                params.put(latitude_x,String.valueOf(list_of_added_points.get(i).latitude()));
                 json.put(longitude_x,String.valueOf(list_of_added_points.get(i).longitude()));
                 json.put(latitude_x,String.valueOf(list_of_added_points.get(i).latitude()));
             }
@@ -637,7 +594,7 @@ public class map_fragment extends Fragment implements
                 Log.d(TAG,"Post Test Code: "+response.code());
                 Log.d(TAG,"Post Test Body: "+response.body().string());
                 //db_model.refresh_db();
-                ((main_activity)getActivity()).refresh_db();
+                ((Main_Activity)getActivity()).refresh_db();
             }
         };
 
@@ -646,7 +603,6 @@ public class map_fragment extends Fragment implements
     }
 
     /// Sends Join, Opt out and Remove commands
-    //void send_join_command(Map<String, String> params, Feature feature, JSONObject json)
     void send_join_command(Feature feature, JSONObject json)
     {
         //Log.d(TAG,"Send join: "+params);
@@ -672,7 +628,7 @@ public class map_fragment extends Fragment implements
 
         HTTP_Provider.post_json("belle_net_users_info/send_join_event_status.php",json,callback);
         //db_model.refresh_db();
-        ((main_activity)getActivity()).refresh_db();
+        ((Main_Activity)getActivity()).refresh_db();
         remove_points_routes();
     }
 
@@ -683,10 +639,10 @@ public class map_fragment extends Fragment implements
         Handler mainHandler = new Handler(getMainLooper());
         Runnable myRunnable = () ->
         {
-            set_feature_select_state(feature, false);
+            map_event_creator.set_feature_select_state(feature, false);
             if(number_of_selected_cards==0)
                 set_camera_position(0,null);
-            ((main_activity)getActivity()).bottom_navigation_visibility(true);
+            ((Main_Activity)getActivity()).bottom_navigation_visibility(true);
             bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
         };
         mainHandler.post(myRunnable);
@@ -710,10 +666,10 @@ public class map_fragment extends Fragment implements
         if(list_of_of_added_points_symbol!=null)
         {
             symbol_manager.delete(list_of_of_added_points_symbol);
-            list_of_of_added_points_symbol = null;
-            list_of_added_points = null;
-
-            navigation_mapRoute.updateRouteVisibilityTo(false);
+            list_of_of_added_points_symbol.clear();
+            list_of_added_points.clear();
+            if(navigation_mapRoute!=null)
+                navigation_mapRoute.updateRouteVisibilityTo(false);
         }
 
     }
@@ -753,7 +709,7 @@ public class map_fragment extends Fragment implements
             @Override
             public boolean onActionSelected(SpeedDialActionItem actionItem)
             {
-                ((main_activity)getActivity()).bottom_navigation_visibility(false);
+                ((Main_Activity)getActivity()).bottom_navigation_visibility(false);
                 switch (actionItem.getId())
                 {
                     case R.id.sd_ensemble_cycling:
@@ -771,8 +727,6 @@ public class map_fragment extends Fragment implements
 
     void change_add_marker_on_map_ib_mode (boolean add_mode)
     {
-        //hint_1 = v.findViewById(R.id.marker_explanation_text);
-        //hint_2 = v.findViewById(R.id.tap_to_add_marker_text);
 
         if(add_mode)
         {
@@ -794,10 +748,11 @@ public class map_fragment extends Fragment implements
         }
     }
 
-    private void getRoute(List<Point> list)
+    private void get_route(List<Point> list)
     {
 
         Log.d(TAG, "Get Route");
+        wait_on_loading_data(false);
         //navigation_mapRoute.updateRouteVisibilityTo(false);
         mapbox_navigation.requestRoutes(RouteOptions.builder()
                 .baseUrl("https://api.mapbox.com")
@@ -816,6 +771,7 @@ public class map_fragment extends Fragment implements
                 Log.d("TAG","Received");
                 DirectionsRoute currentRoute;
                 currentRoute = list.get(0);
+                wait_on_loading_data(true);
 
                 if (navigation_mapRoute == null)
                 {
@@ -833,12 +789,14 @@ public class map_fragment extends Fragment implements
             public void onRoutesRequestFailure(@NotNull Throwable throwable, @NotNull RouteOptions routeOptions)
             {
                 Log.d("TAG","Failure");
+                wait_on_loading_data(true);
             }
 
             @Override
             public void onRoutesRequestCanceled(@NotNull RouteOptions routeOptions)
             {
                 Log.d("TAG","Canceled");
+                wait_on_loading_data(true);
             }
         });
 
@@ -854,47 +812,71 @@ public class map_fragment extends Fragment implements
         selected_event_date = v.findViewById(R.id.selected_event_date);
         selected_event_type = v.findViewById(R.id.selected_event_type);
         selected_event_status = v.findViewById(R.id.selected_event_user_join_status);
+        join_event_layout_cl = v.findViewById(R.id.bottom_sheet_click_to_join);
     }
 
     /// Each time a pin selected, the appropriate bottom_sheet appears
-    private void update_bottom_sheet_click(Feature feature) throws JSONException
+    private void open_selected_pinned_event(Feature feature) throws JSONException
     {
         JSONObject info = new JSONObject(feature.properties().toString());
-        ((main_activity)getActivity()).bottom_navigation_visibility(false);
+        ((Main_Activity)getActivity()).bottom_navigation_visibility(false);
         bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_EXPANDED);
 
-        List<Point> list_received_points  = null;
+        List<Point> list_received_points;
         list_received_points = new ArrayList<>();
 
         int num_points = Integer.parseInt(info.get("num_points").toString());
 
+        /// Removes former added pins
+        if(list_of_of_added_points_symbol.size()>0)
+            symbol_manager.delete(list_of_of_added_points_symbol);
+
+
+        /// Adding pins to the path
         for(int i=0; i<num_points;i++)
         {
             Point point = Point.fromLngLat(Double.parseDouble(info.get("longitude_"+i).toString())
                     ,Double.parseDouble(info.get("latitude_"+i).toString()));
             list_received_points.add(point);
+
+
+            if(i>0)
+            {
+                user_marker_pinned = symbol_manager.create(new SymbolOptions()
+                        .withLatLng(new LatLng(point.latitude(), point.longitude()))
+                        .withIconImage("marker_guide_pin")
+                        .withTextAnchor(Property.TEXT_ANCHOR_BOTTOM)
+                        .withIconSize(1.0f));
+                Log.d(TAG,"Check user_marker_pinned: " + user_marker_pinned.toString());
+                list_of_of_added_points_symbol.add(user_marker_pinned);
+            }
+
+
+
         }
+
+        /// Drawing the path
         if(num_points>1)
-            getRoute(list_received_points);
+            get_route(list_received_points);
 
 
 
         /// Setting name of the user
-        String name_family = (info.get("name")+ " " + info.get("family"));
+        String name_family = (info.get(Events_DB_VM.USER_NAME)+ " " + info.get(Events_DB_VM.USER_FAMILY));
         selected_user_name.setText(name_family);
 
         /// Setting the profile image of the selected_user
-        Bitmap selected_profile_image_bmp = get_profile_bmp(info.get("profile_pic").toString());
+        Bitmap selected_profile_image_bmp = Image_Provider.get_profile_bmp(info.get(USER_PIC).toString());
         if(selected_profile_image_bmp!=null)
             selected_user_profile_image.setImageBitmap(selected_profile_image_bmp);
 
         /// Setting event date
         selected_event_date.setText(Date_Time_Provider.
-                date_reformat(info.get("event_date").toString()));
+                date_to_MDY(info.get(EVENT_DATE).toString()));
 
 
         /// Setting event type
-        String event_type = info.get("event_type").toString();
+        String event_type = info.get(EVENT_TYPE).toString();
         if(event_type.equals("1"))
             selected_event_type.setText("Ensemble Riding");
         else if(event_type.equals("2"))
@@ -903,13 +885,32 @@ public class map_fragment extends Fragment implements
             selected_event_type.setText("Sharing Experience");
 
 
+        join_event_layout_cl.setOnClickListener(v ->
+        {
+            Intent intent = new Intent(getContext(), Selected_Event_Activity.class);
+            getContext().startActivity(intent);
+        });
 
-        boolean user_owns_event = info.get("user_id").toString().equals(USER_ID);
+        /// Check if user owns the event or opens someone else's event
+        boolean user_owns_event = info.get(Events_DB_VM.USER_ID).toString().equals(USER_ID);
+
+        selected_user_profile_image.setOnClickListener(v ->
+        {
+                if(!user_owns_event)
+                {
+                    Log.d(TAG,"check user_ID: Entered");
+                    Intent intent = new Intent(getContext(), User_Profile_Page_Activity.class);
+                    intent.putExtra("feature", feature.toJson());
+                    getActivity().startActivity(intent);
+                }
+        });
+
+
         if(!user_owns_event)
         {
             join_btn.setBackgroundTintList(ResourcesCompat.getColorStateList(getResources()
                     ,R.color.save_button,getActivity().getTheme()));
-            if (info.get("is_user_joined").toString().equals("true"))
+            if (info.get(Events_DB_VM.IS_USER_JOINED).toString().equals("true"))
             {
                 selected_event_status.setText("You have joined this event");
                 hint_user_tv.setText("*Click opt out if you don't want to participate");
@@ -934,87 +935,76 @@ public class map_fragment extends Fragment implements
                     ,R.color.red_500,getActivity().getTheme()));
         }
 
-        join_btn.setOnClickListener(new View.OnClickListener()
+        join_btn.setOnClickListener(v ->
         {
-            @Override
-            public void onClick(View v)
+            Date current_date = Calendar.getInstance().getTime();
+            SimpleDateFormat standard_date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+
+            Log.d(TAG, "Button Pressed");
+            JSONObject json = new JSONObject();
+            symbol_manager.delete(list_of_of_added_points_symbol);
+            list_of_of_added_points_symbol.clear();
+
+            try
+            {   json.put("joined_user_id",USER_ID);
+                json.put("event_unique_id",info.get("event_id").toString());}
+            catch (Exception e) {Log.d(TAG, "event_unique_id catch " + e);}
+
+
+
+            if(!user_owns_event)
             {
-                Date current_date = Calendar.getInstance().getTime();
-                SimpleDateFormat standard_date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-
-                Log.d(TAG, "Button Pressed");
-                //Map<String, String> params = new HashMap<>();
-                JSONObject json = new JSONObject();
-
-                try
-                {   json.put("joined_user_id",USER_ID);
-                    json.put("event_unique_id",info.get("event_id").toString());}
-                catch (Exception e) {Log.d(TAG, "event_unique_id catch " + e);}
-
-
-
-                if(!user_owns_event)
+                if (join_status)
                 {
-                    if (join_status)
-                    {
-                        //params.put("request", "out");
-                        try {json.put("request","out");}
-                        catch (Exception ignored) {}
-                    }
-                    else
-                    {
-
-                        try {
-                            json.put("request","join");
-                            json.put("user_date_of_join",standard_date_format.format(current_date));}
-                        catch (Exception ignored) {}
-                    }
-                    send_join_command(feature,json);
+                    try {json.put("request","out");}
+                    catch (Exception ignored) {}
                 }
                 else
                 {
-                    try {json.put("request","remove");}
+
+                    try {
+                        json.put("request","join");
+                        json.put("user_date_of_join",standard_date_format.format(current_date));}
                     catch (Exception ignored) {}
-                    AlertDialog.Builder alert_dialog_bl = new AlertDialog.Builder(getActivity());
-                    alert_dialog_bl.setMessage("Do you really want to remove this event?")
-                            .setCancelable(true)
-                            .setPositiveButton("YES", new DialogInterface.OnClickListener()
-                            {public void onClick(DialogInterface dialog, int id) {send_join_command(feature,json);}})
-                            .setNegativeButton("CANCEL",new DialogInterface.OnClickListener()
-                            {public void onClick(DialogInterface dialog, int id) {dialog.cancel();}});
-
-
-                    AlertDialog alertDialog = alert_dialog_bl.create();
-
-                    alertDialog.show();
-                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ResourcesCompat.getColor(getResources()
-                            ,R.color.gray_800,getActivity().getTheme()));
-                    alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ResourcesCompat.getColor(getResources()
-                            ,R.color.gray_800,getActivity().getTheme()));
-
                 }
+                send_join_command(feature,json);
+            }
+            else
+            {
+                try {json.put("request","remove");}
+                catch (Exception ignored) {}
+                AlertDialog.Builder alert_dialog_bl = new AlertDialog.Builder(getActivity());
+                alert_dialog_bl.setMessage("Do you really want to remove this event?")
+                        .setCancelable(true)
+                        .setPositiveButton("YES", (dialog, id) -> send_join_command(feature,json))
+                        .setNegativeButton("CANCEL", (dialog, id) -> dialog.cancel());
+
+
+                AlertDialog alertDialog = alert_dialog_bl.create();
+
+                alertDialog.show();
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ResourcesCompat.getColor(getResources()
+                        ,R.color.gray_800,getActivity().getTheme()));
+                alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ResourcesCompat.getColor(getResources()
+                        ,R.color.gray_800,getActivity().getTheme()));
 
             }
+
         });
 
         /// Closing the bottom_sheet_click
-        cancel_join_event_btn.setOnClickListener(new View.OnClickListener()
+        cancel_join_event_btn.setOnClickListener(v ->
         {
-            @Override
-            public void onClick(View v)
-            {
-                number_of_selected_cards--;
-                ((main_activity)getActivity()).bottom_navigation_visibility(true);
-                bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
-                if(number_of_selected_cards==0)
-                    set_camera_position(0,null);
+            number_of_selected_cards--;
+            ((Main_Activity)getActivity()).bottom_navigation_visibility(true);
+            bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
+            if(number_of_selected_cards==0)
+                set_camera_position(0,null);
 
-
-                set_feature_select_state(feature, false);
-
-                //symbol_manager.delete(li);
-                navigation_mapRoute.updateRouteVisibilityTo(false);
-            }
+            map_event_creator.set_feature_select_state(feature, false);
+            navigation_mapRoute.updateRouteVisibilityTo(false);
+            symbol_manager.delete(list_of_of_added_points_symbol);
+            list_of_of_added_points_symbol.clear();
         });
 
 
@@ -1022,22 +1012,6 @@ public class map_fragment extends Fragment implements
 
     }
 
-    private Bitmap get_profile_bmp(String name)
-    {
-        ContextWrapper cw = new ContextWrapper(getContext());
-        File directory = cw.getDir("Profile_Pictures", Context.MODE_PRIVATE);
-        try
-        {
-            File file =new File(directory, name);
-            Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
-            return bitmap;
-        }
-        catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     void wait_on_loading_data(boolean is_loaded)
     {
@@ -1053,11 +1027,11 @@ public class map_fragment extends Fragment implements
         }
     }
 
-
     public void update_map()
     {
+        Log.d(TAG,"update map received");
         new Load_GeoJson_Data_Task(map_fragment.this,0).execute();
-        set_mapbox_style(mapboxMap);
+        refresh_map();
         wait_on_loading_data(true);
     }
 
@@ -1066,6 +1040,7 @@ public class map_fragment extends Fragment implements
     @Override
     public boolean onMapClick(@NonNull LatLng point)
     {
+        Log.v(TAG,"onMapClick");
         return on_event_icon_clicked(mapboxMap.getProjection().toScreenLocation(point));
     }
 
@@ -1083,7 +1058,6 @@ public class map_fragment extends Fragment implements
             {
                 if (!is_marker_added)   // Check if any marker has been added by the user
                 {
-                    //selected_postion = point;
                     user_marker_pinned = symbol_manager.create(new SymbolOptions()
                             .withLatLng(new LatLng(point.getLatitude(), point.getLongitude()))
                             .withIconImage("marker_start_flag")
@@ -1091,12 +1065,10 @@ public class map_fragment extends Fragment implements
                             .withIconSize(1.0f));
 
                     is_marker_added = true;
-                    //add_postition_mode = false;
                 }
                 else
                 {
                     symbol_manager.delete(user_marker_pinned);
-                    //selected_postion = point;
                     user_marker_pinned = symbol_manager.create(new SymbolOptions()
                             .withLatLng(new LatLng(point.getLatitude(), point.getLongitude()))
                             .withIconImage("marker_start_flag")
@@ -1108,9 +1080,9 @@ public class map_fragment extends Fragment implements
             else
             {
                 Log.d(TAG, "Ensemble Riding: Entered");
-                if (list_of_added_points == null)
+                if (list_of_added_points.size() == 0)
                 {
-                    list_of_added_points = new ArrayList<>();
+                    //list_of_added_points = new ArrayList<>();
                     user_marker_pinned = symbol_manager.create(new SymbolOptions()
                             .withLatLng(new LatLng(point.getLatitude(), point.getLongitude()))
                             .withIconImage("marker_start_flag")
@@ -1132,7 +1104,7 @@ public class map_fragment extends Fragment implements
                 list_of_added_points.add(marked_point);
                 Log.d(TAG, "list Size: "+list_of_added_points.size());
                 if(list_of_added_points.size()>1)
-                    getRoute(list_of_added_points);
+                    get_route(list_of_added_points);
 
             }
         }
@@ -1143,37 +1115,34 @@ public class map_fragment extends Fragment implements
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap)
     {
-        this.mapboxMap = mapboxMap;
-        set_mapbox_style(mapboxMap);
-    }
-
-    void set_mapbox_style(@NonNull MapboxMap mapboxMap)
-    {
-        mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded()
+        map_fragment.mapboxMap = mapboxMap;
+        mapboxMap.setStyle(Style.MAPBOX_STREETS, style ->
         {
-            @Override
-            public void onStyleLoaded(@NonNull Style style)
-            {
-                mapboxMap.addOnMapClickListener(map_fragment.this);
-                mapboxMap.addOnMapLongClickListener(map_fragment.this);
-                enable_location_component(style);
-                mapbox_navigation_configuration(style);
-                symbol_manager = new SymbolManager(mapView, mapboxMap, style);
-                symbol_manager.setIconAllowOverlap(true);
-            }
+            mapboxMap.addOnMapClickListener(map_fragment.this);
+            mapboxMap.addOnMapLongClickListener(map_fragment.this);
+            enable_location_component(style);
+            mapbox_navigation_configuration(style);
+            symbol_manager = new SymbolManager(mapView, mapboxMap, style);
+            symbol_manager.setIconAllowOverlap(true);
+            map_event_creator = new Map_Event_Creator(this.getContext());
         });
     }
 
+    void refresh_map()
+    {
+        map_fragment.mapboxMap.setStyle(Style.MAPBOX_STREETS, this::mapbox_navigation_configuration);
+
+        }
+
     void mapbox_navigation_configuration(Style style)
     {
+        //Log.d(TAG,"set_mapbox_style 2");
         LocationEngine locationEngine = LocationEngineProvider.getBestLocationEngine(getActivity());
         navigation_options = MapboxNavigation.defaultNavigationOptionsBuilder(getActivity(),
                 getString(R.string.mapbox_access_token))
                 .locationEngine(locationEngine)
                 .build();
         mapbox_navigation = new MapboxNavigation(navigation_options);
-        //mapbox_navigation.registerRouteProgressObserver(main_activity.this);
-        mapboxMap.addOnMapClickListener(map_fragment.this);
         symbol_manager = new SymbolManager(mapView, mapboxMap, style);
         symbol_manager.setIconAllowOverlap(true);
         style.addImage("marker_guide_pin", BitmapFactory.decodeResource(getResources(),R.drawable.blue_marker));
@@ -1216,11 +1185,11 @@ public class map_fragment extends Fragment implements
 
     private void set_camera_position(int tilt,LatLng point)
     {
-        CameraPosition position = null;
+        CameraPosition position;
         if (point != null)
             position = new CameraPosition.Builder()
                     .target(point) // Sets the new camera position
-                    //.zoom(12) // Sets the zoom
+                    .zoom(12) // Sets the zoom
                     //.bearing(degree) // Rotate the camera
                     .tilt(tilt) // Set the camera tilt
                     .build();
@@ -1235,49 +1204,55 @@ public class map_fragment extends Fragment implements
 
     private boolean on_event_icon_clicked(PointF screenPoint)
     {
+        Log.v(TAG,"on_event_icon_clicked");
         List<Feature> features = new ArrayList<>();
         //List<Feature> features = mapboxMap.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID_ENSEMBLE);
         features.addAll(mapboxMap.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID_ENSEMBLE));
         features.addAll(mapboxMap.queryRenderedFeatures(screenPoint, MARKER_LAYER_ID_CHALLENGE));
         if (!features.isEmpty())
         {
-            String event_id = features.get(0).getStringProperty(PROPERTY_EVENT_ID);
+            String event_id = features.get(0).getStringProperty(Events_DB_VM.EVENT_ID);
             Log.v(TAG,"Feature Name: "+event_id);
-            List<Feature> featureList = featureCollection.features();
+            List<Feature> featureList = map_event_creator.get_feature_collection().features();
             if (featureList != null)
             {
 
                 Log.v(TAG,"Feature Size: "+featureList.size());
                 for (int i = 0; i < featureList.size(); i++)
                 {
-                    if (featureList.get(i).getStringProperty(PROPERTY_EVENT_ID).equals(event_id))
+                    if (featureList.get(i).getStringProperty(Events_DB_VM.EVENT_ID).equals(event_id))
                     {
                         Log.v(TAG,"featureList.get(i): "+featureList.get(i));
-                        Log.d(TAG,"number_of_selected_cards: "+number_of_selected_cards);
+                        Log.d(TAG,"previous_number_of_selected_cards: "+number_of_selected_cards);
 
 
                         /// Check if the selected point has been opened before
-                        if (feature_select_status(i))
+                        if (map_event_creator.feature_select_status(i))
                         {
 
-                            if(featureList.get(i).getStringProperty(PROPERTY_EVENT_ID).equals(last_event_selected))
+                            /// Check if user tapped the same event twice
+                            if(featureList.get(i).getStringProperty(Events_DB_VM.EVENT_ID).equals(last_event_selected))
                             {
                                 number_of_selected_cards--;
+                                navigation_mapRoute.updateRouteVisibilityTo(false);
+                                symbol_manager.delete(list_of_of_added_points_symbol);
+                                list_of_of_added_points_symbol.clear();
+
+                                /// Check if no event is opened on the screen
                                 if(number_of_selected_cards==0)
                                 {
                                     set_camera_position(0, null);
-                                    ((main_activity)getActivity()).bottom_navigation_visibility(true);
+                                    ((Main_Activity)getActivity()).bottom_navigation_visibility(true);
                                     bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_HIDDEN);
                                 }
 
-
-                                set_feature_select_state(featureList.get(i), false);
+                                map_event_creator.set_feature_select_state(featureList.get(i), false);
                                 Log.v(TAG,"Item Deselected");
                             }
                             else
                             {
-                                last_event_selected = featureList.get(i).getStringProperty(PROPERTY_EVENT_ID);
-                                try {update_bottom_sheet_click(featureList.get(i));}
+                                last_event_selected = featureList.get(i).getStringProperty(Events_DB_VM.EVENT_ID);
+                                try {open_selected_pinned_event(featureList.get(i));}
                                 catch (Exception e){Log.d(TAG,"Closing Bottom: "+e.getMessage());}
                             }
                         }
@@ -1286,7 +1261,7 @@ public class map_fragment extends Fragment implements
                         {
 
                             /// Set the last selected point equal to the current selected point
-                            last_event_selected = featureList.get(i).getStringProperty(PROPERTY_EVENT_ID);
+                            last_event_selected = featureList.get(i).getStringProperty(Events_DB_VM.EVENT_ID);
                             number_of_selected_cards++;
                             //if(number_of_selected_cards>0)
 
@@ -1294,7 +1269,7 @@ public class map_fragment extends Fragment implements
                             try
                             {
                                 JSONObject geometry = new JSONObject(featureList.get(i).geometry().toJson());
-                                update_bottom_sheet_click(featureList.get(i));
+                                open_selected_pinned_event(featureList.get(i));
                                 JSONArray point = new JSONArray(geometry.get("coordinates").toString());
 
                                 set_camera_position(50,new LatLng(Double.parseDouble(point.get(1).toString())
@@ -1302,10 +1277,10 @@ public class map_fragment extends Fragment implements
                             }
                             catch (Exception e)
                             {
-                                Log.d(TAG,"Feature selected Exception: "+e.getMessage());
+                                Log.d(TAG,"Feature selected Exception: "+e);
                             }
 
-                            set_active_event_to_selected_point(i);
+                            map_event_creator.set_active_event_to_selected_point(i);
                         }
 
                     }
@@ -1321,238 +1296,9 @@ public class map_fragment extends Fragment implements
         }
     }
 
-    private void set_active_event_to_selected_point(int index)
-    {
-        if (featureCollection.features() != null)
-        {
-            Feature feature = featureCollection.features().get(index);
-            set_feature_select_state(feature, true);
-            refreshSource();
-        }
-    }
-
-    private boolean feature_select_status(int index)
-    {
-        if (featureCollection == null)
-        {
-            return false;
-        }
-        return featureCollection.features().get(index).getBooleanProperty(PROPERTY_SELECTED);
-    }
-
-    private void set_feature_select_state(Feature feature, boolean selectedState)
-    {
-        if (feature.properties() != null)
-        {
-            feature.properties().addProperty(PROPERTY_SELECTED, selectedState);
-            refreshSource();
-        }
-    }
-
-    /**
-     * Updates the display of data on the map after the FeatureCollection has been modified
-     */
-    private void refreshSource()
-    {
-
-        if(featureCollection != null)
-        {
-
-            FeatureCollection feature_collection_ensemble;
-            FeatureCollection feature_collection_others;
-            List<Feature> features_ensemble = new ArrayList<>();
-            List<Feature> features_others = new ArrayList<>();
-
-            for (Feature singleFeature : featureCollection.features())
-            {
-                if (singleFeature.properties().get("event_type").toString().equals("\"0\""))
-                    features_ensemble.add(singleFeature);
-                else
-                    features_others.add(singleFeature);
-                Log.d(TAG, "Sing_Feature: " + singleFeature.properties());
-            }
 
 
-            if (source_ensemble != null && (features_ensemble.size() != 0))
-            {
-                feature_collection_ensemble = FeatureCollection.fromFeatures(features_ensemble);
-                source_ensemble.setGeoJson(feature_collection_ensemble);
-            }
 
-            if (source_challenge != null && (features_others.size() != 0))
-            {
-                feature_collection_others = FeatureCollection.fromFeatures(features_others);
-                source_challenge.setGeoJson(feature_collection_others);
-            }
-
-        }
-
-    }
-
-    /**
-     * Sets up all of the sources and layers needed for this example
-     *
-     * @param collection the FeatureCollection to set equal to the globally-declared FeatureCollection
-     */
-    public void setUpData(final FeatureCollection collection, int type)
-    {
-        //featureCollection = collection;
-
-        if (mapboxMap != null)
-        {
-            Log.d(TAG,"setUpData: mapboxMap != null");
-            if(type==EVENT_TYPE_ENSEMBLE)
-            {
-                Log.d(TAG,"setUpData: EVENT_TYPE_ENSEMBLE");
-                mapboxMap.getStyle(style ->
-                {
-                    style.removeSource(GEOJSON_SOURCE_ID_ENSEMBLE);
-                    style.removeLayer(GEOJSON_SOURCE_ID_ENSEMBLE);
-                    setupSource(style, collection, type);
-                    setUpImage(style, type);
-                    setUpMarkerLayer(style, type);
-                    setUpInfoWindowLayer(style, type);
-                });
-            }
-            else
-            {
-                Log.d(TAG,"setUpData: Others");
-                mapboxMap.getStyle(style ->
-                {
-                    style.removeSource(GEOJSON_SOURCE_ID_CHALLENGE);
-                    style.removeLayer(GEOJSON_SOURCE_ID_CHALLENGE);
-                    setupSource(style, collection, type);
-                    setUpImage(style, type);
-                    setUpMarkerLayer(style, type);
-                    setUpInfoWindowLayer(style, type);
-                });
-            }
-        }
-
-    }
-    public void set_feature_collection(final FeatureCollection collection)
-    {
-        featureCollection = collection;
-    }
-
-    /**
-     * Adds the GeoJSON source to the map
-     */
-    private void setupSource(@NonNull Style loadedStyle,final FeatureCollection collection, int type)
-    {
-        Log.v(TAG,"source was not null");
-        if(type==EVENT_TYPE_ENSEMBLE)
-        {
-            //source = new GeoJsonSource(GEOJSON_SOURCE_ID_ENSEMBLE, collection);
-            source_ensemble = new GeoJsonSource(GEOJSON_SOURCE_ID_ENSEMBLE, collection);
-            loadedStyle.addSource(source_ensemble);
-        }
-        else if(type==EVENT_TYPE_CHALLENGE)
-        {
-            source = new GeoJsonSource(GEOJSON_SOURCE_ID_CHALLENGE, collection);
-            source_challenge = new GeoJsonSource(GEOJSON_SOURCE_ID_CHALLENGE, collection);
-            loadedStyle.addSource(source_challenge);
-            //loadedStyle.addSource(source);
-        }
-        //loadedStyle.addSource(source);
-
-    }
-
-    /**
-     * Adds the marker image to the map for use as a SymbolLayer icon
-     */
-    private void setUpImage(@NonNull Style loadedStyle, int type)
-    {
-        Log.d(TAG,"setUpImage called");
-        if(type==EVENT_TYPE_ENSEMBLE)
-            loadedStyle.addImage(MARKER_IMAGE_ID_ENSEMBLE, BitmapFactory.decodeResource(
-                    this.getResources(), R.drawable.bicycle_32));
-        else if(type==EVENT_TYPE_CHALLENGE)
-            loadedStyle.addImage(MARKER_IMAGE_ID_CHALLENGE, BitmapFactory.decodeResource(
-                    this.getResources(), R.drawable.goal_32));
-    }
-
-    /**
-     * Setup a layer with maki icons, eg. west coast city.
-     */
-    private void setUpMarkerLayer(@NonNull Style loadedStyle, int type)
-    {
-        if(type==EVENT_TYPE_ENSEMBLE)
-            loadedStyle.addLayer(new SymbolLayer(MARKER_LAYER_ID_ENSEMBLE, GEOJSON_SOURCE_ID_ENSEMBLE)
-                    .withProperties(
-                            iconImage(MARKER_IMAGE_ID_ENSEMBLE),
-                            iconAllowOverlap(true),
-                            iconOffset(new Float[] {0f, -8f})
-                    ));
-        else if(type==EVENT_TYPE_CHALLENGE)
-            loadedStyle.addLayer(new SymbolLayer(MARKER_LAYER_ID_CHALLENGE, GEOJSON_SOURCE_ID_CHALLENGE)
-                    .withProperties(
-                            iconImage(MARKER_IMAGE_ID_CHALLENGE),
-                            iconAllowOverlap(true),
-                            iconOffset(new Float[] {0f, -8f})
-                    ));
-
-    }
-
-    /**
-     * Invoked when the bitmaps have been generated from a view.
-     */
-    public void setImageGenResults(HashMap<String, Bitmap> imageMap)
-    {
-        if (mapboxMap != null)
-        {
-            mapboxMap.getStyle(style ->
-            {
-                // calling addImages is faster as separate addImage calls for each bitmap.
-                style.addImages(imageMap);
-            });
-        }
-    }
-
-    /**
-     * Setup a layer with Android SDK call-outs
-     * <p>
-     * name of the feature is used as key for the iconImage
-     * </p>
-     */
-    private void setUpInfoWindowLayer(@NonNull Style loadedStyle, int type)
-    {
-        if(type==EVENT_TYPE_ENSEMBLE)
-            loadedStyle.addLayer(new SymbolLayer(CALLOUT_LAYER_ID_ENSEMBLE, GEOJSON_SOURCE_ID_ENSEMBLE)
-                    .withProperties(
-                            /* show image with id title based on the value of the name feature property */
-                            iconImage("{name}"),
-
-                            /* set anchor of icon to bottom-left */
-                            iconAnchor(ICON_ANCHOR_BOTTOM),
-
-                            /* all info window and marker image to appear at the same time*/
-                            iconAllowOverlap(true),
-
-                            /* offset the info window to be above the marker */
-                            iconOffset(new Float[] {-2f, -28f})
-                    )
-                    /* add a filter to show only when selected feature property is true */
-                    .withFilter(eq((get(PROPERTY_SELECTED)), literal(true))));
-
-        else if(type==EVENT_TYPE_CHALLENGE)
-            loadedStyle.addLayer(new SymbolLayer(CALLOUT_LAYER_ID_CHALLENGE, GEOJSON_SOURCE_ID_CHALLENGE)
-                    .withProperties(
-                            /* show image with id title based on the value of the name feature property */
-                            iconImage("{name}"),
-
-                            /* set anchor of icon to bottom-left */
-                            iconAnchor(ICON_ANCHOR_BOTTOM),
-
-                            /* all info window and marker image to appear at the same time*/
-                            iconAllowOverlap(true),
-
-                            /* offset the info window to be above the marker */
-                            iconOffset(new Float[] {-2f, -28f})
-                    )
-                    /* add a filter to show only when selected feature property is true */
-                    .withFilter(eq((get(PROPERTY_SELECTED)), literal(true))));
-    }
 
     @Override
     public void onExplanationNeeded(List<String> permissionsToExplain)
@@ -1590,6 +1336,7 @@ public class map_fragment extends Fragment implements
         @Override
         protected FeatureCollection doInBackground(Void... params)
         {
+            Log.d(TAG,"Load_GeoJson_Data_Task activated");
             map_fragment activity = activityRef.get();
 
             if (activity == null)
@@ -1600,7 +1347,6 @@ public class map_fragment extends Fragment implements
             Log.v(TAG,"Feature Collection Returned");
 
             file_maker geo_json_holder = new file_maker(file_directory_static,FILE_NAME);
-            //geo_json_holder.read_json();
 
             Log.v(TAG,"LoadGeoJsonDataTask: doInBackground");
             return FeatureCollection.fromJson(geo_json_holder.read_json().toString());
@@ -1631,7 +1377,7 @@ public class map_fragment extends Fragment implements
 
                 singleFeature.addBooleanProperty(PROPERTY_SELECTED, false);
                 //feature_collection_ensemble.features() = FeatureCollection.fromFeature(singleFeature)
-                Log.d(TAG,"singleFeature.properties(): "+singleFeature.properties().get("event_type").toString());
+                Log.d(TAG,"singleFeature.properties(): "+singleFeature.properties().toString());
                 if(singleFeature.properties().get("event_type").toString().equals("\"0\""))
                 {
                     //feature_collection_ensemble.features().add(singleFeature);
@@ -1647,22 +1393,20 @@ public class map_fragment extends Fragment implements
                 Log.v(TAG,"Sing_Feature: "+singleFeature.properties());
                 Log.v(TAG,"PROPERTY_SELECTED, False");
             }
-            activity.set_feature_collection(featureCollection);
+
+            //activity.set_feature_collection(featureCollection);
+            activity.map_event_creator.set_feature_collection(featureCollection);
             if(features_ensemble.size()!=0)
             {
                 feature_collection_ensemble = FeatureCollection.fromFeatures(features_ensemble);
-                activity.setUpData(feature_collection_ensemble, 0);
+                activity.map_event_creator.setUpData(feature_collection_ensemble, 0);
             }
 
             if(features_others.size()!=0)
             {
                 feature_collection_others = FeatureCollection.fromFeatures(features_others);
-                activity.setUpData(feature_collection_others, 1);
+                activity.map_event_creator.setUpData(feature_collection_others, 1);
             }
-
-
-
-            //activity.setUpData(featureCollection,0);
 
             Generate_View_Icon_Task generateViewIconTask=null;
             Log.v(TAG,"LoadGeoJsonDataTask: onPostExecute");
@@ -1695,16 +1439,16 @@ public class map_fragment extends Fragment implements
 
         private final HashMap<String, View> viewMap = new HashMap<>();
         private final WeakReference<map_fragment> activityRef;
-        private final boolean refreshSource;
+        //private final boolean refreshSource;
         @SuppressLint("StaticFieldLeak")
-        private final Context context;
+        // final Context context;
         private boolean is_user_joined;
 
         Generate_View_Icon_Task(map_fragment activity, boolean refreshSource)
         {
             this.activityRef = new WeakReference<>(activity);
-            this.refreshSource = refreshSource;
-            this.context = activity.getContext();
+            //this.refreshSource = refreshSource;
+            //this.context = activity.getContext();
             Log.v(TAG,"GenerateViewIconTask: Constructor_1");
         }
 
@@ -1713,45 +1457,6 @@ public class map_fragment extends Fragment implements
             this(activity, false);
             Log.v(TAG,"GenerateViewIconTask: Constructor_2");
         }
-
-        private String date_reformat(String time)
-        {
-            String inputPattern = "yyyy-MM-dd";
-            String outputPattern = "MMMM,dd,yy";
-            SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
-            SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
-
-            Date date = null;
-            String str = null;
-
-            try {
-                date = inputFormat.parse(time);
-                str = outputFormat.format(date);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            return str;
-        }
-
-
-        private Bitmap get_profile_bmp(String name)
-        {
-            ContextWrapper cw = new ContextWrapper(context);
-            File directory = cw.getDir("Profile_Pictures", Context.MODE_PRIVATE);
-            try
-            {
-                File file =new File(Events_DB_VM.get_image_file(), name);
-                Log.d(TAG,"profile cards image path:" + file);
-                Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
-                return bitmap;
-            }
-            catch (FileNotFoundException e)
-            {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
 
 
         @SuppressWarnings("WrongThread")
@@ -1773,51 +1478,62 @@ public class map_fragment extends Fragment implements
                             (ConstraintLayout) inflater.inflate(R.layout.event_id_card, null);
 
                     /// Name Section
-                    String name = feature.getStringProperty(PROPERTY_NAME);
+
+                    String user_name = feature.getStringProperty(Events_DB_VM.USER_NAME);
+                    Log.v(TAG,"Events_DB_VM.USER_NAME: "+ user_name);
                     TextView titleTextView = constraint_layout.findViewById(R.id.invitor_name);
-                    titleTextView.setText(name);
+                    titleTextView.setText(user_name);
+
 
                     /// Created Date Section
-                    String date_creation = feature.getStringProperty(PROPERTY_DATE_CREATED);
-                    TextView created_date = constraint_layout.findViewById(R.id.created_date);
-                    created_date.setText(date_reformat(date_creation));
+                    String event_date_created = feature.getStringProperty(EVENT_DATE_CREATED);
+                    Log.v(TAG,"Events_DB_VM.EVENT_DATE_CREATED: "+ event_date_created);
+                    TextView event_date_created_tv = constraint_layout.findViewById(R.id.event_date_created_tv);
+                    event_date_created_tv.setText(Date_Time_Provider.date_to_MDY(event_date_created));
 
                     /// Event Date Section
-                    String date_of_event = feature.getStringProperty(PROPERTY_EVENT_DATE);
-                    TextView event_date = constraint_layout.findViewById(R.id.event_date);
-                    event_date.setText(date_reformat(date_of_event)); //
+                    String event_date = feature.getStringProperty(EVENT_DATE);
+                    Log.v(TAG,"Events_DB_VM.EVENT_DATE: "+event_date);
+                    TextView event_date_tv = constraint_layout.findViewById(R.id.event_date);
+                    event_date_tv.setText(Date_Time_Provider.date_to_MDY(event_date)); //
+
+
 
                     /// Profile Pix Section
-                    String profile_pic_name = feature.getStringProperty(PROPERTY_PIC);
+                    String profile_pic_name = feature.getStringProperty(USER_PIC);
+                    //Log.v(TAG,"Events_DB_VM.USER_PIC: "+profile_pic_name);
                     CircleImageView profile_image = constraint_layout.findViewById(R.id.profile_image);
-                    Bitmap profile_pic = get_profile_bmp(profile_pic_name);
+                    Bitmap profile_pic = Image_Provider.get_profile_bmp(profile_pic_name);
                     if(profile_pic!=null)
                         profile_image.setImageBitmap(profile_pic);
 
                     /// Number of Joined User Section
                     try
                     {
-                        String num_of_joined = feature.getStringProperty(PROPERTY_NUM_OF_JOINED);
+                        String num_of_joined = feature.getStringProperty(Events_DB_VM.NUM_OF_JOINED);
+                        Log.v(TAG,"Events_DB_VM.NUM_OF_JOINED: "+num_of_joined);
                         TextView number_of_joined_users_tv = constraint_layout.findViewById(R.id.num_of_joined);
                         number_of_joined_users_tv.setText(num_of_joined);
                     }
                     catch (Exception e)
                     {
-
+                        Log.v(TAG,"Events_DB_VM.NUM_OF_JOINED: Failed");
                     }
 
 
                     /// Is User Joined Section
-                    String is_user_joined = feature.getStringProperty(PROPERTY_IS_USER_JOINED);
+                    String is_user_joined = feature.getStringProperty(Events_DB_VM.IS_USER_JOINED);
 
 
                     int measureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
                     constraint_layout.measure(measureSpec, measureSpec);
 
 
+                    /// Naming each car identically using event_id
+                    String event_id = feature.getStringProperty(Events_DB_VM.EVENT_ID);
                     Bitmap bitmap = map_fragment.SymbolGenerator.generate(constraint_layout);
-                    imagesMap.put(name, bitmap);
-                    viewMap.put(name, constraint_layout);
+                    imagesMap.put(event_id, bitmap);
+                    viewMap.put(event_id, constraint_layout);
                 }
                 Log.v(TAG,"GenerateViewIconTask: doInBackground");
                 return imagesMap;
@@ -1836,14 +1552,7 @@ public class map_fragment extends Fragment implements
             map_fragment activity = activityRef.get();
             if (activity != null && bitmapHashMap != null)
             {
-                activity.setImageGenResults(bitmapHashMap);
-                /*
-                if (refreshSource)
-                {
-                    activity.refreshSource();
-                }
-
-                 */
+                activity.map_event_creator.setImageGenResults(bitmapHashMap);
             }
             Log.v(TAG,"GenerateViewIconTask: onPostExecute");
             //Toast.makeText(activity, R.string.tap_on_marker_instruction, Toast.LENGTH_SHORT).show();
@@ -1945,7 +1654,4 @@ public class map_fragment extends Fragment implements
     {
         super.onDetach();
     }
-
-
-
 }

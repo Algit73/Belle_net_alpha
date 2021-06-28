@@ -4,16 +4,16 @@ public class FollowX_Object
 {
     String user_name;
     String user_family;
-    String user_pic;
+    String user_picture;
 
     public String getUser_family()
     {
         return user_family;
     }
 
-    public String getUser_pic()
+    public String getUser_picture()
     {
-        return user_pic;
+        return user_picture;
     }
 
     public String getUser_name()
@@ -31,9 +31,9 @@ public class FollowX_Object
         this.user_name = user_name;
     }
 
-    public void setUser_pic(String user_pic)
+    public void setUser_picture(String user_picture)
     {
-        this.user_pic = user_pic;
+        this.user_picture = user_picture;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class FollowX_Object
         return "{" +
                 "user_name='" + user_name + '\'' +
                 ", user_family='" + user_family + '\'' +
-                ", user_pic='" + user_pic + '\'' +
+                ", user_picture='" + user_picture + '\'' +
                 '}';
     }
 }

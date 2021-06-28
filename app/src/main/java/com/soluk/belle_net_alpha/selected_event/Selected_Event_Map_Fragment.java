@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineProvider;
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -22,6 +24,8 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
+import com.mapbox.mapboxsdk.style.layers.Property;
 import com.mapbox.navigation.base.options.NavigationOptions;
 import com.mapbox.navigation.core.MapboxNavigation;
 import com.mapbox.navigation.ui.route.NavigationMapRoute;
@@ -40,12 +44,11 @@ public class Selected_Event_Map_Fragment extends Fragment implements OnMapReadyC
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_feature = "feature";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String feature_string;
+
 
     public Selected_Event_Map_Fragment()
     {
@@ -71,12 +74,11 @@ public class Selected_Event_Map_Fragment extends Fragment implements OnMapReadyC
 
 
     // TODO: Rename and change types and number of parameters
-    public static Selected_Event_Map_Fragment newInstance(String param1, String param2)
+    public static Selected_Event_Map_Fragment newInstance(String param1)
     {
         Selected_Event_Map_Fragment fragment = new Selected_Event_Map_Fragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_feature, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -87,8 +89,8 @@ public class Selected_Event_Map_Fragment extends Fragment implements OnMapReadyC
         super.onCreate(savedInstanceState);
         if (getArguments() != null)
         {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            feature_string = getArguments().getString(ARG_feature);
+
         }
 
         Mapbox.getInstance(getActivity(), getString(R.string.mapbox_access_token));
@@ -118,6 +120,13 @@ public class Selected_Event_Map_Fragment extends Fragment implements OnMapReadyC
             mapbox_navigation_configuration(style);
             symbol_manager = new SymbolManager(mapView, mapboxMap, style);
             symbol_manager.setIconAllowOverlap(true);
+            Feature feature = Feature.fromJson(feature_string);
+            double longitude = Double.parseDouble(feature.getStringProperty("longitude_0"));
+            double latitude = Double.parseDouble(feature.getStringProperty("latitude_0"));
+            Point point =  Point.fromLngLat(longitude,latitude);
+            LatLng start_point = new LatLng(point.latitude(),point.longitude());
+            set_camera_position(0,start_point);
+            add_marker(start_point,0);
         });
 
     }
@@ -142,11 +151,24 @@ public class Selected_Event_Map_Fragment extends Fragment implements OnMapReadyC
             position = new CameraPosition.Builder()
                     .target(point) // Sets the new camera position
                     .zoom(12) // Sets the zoom
+
                     //.bearing(degree) // Rotate the camera
                     .tilt(tilt) // Set the camera tilt
                     .build();
 
-        mapboxMap.animateCamera(CameraUpdateFactory
-                .newCameraPosition(position), 2000);
+            mapboxMap.easeCamera(CameraUpdateFactory.newCameraPosition(position));
+
     }
+
+    private void add_marker(LatLng lat_lng, int type)
+    {
+        if(type<1)
+            symbol_manager.create(new SymbolOptions()
+                    .withLatLng(lat_lng)
+                    .withIconImage("marker_start_flag")
+                    .withTextAnchor(Property.TEXT_ANCHOR_BOTTOM)
+                    .withIconSize(1.5f));
+    }
+
+
 }

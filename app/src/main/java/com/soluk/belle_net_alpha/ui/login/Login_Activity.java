@@ -3,7 +3,6 @@ package com.soluk.belle_net_alpha.ui.login;
 import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
-import android.net.wifi.hotspot2.pps.Credential;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,8 +19,8 @@ import android.widget.Toast;
 
 import com.soluk.belle_net_alpha.HTTP_Provider;
 import com.soluk.belle_net_alpha.R;
-import com.soluk.belle_net_alpha.event_data_maker.file_maker;
-import com.soluk.belle_net_alpha.main_activity;
+import com.soluk.belle_net_alpha.Main_Activity;
+import com.soluk.belle_net_alpha.model.Events_DB_VM;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -34,6 +33,11 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_EMAIL;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_FAMILY;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_NAME;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_PASSWORD;
+
 public class Login_Activity extends AppCompatActivity
 {
 
@@ -41,15 +45,12 @@ public class Login_Activity extends AppCompatActivity
     private static final String TAG = Login_Activity.class.getSimpleName();
     private static final String LOGIN_SUBURL = "belle_net_users_info/user_login_check.php";
     private final String USER_CREDENTIALS = "user_cred";
-    private final String USER_EMAIL = "user_email";
-    private final String USER_NAME = "user_name";
-    private final String USER_FAMILY = "user_family";
-    private final String USER_PASS = "user_password";
+
+
     private final String USER_REQUEST = "user_request";
     private final String SIGN_IN_REQUEST = "signin";
     private final String SIGN_UP_REQUEST = "signup";
-    //private JSONObject user_creds;
-    //file_maker credentials_file;
+
     ImageView loading_screen_1;
     ImageView loading_screen_2;
     ImageView loading_screen_3;
@@ -75,10 +76,6 @@ public class Login_Activity extends AppCompatActivity
         File file_directory = Login_Activity.this.getFilesDir();
         HTTP_Provider.set_file_dir(file_directory);
 
-
-        //loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
-        //        .get(LoginViewModel.class);
-
         /// Setting up the GUI elements
         loading_screen_1 = findViewById(R.id.loading_screen_1);
         loading_screen_2 = findViewById(R.id.loading_screen_2);
@@ -90,9 +87,6 @@ public class Login_Activity extends AppCompatActivity
 
 
         User_Credentials.init(file_directory.toString(),USER_CREDENTIALS);
-        //credentials_file = new file_maker(file_directory.toString(),USER_CREDENTIALS);
-        //user_creds = credentials_file.read_json();
-
 
 
         final Button login_button = findViewById(R.id.login);
@@ -103,15 +97,11 @@ public class Login_Activity extends AppCompatActivity
         {
             if((username_et.getText()!=null)&&(password_et.getText()!=null))
             {
-                //JSONObject user_pass = new JSONObject();
                 try
                 {
-                    //user_pass.put(USER_EMAIL,username_et.getText())
-                      //      .put(USER_PASS,password_et.getText());
                     User_Credentials.put_user_item(USER_EMAIL,username_et.getText().toString());
-                    User_Credentials.put_user_item(USER_PASS,password_et.getText().toString());
+                    User_Credentials.put_user_item(USER_PASSWORD,password_et.getText().toString());
                     User_Credentials.write_user_items();
-                    //credentials_file.write_json(user_pass);
                     send_user_creds();
                 }
                 catch (JSONException e)
@@ -127,10 +117,8 @@ public class Login_Activity extends AppCompatActivity
         try
         {
             Log.d("Login_Activity","user_creds: "+User_Credentials.get_items());
-            //username_et.setText(user_creds.get(USER_EMAIL).toString());
-            //password_et.setText(user_creds.get(USER_PASS).toString());
             username_et.setText(User_Credentials.get_item(USER_EMAIL));
-            password_et.setText(User_Credentials.get_item(USER_PASS));
+            password_et.setText(User_Credentials.get_item(USER_PASSWORD));
         }
         catch (JSONException e) {e.printStackTrace();}
 
@@ -197,7 +185,18 @@ public class Login_Activity extends AppCompatActivity
             card_view_sign_up.setVisibility(View.VISIBLE);
         });
 
+
+        try
+        {
+            User_Credentials.put_user_item(USER_EMAIL,username_et.getText().toString());
+            User_Credentials.put_user_item(USER_PASSWORD,password_et.getText().toString());
+            User_Credentials.write_user_items();
+            send_user_creds();
+        } catch (Exception ignored){}
+
     }
+
+
 
     void send_user_creds()
     {
@@ -228,20 +227,18 @@ public class Login_Activity extends AppCompatActivity
                 try
                 {
                     user_response = new JSONObject(response_body);
-                    //user_response.put(USER_PASS,user_creds.get(USER_PASS).toString());
-                    //user_response.put(USER_EMAIL,user_creds.get(USER_EMAIL).toString());
 
                     if(user_response.get("eligible").toString().equals("eligible"))
                     {
-                        //credentials_file.write_json(user_response);
-                        User_Credentials.put_user_item("user_name",user_response.get("user_name").toString());
-                        User_Credentials.put_user_item("user_family",user_response.get("user_family").toString());
-                        User_Credentials.put_user_item("user_id",user_response.get("user_id").toString());
-                        User_Credentials.put_user_item("user_pic",user_response.get("user_pic").toString());
-                        User_Credentials.put_user_item("user_join_date",user_response.get("user_join_date").toString());
+
+                        User_Credentials.put_user_item(USER_NAME,user_response.get(USER_NAME).toString());
+                        User_Credentials.put_user_item(USER_FAMILY,user_response.get(USER_FAMILY).toString());
+                        User_Credentials.put_user_item(Events_DB_VM.USER_ID,user_response.get(Events_DB_VM.USER_ID).toString());
+                        User_Credentials.put_user_item(Events_DB_VM.USER_PIC,user_response.get(Events_DB_VM.USER_PIC).toString());
+                        User_Credentials.put_user_item(Events_DB_VM.USER_JOIN_DATE,user_response.get(Events_DB_VM.USER_JOIN_DATE).toString());
                         User_Credentials.write_user_items();
                         Intent home = new Intent(Login_Activity.this,
-                                main_activity.class);
+                                Main_Activity.class);
                         startActivity(home);
                         Login_Activity.this.finish();
                     }
@@ -261,7 +258,7 @@ public class Login_Activity extends AppCompatActivity
         try
         {
             json.put(USER_REQUEST, SIGN_IN_REQUEST);
-            json.put(USER_PASS, User_Credentials.get_item(USER_PASS));
+            json.put(USER_PASSWORD, User_Credentials.get_item(USER_PASSWORD));
             json.put(USER_EMAIL, User_Credentials.get_item(USER_EMAIL));
         }
         catch (JSONException e) {e.printStackTrace();}
@@ -277,7 +274,7 @@ public class Login_Activity extends AppCompatActivity
         json.put(USER_NAME,user_name_et.getText().toString());
         json.put(USER_FAMILY,user_family_et.getText().toString());
         json.put(USER_EMAIL,user_email_et.getText().toString());
-        json.put(USER_PASS, user_pass_et.getText().toString());
+        json.put(USER_PASSWORD, user_pass_et.getText().toString());
         Log.d("Login_Activity","json "+json);
 
         Callback callback = new Callback()

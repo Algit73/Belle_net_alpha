@@ -3,17 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".selected_event.Selected_Event_Activity"
     android:orientation="vertical"
-    android:background="@color/gray_200"
-    >
+    android:background="@color/gray_200">
 
     <LinearLayout
         android:id="@+id/title_holder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@color/gray_100"
+        android:background="@color/teal_palette_light"
         android:padding="8dp"
         >
 
@@ -24,8 +24,8 @@
 
             android:layout_margin="8dp"
             android:src="@drawable/arrow_left"
-            android:background="@drawable/background_circular"
-            android:backgroundTint="@color/gray_100"
+            android:background="@null"
+            android:tint="@color/gray_100"
             android:padding="8dp"
             />
 
@@ -37,31 +37,39 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
             android:textSize="24sp"
-            android:textColor="@color/gray_800"
+            android:textColor="@color/gray_100"
             />
 
 
 
     </LinearLayout>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_map_section"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        />
+
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5"
-        android:layout_marginTop="16dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
         >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             >
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp">
+
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/fragment_map_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    />
+            </androidx.cardview.widget.CardView>
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragment_info_section"

@@ -1,11 +1,11 @@
-package com.soluk.belle_net_alpha.user_followx;
+package com.soluk.belle_net_alpha.search_users;
 
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,45 +13,47 @@ import android.widget.TextView;
 
 import com.soluk.belle_net_alpha.R;
 import com.soluk.belle_net_alpha.model.Events_DB_VM;
-
+import com.soluk.belle_net_alpha.search_users.dummy.DummyContent.DummyItem;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link }.
+ * {@link RecyclerView.Adapter} that can display a {@link DummyItem}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class My_Followx_RecyclerViewAdapter extends RecyclerView.Adapter<My_Followx_RecyclerViewAdapter.ViewHolder>
+public class Searched_Users_Recycler_View_Adapter extends RecyclerView.Adapter<Searched_Users_Recycler_View_Adapter.ViewHolder>
 {
 
-    private final List<FollowX_Object> followx_objects;
+    private final List<Returned_User_Info_Object> mValues;
+    String TAG = Searched_Users_Recycler_View_Adapter.class.getSimpleName();
 
-    public My_Followx_RecyclerViewAdapter(List<FollowX_Object> items)
+    public Searched_Users_Recycler_View_Adapter(List<Returned_User_Info_Object> items)
     {
-        followx_objects = items;
+        mValues = items;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_followx, parent, false);
+                .inflate(R.layout.fragment_search_users, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position)
     {
-        holder.followx = followx_objects.get(position);
-        String user_name_family = holder.followx.getUser_name()+" "+holder.followx.getUser_family();
+        holder.user_info = mValues.get(position);
+        Log.d(TAG,holder.user_info.toString());
+
+        String user_name_family = holder.user_info.getUser_name()+" "+holder.user_info.getUser_family();
         holder.user_name_family_tv.setText(user_name_family);
-        String path = Events_DB_VM.profile_pic_url + holder.followx.getUser_picture() + ".jpg";
+
+        String path = Events_DB_VM.profile_pic_url + holder.user_info.getUser_picture() + ".jpg";
         Target target = new Target()
         {
             @Override
@@ -63,7 +65,8 @@ public class My_Followx_RecyclerViewAdapter extends RecyclerView.Adapter<My_Foll
             @Override
             public void onBitmapFailed(Exception e, Drawable errorDrawable)
             {
-
+                holder.user_profile_image_civ.setImageDrawable(AppCompatResources
+                        .getDrawable(holder.user_profile_image_civ.getContext(),R.drawable.default_profile_pic));
             }
 
             @Override
@@ -79,24 +82,22 @@ public class My_Followx_RecyclerViewAdapter extends RecyclerView.Adapter<My_Foll
     @Override
     public int getItemCount()
     {
-        return followx_objects.size();
+        return mValues.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder
     {
-        public final View mView;
+        //public final View mView;
         public final TextView user_name_family_tv;
         public final CircleImageView user_profile_image_civ;
-        public FollowX_Object followx;
+        public Returned_User_Info_Object user_info;
 
         public ViewHolder(View view)
         {
             super(view);
-            mView = view;
+            //mView = view;
             user_name_family_tv = view.findViewById(R.id.user_name_family_tv);
             user_profile_image_civ = view.findViewById(R.id.user_profile_image_civ);
-
-
         }
 
         @Override

@@ -2,25 +2,20 @@ package com.soluk.belle_net_alpha;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
+//import androidx.appcompat.app.ActionBar;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.ImageDecoder;
 import android.net.Uri;
@@ -31,9 +26,10 @@ import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
+//import android.widget.Toolbar;
 
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.mapbox.android.core.permissions.PermissionsListener;
@@ -42,14 +38,15 @@ import com.soluk.belle_net_alpha.main_fragments.Profile_Fragment;
 import com.soluk.belle_net_alpha.main_fragments.events_hub_feed_fragment;
 import com.soluk.belle_net_alpha.main_fragments.map_fragment;
 import com.soluk.belle_net_alpha.model.Events_DB_VM;
+import com.soluk.belle_net_alpha.search_users.Search_Users_Activity;
 import com.soluk.belle_net_alpha.ui.login.User_Credentials;
+import com.soluk.belle_net_alpha.utils.Image_Provider;
 import com.yalantis.ucrop.UCrop;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import java.util.ArrayList;
@@ -61,11 +58,11 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 
-public class main_activity extends AppCompatActivity implements
+public class Main_Activity extends AppCompatActivity implements
         PermissionsListener
 {
 
-    private static final String TAG = main_activity.class.getSimpleName();
+    private static final String TAG = Main_Activity.class.getSimpleName();
 
 
     private FragmentTransaction fragment_transaction;
@@ -117,6 +114,19 @@ public class main_activity extends AppCompatActivity implements
 
 
 
+        /*
+        /// Change status bar color
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        android.graphics.drawable.Drawable background = AppCompatResources.getDrawable(this,R.drawable.main_ui_gradient_green_blue);
+        getWindow().setBackgroundDrawable(background);
+
+         */
+
+
+
+
+
 
         map_fragment_instance = new map_fragment();
         event_list_parent_holder = new events_hub_feed_fragment();
@@ -136,12 +146,18 @@ public class main_activity extends AppCompatActivity implements
 
         /// Initializing DB_Model
 
-        String file_directory = main_activity.this.getFilesDir().toString();
+        String file_directory = Main_Activity.this.getFilesDir().toString();
         ContextWrapper context_wrapper = new ContextWrapper(getApplicationContext());
         File image_directory = context_wrapper.getDir("Profile_Pictures", Context.MODE_PRIVATE);
+
+
+
         model_db = new ViewModelProvider(this).get(Events_DB_VM.class);
         model_db.set_db_handler(this::update_children_fragments);
         model_db.init_db(file_directory,image_directory);
+        Image_Provider.set_file(image_directory);
+
+
 
 
 
@@ -169,12 +185,17 @@ public class main_activity extends AppCompatActivity implements
                                                                         .hide(profile_fragment).commit();
                    break;
                case R.id.page_profile:
-                   fragment_transaction = getSupportFragmentManager().beginTransaction();
-                   fragment_transaction.show(profile_fragment).hide(event_list_parent_holder)
-                                                                .hide(map_fragment_instance).commit();
+                   show_user_profile();
                    break;
            }
             return true;
+        });
+
+        ImageButton find_friends_ib = findViewById(R.id.find_friends_ib);
+        find_friends_ib.setOnClickListener(v ->
+        {
+            Intent intent = new Intent(this, Search_Users_Activity.class);
+            startActivity(intent);
         });
 
         /// FireBase
@@ -183,6 +204,14 @@ public class main_activity extends AppCompatActivity implements
     }
 
 
+    public void show_user_profile()
+    {
+        fragment_transaction = getSupportFragmentManager().beginTransaction();
+        fragment_transaction.show(profile_fragment).hide(event_list_parent_holder)
+                .hide(map_fragment_instance).commit();
+
+        bottom_navigation_view.getMenu().getItem(2).setChecked(true);
+    }
 
 
     @Override
@@ -210,8 +239,7 @@ public class main_activity extends AppCompatActivity implements
                 else
                     image_profile_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), resultUri);
 
-                //saveToInternalStorage(image_profile_bitmap, User_Credentials.get_item("user_pic"));
-                Events_DB_VM.save_to_internal_storage(image_profile_bitmap, User_Credentials.get_item("user_pic"));
+                Image_Provider.save_to_internal_storage(image_profile_bitmap, User_Credentials.get_item(Events_DB_VM.USER_PIC));
 
 
             }
@@ -260,6 +288,7 @@ public class main_activity extends AppCompatActivity implements
 
 
 
+
         /*
         Cursor  returnCursor = getContentResolver().query(resultUri, null, null, null, null);
         if (returnCursor != null)
@@ -278,36 +307,7 @@ public class main_activity extends AppCompatActivity implements
         model_db.refresh_db();
     }
 
-    private String saveToInternalStorage(Bitmap bitmapImage, String name)
-    {
-        File path=new File(Events_DB_VM.get_image_file(),name);
-        Log.d(TAG,"Profile pic address "+path);
 
-        FileOutputStream fos = null;
-        try
-        {
-            fos = new FileOutputStream(path);
-            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-        }
-        catch (Exception e)
-        {
-            Log.d(TAG,"Int Storage Create File failed: "+e.getMessage());
-            e.printStackTrace();
-        }
-        finally
-        {
-            try
-            {
-                fos.close();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        Log.d(TAG,"Directory: "+ Events_DB_VM.get_image_file().getAbsolutePath());
-        return Events_DB_VM.get_image_file().getAbsolutePath();
-    }
 
 
 
@@ -377,7 +377,7 @@ public class main_activity extends AppCompatActivity implements
                         msg = "Subscribe Was Not Successful";
                     }
                     Log.d(TAG, msg);
-                    Toast.makeText(main_activity.this, msg, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(Main_Activity.this, msg, Toast.LENGTH_SHORT).show();
                 });
 
     }
