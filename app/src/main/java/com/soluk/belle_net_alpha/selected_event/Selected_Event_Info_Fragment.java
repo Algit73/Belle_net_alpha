@@ -98,7 +98,7 @@ public class Selected_Event_Info_Fragment extends Fragment
         else
         {
             join_event_btn.setBackgroundColor(ResourcesCompat.getColor(getResources()
-                    , R.color.blue_900, getActivity().getTheme()));
+                    , R.color.teal_palette_light, getActivity().getTheme()));
             join_event_btn.setText("Join Now");
             join_event_btn.setTextColor(ResourcesCompat.getColor(getResources()
                     , R.color.gray_100, getActivity().getTheme()));

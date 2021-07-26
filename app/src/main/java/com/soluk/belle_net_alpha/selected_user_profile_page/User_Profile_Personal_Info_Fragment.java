@@ -164,7 +164,7 @@ public class User_Profile_Personal_Info_Fragment extends Fragment
                         if(!user_params.get("is_user_following").toString().equals("1"))
                         {
                             follow_btn.setBackgroundColor(ResourcesCompat.getColor(getResources()
-                                    , R.color.blue_900, getActivity().getTheme()));
+                                    , R.color.teal_palette_light, getActivity().getTheme()));
                             follow_btn.setTextColor(ResourcesCompat.getColor(getResources()
                                     , R.color.gray_100, getActivity().getTheme()));
                             follow_btn.setText("Follow");

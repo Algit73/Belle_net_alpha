@@ -13,7 +13,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/bellenet_bw"
+        android:icon="@mipmap/bellenet_round"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Belle_net_alpha">

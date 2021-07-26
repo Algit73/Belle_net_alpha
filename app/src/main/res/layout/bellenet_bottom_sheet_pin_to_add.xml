@@ -7,6 +7,7 @@
     android:background = "@drawable/bellenet_bottom_sheet_background"
     android:paddingBottom="32dp"
     android:id="@+id/bottom_sheet_challenges"
+
     app:behavior_hideable="true"
     app:behavior_peekHeight="16dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">

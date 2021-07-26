@@ -194,11 +194,12 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Infinite"
-                                android:textAlignment="center"
                                 android:textColor="@color/gray_100"
+                                android:layout_marginStart="8dp"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintLeft_toRightOf="@id/vs_followings"
-                                app:layout_constraintTop_toTopOf="parent" />
+                                app:layout_constraintTop_toTopOf="parent"
+                                />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -229,6 +230,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Infinite"
                                 android:textColor="@color/gray_100"
+                                android:layout_marginStart="8dp"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintLeft_toRightOf="@id/vs_followers"
                                 app:layout_constraintTop_toTopOf="parent" />

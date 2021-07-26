@@ -1,6 +1,7 @@
 package com.soluk.belle_net_alpha.all_events_list_fragment;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -59,11 +60,50 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
         holder.event_date_tv.setText(Date_Time_Provider.date_to_MDY(feature_list.get(position).getStringProperty(Events_DB_VM.EVENT_DATE)));
         holder.event_joinees_tv.setText(feature_list.get(position).getStringProperty(Events_DB_VM.NUM_OF_JOINED));
 
+        boolean is_user_owned_event = false;
+        try
+        {
+            String USER_ID = User_Credentials.get_item(Events_DB_VM.USER_ID);
+            String event_owner_user_id = feature_list.get(position).getStringProperty(Events_DB_VM.USER_ID);
+            is_user_owned_event = event_owner_user_id.equals(USER_ID);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
         String profile_pic_name = feature_list.get(position).getStringProperty(Events_DB_VM.USER_PIC);
 
         Bitmap profile_pic = Image_Provider.get_profile_bmp(profile_pic_name);
         if(profile_pic!=null)
             holder.profile_pic_civ.setImageBitmap(profile_pic);
+        if(!is_user_owned_event)
+        {
+            if (feature_list.get(position).getStringProperty(Events_DB_VM.IS_USER_JOINED).equals("true"))
+            {
+                holder.join_event_btn.setBackgroundColor(ResourcesCompat.getColor(holder.join_event_btn.getResources()
+                        , R.color.gray_200, holder.join_event_btn.getContext().getTheme()));
+                holder.join_event_btn.setTextColor(ResourcesCompat.getColor(holder.join_event_btn.getResources()
+                        , R.color.gray_500, holder.join_event_btn.getContext().getTheme()));
+                holder.join_event_btn.setText("joined");
+            }
+            else
+            {
+                holder.join_event_btn.setBackgroundColor(ResourcesCompat.getColor(holder.join_event_btn.getResources()
+                        , R.color.teal_palette_light, holder.join_event_btn.getContext().getTheme()));
+                holder.join_event_btn.setTextColor(ResourcesCompat.getColor(holder.join_event_btn.getResources()
+                        , R.color.gray_100, holder.join_event_btn.getContext().getTheme()));
+                holder.join_event_btn.setText("join");
+
+            }
+        }
+        else
+        {
+            holder.join_event_btn.setText("Remove");
+            holder.join_event_btn.setBackgroundTintList(ResourcesCompat.getColorStateList(holder.join_event_btn.getResources()
+                    ,R.color.red_500, holder.join_event_btn.getContext().getTheme()));
+        }
+            
 
         holder.profile_pic_civ.setOnClickListener(v ->
         {
@@ -85,20 +125,19 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
 
         });
 
-        holder.join_event.setOnClickListener(v ->
+        holder.join_event_btn.setOnClickListener(v ->
         {
-            Toast.makeText(holder.join_event.getContext(),feature_list
-                    .get(position).getStringProperty(Events_DB_VM.USER_NAME),Toast.LENGTH_SHORT).show();
+
+
 
         });
 
         holder.card_layout.setOnClickListener(v ->
         {
-            Toast.makeText(holder.card_layout.getContext(),feature_list
-                    .get(position).getStringProperty(Events_DB_VM.USER_FAMILY),Toast.LENGTH_SHORT).show();
+
             Intent intent = new Intent(holder.card_layout.getContext(), Selected_Event_Activity.class);
             intent.putExtra("feature", feature_list.get(position).toJson());
-            holder.join_event.getContext().startActivity(intent);
+            holder.join_event_btn.getContext().startActivity(intent);
         });
 
     }
@@ -122,7 +161,7 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
         public final TextView event_explanation_tv;
         public final TextView event_joinees_tv;
         public final CircleImageView profile_pic_civ;
-        public final Button join_event;
+        public final Button join_event_btn;
         public final ConstraintLayout card_layout;
         public Feature mItem;
 
@@ -139,7 +178,7 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
             event_explanation_tv = view.findViewById(R.id.event_explanation);
             event_joinees_tv = view.findViewById(R.id.event_joinees);
             profile_pic_civ = view.findViewById(R.id.profile_pic);
-            join_event = view.findViewById(R.id.join_event);
+            join_event_btn = view.findViewById(R.id.join_event_btn);
             card_layout = view.findViewById(R.id.card_layout);
         }
 

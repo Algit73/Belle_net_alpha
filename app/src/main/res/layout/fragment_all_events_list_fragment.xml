@@ -218,7 +218,7 @@
                 />
 
             <Button
-                android:id="@+id/join_event"
+                android:id="@+id/join_event_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/event_explanation_icon"

@@ -330,10 +330,12 @@ public class map_fragment extends Fragment implements
 
 
 
+
         /// Configuring BottomSheet_Choose_Challenge in the BelleNet
         View bottom_sheet_challenges_veiw = v.findViewById(R.id.bottom_sheet_challenges);
         bottom_sheet_Choose_challenge = BottomSheetBehavior.from(bottom_sheet_challenges_veiw);
         bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
+
 
         /// Set camera on the user location
         set_cam_on_location_fab = v.findViewById(R.id.fab_pin_on_maps);
@@ -626,8 +628,7 @@ public class map_fragment extends Fragment implements
         };
         wait_on_loading_data(false);
 
-        HTTP_Provider.post_json("belle_net_users_info/send_join_event_status.php",json,callback);
-        //db_model.refresh_db();
+        HTTP_Provider.post_json(getActivity().getString(R.string.bellenet_join_event_url),json,callback);
         ((Main_Activity)getActivity()).refresh_db();
         remove_points_routes();
     }
