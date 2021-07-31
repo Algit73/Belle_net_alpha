@@ -941,7 +941,6 @@ public class map_fragment extends Fragment implements
             Date current_date = Calendar.getInstance().getTime();
             SimpleDateFormat standard_date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
-            Log.d(TAG, "Button Pressed");
             JSONObject json = new JSONObject();
             symbol_manager.delete(list_of_of_added_points_symbol);
             list_of_of_added_points_symbol.clear();

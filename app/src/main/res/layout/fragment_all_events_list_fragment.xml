@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <androidx.cardview.widget.CardView
+    android:id="@+id/event_card_cv"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -21,6 +20,8 @@
             android:layout_height="match_parent"
             android:padding="8dp"
             >
+
+
 
             <View
                 android:id="@+id/vertical_splitter"
@@ -234,11 +235,33 @@
                 app:cornerRadius="36dp"
                 />
 
+            <ProgressBar
+                android:id="@+id/loading_wheel_pb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateTint="@color/teal_500"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:visibility="gone"
+                />
+
+
 
 
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:id="@+id/loading_screen_iv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@color/gray_800"
+        android:alpha=".5"
+        app:layout_anchor="@+id/constraintLayout2"
+        android:visibility="gone"
+        />
 
 
 

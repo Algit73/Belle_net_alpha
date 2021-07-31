@@ -84,9 +84,10 @@
                 android:orientation="horizontal"
                 >
                 <Button
+                    android:id="@+id/discover_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
-                    android:text="nearest"
+                    android:text="Discover"
                     android:backgroundTint="@color/teal_palette_light"
                     android:textColor="@color/gray_100"
                     app:cornerRadius="12dp"
@@ -96,9 +97,10 @@
                     />
 
                 <Button
+                    android:id="@+id/joined_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
-                    android:text="top"
+                    android:text="Joined"
                     app:cornerRadius="12dp"
                     android:backgroundTint="@color/gray_300"
                     android:textColor="@color/gray_700"
@@ -107,9 +109,10 @@
                     android:textSize="12sp"
                     />
                 <Button
+                    android:id="@+id/own_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
-                    android:text="hot"
+                    android:text="Own"
                     android:backgroundTint="@color/gray_300"
                     android:textColor="@color/gray_700"
                     app:cornerRadius="36dp"
@@ -117,17 +120,7 @@
                     android:layout_margin="8dp"
                     android:textSize="12sp"
                     />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:text="recent"
-                    android:backgroundTint="@color/gray_300"
-                    android:textColor="@color/gray_700"
-                    app:cornerRadius="36dp"
-                    android:drawableTint="@color/gray_100"
-                    android:layout_margin="8dp"
-                    android:textSize="12sp"
-                    />
+
 
             </LinearLayout>
 
