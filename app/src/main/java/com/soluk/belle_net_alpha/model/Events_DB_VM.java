@@ -74,7 +74,9 @@ public class Events_DB_VM extends ViewModel
     public static final String OWNER_USER_ID = "owner_user_id";
     public static final String EVENT_DATE_CREATED = "date_created";
     public static final String EVENT_DATE = "event_date";
+    public static final String EVENT_DATE_END = "event_date_end";
     public static final String EVENT_TIME = "event_time";
+    public static final String EVENT_TIME_END = "event_time_end";
     public static final String EVENT_TYPE = "event_type";
     public static final String EVENT_ID = "event_id";
     public static final String NUM_POINTS = "num_points";

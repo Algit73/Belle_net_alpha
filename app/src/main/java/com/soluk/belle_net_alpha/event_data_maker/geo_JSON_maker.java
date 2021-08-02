@@ -54,7 +54,9 @@ public class geo_JSON_maker
             properties.put(Events_DB_VM.EVENT_ID, feature.get("event_unique_id"));
             properties.put(Events_DB_VM.EVENT_DATE_CREATED, feature.get(Events_DB_VM.EVENT_DATE_CREATED));
             properties.put(Events_DB_VM.EVENT_DATE, feature.get(Events_DB_VM.EVENT_DATE));
+            properties.put(Events_DB_VM.EVENT_DATE_END, feature.get(Events_DB_VM.EVENT_DATE_END));
             properties.put(Events_DB_VM.EVENT_TIME, feature.get(Events_DB_VM.EVENT_TIME));
+            properties.put(Events_DB_VM.EVENT_TIME_END, feature.get(Events_DB_VM.EVENT_TIME_END));
             properties.put(Events_DB_VM.USER_PIC, feature.get(Events_DB_VM.USER_PIC));
             properties.put(Events_DB_VM.IS_USER_JOINED, feature.get(Events_DB_VM.IS_USER_JOINED));
             properties.put(Events_DB_VM.NUM_OF_JOINED, feature.get(Events_DB_VM.NUM_OF_JOINED));

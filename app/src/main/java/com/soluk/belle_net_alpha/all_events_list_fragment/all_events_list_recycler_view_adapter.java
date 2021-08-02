@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mapbox.geojson.Feature;
 import com.soluk.belle_net_alpha.HTTP_Provider;
@@ -35,11 +34,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
@@ -49,7 +44,10 @@ import okhttp3.Response;
 import static com.soluk.belle_net_alpha.all_events_list_fragment.all_events_list_fragment.DISCOVER_MODE;
 import static com.soluk.belle_net_alpha.all_events_list_fragment.all_events_list_fragment.JOINED_MODE;
 import static com.soluk.belle_net_alpha.all_events_list_fragment.all_events_list_fragment.OWN_MODE;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_ID;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_EMAIL;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_ID;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_PASSWORD;
 
 
 public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<all_events_list_recycler_view_adapter.ViewHolder>
@@ -116,7 +114,14 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
         holder.mItem = feature_list.get(position);
         holder.name_tv.setText(feature_list.get(position).getStringProperty(Events_DB_VM.USER_NAME));
         holder.family_tv.setText(feature_list.get(position).getStringProperty(Events_DB_VM.USER_FAMILY));
-        holder.event_date_tv.setText(Date_Time_Provider.date_to_MDY(feature_list.get(position).getStringProperty(Events_DB_VM.EVENT_DATE)));
+        holder.event_date_tv.setText(Date_Time_Provider
+                .date_to_MDY(feature_list.get(position).getStringProperty(Events_DB_VM.EVENT_DATE)));
+        holder.event_date_end_tv.setText(Date_Time_Provider
+                .date_to_MDY(feature_list.get(position).getStringProperty(Events_DB_VM.EVENT_DATE_END)));
+        holder.event_time_tv.setText(Date_Time_Provider
+                .time_reformat(feature_list.get(position).getStringProperty(Events_DB_VM.EVENT_TIME)));
+        holder.event_time_end_tv.setText(Date_Time_Provider
+                .time_reformat(feature_list.get(position).getStringProperty(Events_DB_VM.EVENT_TIME_END)));
         holder.event_joinees_tv.setText(feature_list.get(position).getStringProperty(Events_DB_VM.NUM_OF_JOINED));
 
         /// Setting button color according to the user's past choices
@@ -160,14 +165,14 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
             holder.loading_screen_iv.setVisibility(View.VISIBLE);
 
             /// Initializing request: date, user_id, event_id
-            Date current_date = Calendar.getInstance().getTime();
-            SimpleDateFormat standard_date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
             JSONObject json = new JSONObject();
             Context context = holder.join_event_btn.getContext();
 
             try
-            {   json.put("joined_user_id",user_id);
-                json.put("event_unique_id",feature_list.get(position)
+            {   json.put(USER_EMAIL, User_Credentials.get_item(USER_EMAIL));
+                json.put(USER_PASSWORD,User_Credentials.get_item(USER_PASSWORD));
+                json.put(USER_ID,user_id);
+                json.put(EVENT_ID,feature_list.get(position)
                                     .getStringProperty(Events_DB_VM.EVENT_ID));
             }
             catch (Exception e) {Log.d(TAG, "event_unique_id catch " + e);}
@@ -175,8 +180,7 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
             {
                 case DISCOVER_MODE:
                     try
-                    {   json.put("request","join");
-                        json.put("user_date_of_join",standard_date_format.format(current_date));}
+                    {json.put("request","join");}
                     catch (Exception ignored) {}
 
                     send_join_command(json,context); break;
@@ -259,7 +263,9 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
         public final TextView name_tv;
         public final TextView family_tv;
         public final TextView event_date_tv;
+        public final TextView event_date_end_tv;
         public final TextView event_time_tv;
+        public final TextView event_time_end_tv;
         public final TextView event_distance_tv;
         public final TextView event_type_tv;
         public final TextView event_explanation_tv;
@@ -276,15 +282,17 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
         {
             super(view);
             mView = view;
-            name_tv = view.findViewById(R.id.user_name);
-            family_tv = view.findViewById(R.id.user_family);
-            event_date_tv = view.findViewById(R.id.event_date);
+            name_tv = view.findViewById(R.id.user_name_tv);
+            family_tv = view.findViewById(R.id.user_family_tv);
+            event_date_tv = view.findViewById(R.id.event_date_tv);
+            event_date_end_tv = view.findViewById(R.id.event_date_end_tv);
             event_time_tv = view.findViewById(R.id.event_start_time_tv);
+            event_time_end_tv = view.findViewById(R.id.event_start_time_end_tv);
             event_distance_tv = view.findViewById(R.id.event_distance);
-            event_type_tv = view.findViewById(R.id.challenge_type);
+            event_type_tv = view.findViewById(R.id.challenge_type_tv);
             event_explanation_tv = view.findViewById(R.id.event_explanation);
             event_joinees_tv = view.findViewById(R.id.event_joinees);
-            profile_pic_civ = view.findViewById(R.id.profile_pic);
+            profile_pic_civ = view.findViewById(R.id.profile_pic_civ);
             join_event_btn = view.findViewById(R.id.join_event_btn);
             card_layout = view.findViewById(R.id.card_layout);
             even_card_cv = view.findViewById(R.id.event_card_cv);

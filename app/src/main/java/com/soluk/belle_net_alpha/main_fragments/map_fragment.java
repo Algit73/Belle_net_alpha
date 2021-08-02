@@ -938,16 +938,15 @@ public class map_fragment extends Fragment implements
 
         join_btn.setOnClickListener(v ->
         {
-            Date current_date = Calendar.getInstance().getTime();
-            SimpleDateFormat standard_date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-
             JSONObject json = new JSONObject();
             symbol_manager.delete(list_of_of_added_points_symbol);
             list_of_of_added_points_symbol.clear();
 
             try
-            {   json.put("joined_user_id",USER_ID);
-                json.put("event_unique_id",info.get("event_id").toString());}
+            {   json.put(Events_DB_VM.USER_EMAIL, USER_EMAIL);
+                json.put(Events_DB_VM.USER_PASSWORD,USER_PASSWORD);
+                json.put(Events_DB_VM.USER_ID,USER_ID);
+                json.put(Events_DB_VM.EVENT_ID,info.get(Events_DB_VM.EVENT_ID).toString());}
             catch (Exception e) {Log.d(TAG, "event_unique_id catch " + e);}
 
 
@@ -962,9 +961,7 @@ public class map_fragment extends Fragment implements
                 else
                 {
 
-                    try {
-                        json.put("request","join");
-                        json.put("user_date_of_join",standard_date_format.format(current_date));}
+                    try {json.put("request","join");}
                     catch (Exception ignored) {}
                 }
                 send_join_command(feature,json);
@@ -1494,7 +1491,7 @@ public class map_fragment extends Fragment implements
                     /// Event Date Section
                     String event_date = feature.getStringProperty(EVENT_DATE);
                     Log.v(TAG,"Events_DB_VM.EVENT_DATE: "+event_date);
-                    TextView event_date_tv = constraint_layout.findViewById(R.id.event_date);
+                    TextView event_date_tv = constraint_layout.findViewById(R.id.event_date_tv);
                     event_date_tv.setText(Date_Time_Provider.date_to_MDY(event_date)); //
 
 

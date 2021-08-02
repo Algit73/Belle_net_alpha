@@ -70,7 +70,9 @@ public class Selected_Event_Info_Fragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_selected_event_info, container, false);
 
         TextView event_start_date_tv = view.findViewById(R.id.event_start_date_tv);
+        TextView event_end_date_tv = view.findViewById(R.id.event_end_date_tv);
         TextView event_start_time_tv = view.findViewById(R.id.event_start_time_tv);
+        TextView event_end_time_tv = view.findViewById(R.id.event_end_time_tv);
         TextView event_joinees_tv = view.findViewById(R.id.event_joinees_tv);
         TextView user_name_family_tv = view.findViewById(R.id.user_name_family_tv);
         CircleImageView user_profile_image_civ = view.findViewById(R.id.user_profile_image_civ);
@@ -80,8 +82,14 @@ public class Selected_Event_Info_Fragment extends Fragment
         Feature feature = Feature.fromJson(feature_string);
         String user_name_family = feature.getStringProperty(Events_DB_VM.USER_NAME) + " "+
                 feature.getStringProperty(Events_DB_VM.USER_FAMILY);
-        event_start_date_tv.setText(feature.getStringProperty(Events_DB_VM.EVENT_DATE));
-        event_start_time_tv.setText(Date_Time_Provider.time_reformat(feature.getStringProperty(Events_DB_VM.EVENT_TIME)));
+        event_start_date_tv.setText(Date_Time_Provider
+                .date_to_MDY(feature.getStringProperty(Events_DB_VM.EVENT_DATE)));
+        event_end_date_tv.setText(Date_Time_Provider
+                .date_to_MDY(feature.getStringProperty(Events_DB_VM.EVENT_DATE_END)));
+        event_start_time_tv.setText(Date_Time_Provider
+                .time_reformat(feature.getStringProperty(Events_DB_VM.EVENT_TIME)));
+        event_end_time_tv.setText(Date_Time_Provider
+                .time_reformat(feature.getStringProperty(Events_DB_VM.EVENT_TIME_END)));
         event_joinees_tv.setText(feature.getStringProperty(Events_DB_VM.NUM_OF_JOINED));
         user_name_family_tv.setText(user_name_family);
         user_profile_image_civ.setImageBitmap(Image_Provider

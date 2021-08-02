@@ -195,6 +195,5 @@ public class all_events_list_fragment extends Fragment
         own_btn.setTextColor(ResourcesCompat.getColor(getResources()
                 , R.color.gray_500, getContext().getTheme()));
 
-
     }
 }
