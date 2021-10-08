@@ -72,7 +72,8 @@ public class Events_DB_VM extends ViewModel
     public static final String USER_TYPE = "user_type";
     public static final String USER_REQUEST = "user_request";
     public static final String OWNER_USER_ID = "owner_user_id";
-    public static final String EVENT_DATE_CREATED = "date_created";
+    public static final String EVENT_NAME = "event_name";
+    public static final String EVENT_CREATION_DATE = "event_creation_date";
     public static final String EVENT_DATE = "event_date";
     public static final String EVENT_DATE_END = "event_date_end";
     public static final String EVENT_TIME = "event_time";
@@ -126,7 +127,7 @@ public class Events_DB_VM extends ViewModel
             json.put("user_id",User_Credentials.get_item(USER_ID));
             HTTP_Provider.post_json(REQUEST_DB_SUB_URL,json,callback);
         }
-        catch (Exception e){};
+        catch (Exception e){Log.d(TAG, "Data Base Call Error: " + e);}
 
 
     }
@@ -137,7 +138,7 @@ public class Events_DB_VM extends ViewModel
         {
             String response_body = response.body().string();
             Log.d(TAG, "Post Code: " + response.code());
-            Log.d(TAG, "Post Body: " + response_body );
+            Log.d(TAG, "Data Base Call: " + response_body );
 
             if (response.code() != 200)
                 return;
@@ -175,7 +176,7 @@ public class Events_DB_VM extends ViewModel
         }
         catch (Exception e)
         {
-            Log.d(TAG, "on Post Response: " + e.getMessage());
+            Log.d(TAG, "Data Base Receive Error: " + e.getMessage());
         }
 
 

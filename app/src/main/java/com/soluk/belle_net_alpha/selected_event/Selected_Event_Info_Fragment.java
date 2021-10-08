@@ -12,16 +12,24 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.gson.JsonObject;
 import com.mapbox.geojson.Feature;
+import com.soluk.belle_net_alpha.HTTP_Provider;
 import com.soluk.belle_net_alpha.R;
 import com.soluk.belle_net_alpha.model.Events_DB_VM;
 import com.soluk.belle_net_alpha.utils.Date_Time_Provider;
 import com.soluk.belle_net_alpha.utils.Image_Provider;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 
 public class Selected_Event_Info_Fragment extends Fragment
@@ -112,6 +120,39 @@ public class Selected_Event_Info_Fragment extends Fragment
                     , R.color.gray_100, getActivity().getTheme()));
 
         }
+
+        join_event_btn.setOnClickListener(v->
+        {
+            Callback callback = new Callback()
+            {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e)
+                {
+
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException
+                {
+                    Log.d(TAG, "onResponse: Text upload ->"+response.body().string());
+
+                }
+            };
+
+            try
+            {
+                JSONObject json = new JSONObject();
+                json.put("alpha",1);
+                json.put("beta",2);
+                HTTP_Provider.upload_text(json,"this is only a test",callback);
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+
+
+        });
 
 
 

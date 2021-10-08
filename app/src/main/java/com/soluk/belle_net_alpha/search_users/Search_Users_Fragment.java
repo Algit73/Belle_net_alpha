@@ -185,7 +185,7 @@ public class Search_Users_Fragment extends Fragment
 
                         handler.post(() ->
                         {
-                            //Log.d(TAG, "user: "+users.get(1));
+                            Log.d(TAG, "searched users: " + users.toString());
                             recyclerView.setAdapter(new Searched_Users_Recycler_View_Adapter(users));
                             recyclerView.setVisibility(View.VISIBLE);
                         });

@@ -50,9 +50,9 @@ public class geo_JSON_maker
             properties.put(Events_DB_VM.USER_ID, feature.get(Events_DB_VM.USER_ID));
             properties.put(Events_DB_VM.USER_NAME, feature.get(Events_DB_VM.USER_NAME));
             properties.put(Events_DB_VM.USER_FAMILY, feature.get(Events_DB_VM.USER_FAMILY));
-
-            properties.put(Events_DB_VM.EVENT_ID, feature.get("event_unique_id"));
-            properties.put(Events_DB_VM.EVENT_DATE_CREATED, feature.get(Events_DB_VM.EVENT_DATE_CREATED));
+            properties.put(Events_DB_VM.EVENT_NAME, feature.get(Events_DB_VM.EVENT_NAME));
+            properties.put(Events_DB_VM.EVENT_ID, feature.get(Events_DB_VM.EVENT_ID));
+            properties.put(Events_DB_VM.EVENT_CREATION_DATE, feature.get(Events_DB_VM.EVENT_CREATION_DATE));
             properties.put(Events_DB_VM.EVENT_DATE, feature.get(Events_DB_VM.EVENT_DATE));
             properties.put(Events_DB_VM.EVENT_DATE_END, feature.get(Events_DB_VM.EVENT_DATE_END));
             properties.put(Events_DB_VM.EVENT_TIME, feature.get(Events_DB_VM.EVENT_TIME));
@@ -60,13 +60,11 @@ public class geo_JSON_maker
             properties.put(Events_DB_VM.USER_PIC, feature.get(Events_DB_VM.USER_PIC));
             properties.put(Events_DB_VM.IS_USER_JOINED, feature.get(Events_DB_VM.IS_USER_JOINED));
             properties.put(Events_DB_VM.NUM_OF_JOINED, feature.get(Events_DB_VM.NUM_OF_JOINED));
-            //properties.put("longitude_0", feature.get("longitude_0"));
-            //properties.put("latitude_0", feature.get("latitude_0"));
-            properties.put("event_type", feature.get("event_type"));
-            properties.put("num_points", feature.get("num_points"));
+            properties.put(Events_DB_VM.EVENT_TYPE, feature.get(Events_DB_VM.EVENT_TYPE));
+            //properties.put("num_points", feature.get("num_points"));
 
-            int num_points = Integer.parseInt(feature.get("num_points").toString());
-            for(int i=0;i<num_points;i++)
+            //int num_points = Integer.parseInt(feature.get("num_points").toString());
+            for(int i=0;i<2;i++)
             {
                 properties.put("longitude_"+i,feature.get("longitude_"+i));
                 properties.put("latitude_"+i,feature.get("latitude_"+i));

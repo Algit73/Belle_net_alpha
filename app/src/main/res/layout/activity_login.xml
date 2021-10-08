@@ -1,38 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/teal_palette_dark"
 
     tools:context=".ui.login.Login_Activity">
 
 
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/sign_in_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="36dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        app:cardCornerRadius="16dp"
-        android:backgroundTint="@color/teal_palette_dark"
-        android:visibility="visible"
-        >
+
 
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/sign_in_card_cl"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_botton_corners_round"
             android:visibility="visible"
-
-            >
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent">
             <TextView
                 android:id="@+id/welcome_text"
                 android:layout_width="wrap_content"
@@ -40,12 +32,15 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="128dp"
                 android:textSize="48sp"
                 android:text="BelleNet"
                 android:textAlignment="center"
                 android:textColor="@color/gray_100"
+                android:textStyle="bold"
                 />
+
+
 
             <TextView
                 android:id="@+id/sign_in_text"
@@ -156,6 +151,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="24dp"
 
+
                 android:text="@string/sign_up_hint"
                 android:textColor="@color/gray_100"
                 />
@@ -191,30 +187,16 @@
             android:visibility="gone"
             />
 
-    </androidx.cardview.widget.CardView>
-
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/sign_up_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="36dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        app:cardCornerRadius="16dp"
-        android:backgroundTint="@color/teal_palette_dark"
-        android:visibility="gone"
-        >
-
-
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/sign_up_card_cl"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:background="@drawable/background_botton_corners_round"
+            android:visibility="gone"
             >
             <TextView
                 android:id="@+id/welcome_text_su"
@@ -223,13 +205,16 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="128dp"
                 android:textSize="48sp"
                 android:text="BelleNet"
+                android:textStyle="bold"
                 android:textAlignment="center"
                 android:textColor="@color/gray_100"
                 android:padding="4dp"
                 />
+
+
 
             <TextView
                 android:id="@+id/sign_up_text"
@@ -237,10 +222,10 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/welcome_text_su"
                 app:layout_constraintLeft_toLeftOf="parent"
-                android:text="Please Enter Your Info:"
+                android:text="Sign-up:"
                 android:layout_marginTop="48dp"
                 android:layout_marginStart="32dp"
-                android:textSize="18sp"
+                android:textSize="24sp"
                 android:textColor="@color/gray_100"
                 />
 
@@ -487,7 +472,7 @@
             android:visibility="gone"
             />
 
-    </androidx.cardview.widget.CardView>
+
 
     <ImageView
         android:id="@+id/loading_screen_1"

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -149,8 +150,11 @@ public class all_events_list_fragment extends Fragment
 
         for(int i=0; i<feature_list.size(); i++)
         {
+            /// Check if the user joined the event
+            //Log.d("Main_Activity", "feature_list.get(i): "+feature_list.get(i));
             boolean is_user_joined_event = feature_list.get(i).
-                    getStringProperty(Events_DB_VM.IS_USER_JOINED).equals("true");
+                        getStringProperty(Events_DB_VM.IS_USER_JOINED).equals("true");
+
             boolean is_user_owned_event = false;
             try
             {

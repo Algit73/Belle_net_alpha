@@ -3,6 +3,7 @@ package com.soluk.belle_net_alpha.main_fragments;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -28,7 +29,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -115,7 +118,9 @@ import static com.soluk.belle_net_alpha.main_fragments.map_utils.Map_Event_Creat
 import static com.soluk.belle_net_alpha.main_fragments.map_utils.Map_Event_Creator.MARKER_LAYER_ID_ENSEMBLE;
 import static com.soluk.belle_net_alpha.main_fragments.map_utils.Map_Event_Creator.PROPERTY_SELECTED;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_DATE;
-import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_DATE_CREATED;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_DATE_END;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_TIME;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_TIME_END;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_TYPE;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_PIC;
 
@@ -185,9 +190,13 @@ public class map_fragment extends Fragment implements
     private Symbol user_marker_pinned;
 
     private TextView event_date_tv;
+    private TextView event_date_end_tv;
     private TextView event_time_tv;
+    private TextView event_time_end_tv;
     private TextView hint_1;
     private TextView hint_2;
+    private EditText event_explanation_et;
+    private EditText event_name_et;
 
     private final Calendar calendar_time_picker = Calendar.getInstance();
     private ImageButton add_marker_on_map_ib;
@@ -372,7 +381,7 @@ public class map_fragment extends Fragment implements
         });
 
         hint_1 = v.findViewById(R.id.marker_explanation_text);
-        hint_2 = v.findViewById(R.id.tap_to_add_marker_text);
+        hint_2 = v.findViewById(R.id.tap_to_add_marker_text_tv);
         button_sheet_add_event_init(v);
         bottom_sheet_join_event_init(v);
         pin_event_sd_init(v);
@@ -380,19 +389,23 @@ public class map_fragment extends Fragment implements
         return v;
     }
 
-    void button_sheet_add_event_init(View v)
+    /// Initializing the bottomSheet related to the user created events
+    void button_sheet_add_event_init(View view)
     {
 
-        CircleImageView user_profile_image = v.findViewById(R.id.user_profile_image);
+        CircleImageView user_profile_image = view.findViewById(R.id.user_profile_image);
         Bitmap selected_profile_image_bmp = Image_Provider.get_profile_bmp(USER_PICTURE);
         if(selected_profile_image_bmp!=null)
             user_profile_image.setImageBitmap(selected_profile_image_bmp);
 
-        // Configuring Buttons in the BottomSheet of BelleNet
-        Button save_challenge_btn = v.findViewById(R.id.save_challenge);
-        Button cancel_challenge_btn = v.findViewById(R.id.cancel_challenge);
+        event_explanation_et = view.findViewById(R.id.event_explanation_et);
+        event_name_et = view.findViewById(R.id.event_name_et);
 
-        cancel_challenge_btn.setOnClickListener(v1 ->
+        /// Configuring Buttons in the BottomSheet of BelleNet
+        Button save_challenge_btn = view.findViewById(R.id.save_challenge_btn);
+        Button cancel_challenge_btn = view.findViewById(R.id.cancel_challenge_btn);
+
+        cancel_challenge_btn.setOnClickListener(v ->
         {
             is_marker_added = false;
             add_postition_mode = false;
@@ -402,8 +415,19 @@ public class map_fragment extends Fragment implements
             ((Main_Activity)getActivity()).bottom_navigation_visibility(true);
         });
 
-        save_challenge_btn.setOnClickListener(v1 ->
+        save_challenge_btn.setOnClickListener(v ->
         {
+            /// Check all fields to prevent them be blank
+            String event_name_string = event_name_et.getText().toString();
+            if(event_name_string.matches(""))
+            {
+                Toast.makeText(getActivity(),
+                        event_name_et.getText().toString(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),
+                        "Please input the event name",Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             if(list_of_added_points.size()==0)
             {
                 Toast.makeText(getActivity(),
@@ -412,7 +436,6 @@ public class map_fragment extends Fragment implements
             }
 
             String date_value = event_date_tv.getText().toString();
-
             if(!date_value.matches(".*\\d.*"))
             {
                 Toast.makeText(getActivity(),
@@ -421,11 +444,26 @@ public class map_fragment extends Fragment implements
             }
 
             String time_value = event_time_tv.getText().toString();
-
             if(!time_value.matches(".*\\d.*"))
             {
                 Toast.makeText(getActivity(),
-                        "Please input the event time",Toast.LENGTH_SHORT).show();
+                        "Please input the event's time",Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String date_end_value = event_date_end_tv.getText().toString();
+            if(!date_end_value.matches(".*\\d.*"))
+            {
+                Toast.makeText(getActivity(),
+                        "Please input the event's end date",Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String time_end_value = event_time_end_tv.getText().toString();
+            if(!time_end_value.matches(".*\\d.*"))
+            {
+                Toast.makeText(getActivity(),
+                        "Please input the event's end time",Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -436,70 +474,83 @@ public class map_fragment extends Fragment implements
             change_add_marker_on_map_ib_mode(true);
         });
 
-        /// Configuring DatePicker
-        event_date_tv = v.findViewById(R.id.input_date_tv);
-        event_date_tv.setOnClickListener(new View.OnClickListener()
+        /// Configuring Event Date
+        event_date_tv = view.findViewById(R.id.event_date_tv);
+        event_date_tv.setOnClickListener(v ->
         {
 
-            @Override
-            public void onClick(View v)
-            {
+            Date_Time_Provider date_provider = new Date_Time_Provider(getActivity())
+                    .set_date_tv(event_date_tv)
+                    .set_date_format(Date_Time_Provider.US);
 
-                Date_Time_Provider date_provider = new Date_Time_Provider(getActivity())
-                        .set_date_tv(event_date_tv)
-                        .set_date_format(Date_Time_Provider.US);
+            date_provider.show_date_dialog();
+        });
 
-                date_provider.show_date_dialog();
-            }
+        event_date_end_tv = view.findViewById(R.id.event_date_end_tv);
+        event_date_end_tv.setOnClickListener(v ->
+        {
+
+            Date_Time_Provider date_provider = new Date_Time_Provider(getActivity())
+                    .set_date_tv(event_date_end_tv)
+                    .set_date_format(Date_Time_Provider.US);
+
+            date_provider.show_date_dialog();
         });
 
         /// Configuring TimePicker
-        event_time_tv = v.findViewById(R.id.input_time_tv);
-
-        event_time_tv.setOnClickListener(new View.OnClickListener()
+        event_time_tv = view.findViewById(R.id.event_time_tv);
+        event_time_tv.setOnClickListener(v ->
         {
-            @Override
-            public void onClick(View v)
-            {
-                Date_Time_Provider time_provider = new Date_Time_Provider(getActivity())
-                        .set_time_tv(event_time_tv)
-                        .set_time_format(Date_Time_Provider.H24);
+            Date_Time_Provider time_provider = new Date_Time_Provider(getActivity())
+                    .set_time_tv(event_time_tv)
+                    .set_time_format(Date_Time_Provider.H24);
 
-                time_provider.show_time_dialog();
-            }
+            time_provider.show_time_dialog();
+        });
+
+        event_time_end_tv = view.findViewById(R.id.event_time_end_tv);
+        event_time_end_tv.setOnClickListener(v ->
+        {
+            Date_Time_Provider time_provider = new Date_Time_Provider(getActivity())
+                    .set_time_tv(event_time_end_tv)
+                    .set_time_format(Date_Time_Provider.H24);
+
+            time_provider.show_time_dialog();
         });
 
         /// Configuring pinning on map
-        add_marker_on_map_ib = v.findViewById(R.id.add_marker_ib);
-        accept_marker_on_map_ib = v.findViewById(R.id.accept_pinned_markers_ib);
-        reject_marker_on_map_ib = v.findViewById(R.id.reject_pinned_markers_ib);
+        add_marker_on_map_ib = view.findViewById(R.id.add_marker_ib);
+        accept_marker_on_map_ib = view.findViewById(R.id.accept_pinned_markers_ib);
+        reject_marker_on_map_ib = view.findViewById(R.id.reject_pinned_markers_ib);
 
-        // Configuring Add Marker: 1- Adding points and route 2- Removing points and route
-        add_marker_on_map_ib.setOnClickListener(new View.OnClickListener()
+        /// Configuring Add Marker: 1- Adding points and route 2- Removing points and route
+        add_marker_on_map_ib.setOnClickListener(v ->
         {
-            @Override
-            public void onClick(View v)
+
+            /// Closing on-screen keyboard
+            InputMethodManager input_method =(InputMethodManager)
+                    getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            input_method.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+            /// Check if any point has been added previously: null if not
+            if(list_of_added_points.size()>0)
             {
-                // Check if any point has been added previously: null if not
-                if(list_of_added_points.size()>0)
-                {
-                    remove_points_routes();
-                    change_add_marker_on_map_ib_mode(true);
-                }
-                else
-                {
-                    bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-                    accept_marker_on_map_ib.setVisibility(View.VISIBLE);
-                    reject_marker_on_map_ib.setVisibility(View.VISIBLE);
-
-                    set_cam_on_location_fab.setVisibility(View.INVISIBLE);
-                    pin_event_sd.setVisibility(View.INVISIBLE);
-
-                    add_postition_mode = true;
-                }
-
+                remove_points_routes();
+                change_add_marker_on_map_ib_mode(true);
             }
+            else
+            {
+                bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+                accept_marker_on_map_ib.setVisibility(View.VISIBLE);
+                reject_marker_on_map_ib.setVisibility(View.VISIBLE);
+
+                set_cam_on_location_fab.setVisibility(View.INVISIBLE);
+                pin_event_sd.setVisibility(View.INVISIBLE);
+
+                add_postition_mode = true;
+            }
+
         });
 
         // Configuring accept button: accepts the points if user choses at least one
@@ -547,27 +598,30 @@ public class map_fragment extends Fragment implements
         });
     }
 
+    /// Send the user created event to the sever
     void send_user_created_event()
     {
         wait_on_loading_data(false);
 
         Date current_date = Calendar.getInstance().getTime();
-        SimpleDateFormat standard_date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);    // Date Styles may should change to the getDefault()
+        SimpleDateFormat standard_date_format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);    /// Date Styles may should change to the getDefault()
         SimpleDateFormat time_24_format = new SimpleDateFormat("H:mm", Locale.US);
 
-
+        Log.d(TAG,"send_user_created_event");
         JSONObject json = new JSONObject();
         try
         {
             json.put(Events_DB_VM.USER_NAME,USER_NAME);
             json.put(Events_DB_VM.USER_FAMILY,USER_FAMILY);
             json.put(Events_DB_VM.USER_ID,USER_ID);
+            json.put(Events_DB_VM.USER_EMAIL,User_Credentials.get_item(Events_DB_VM.USER_EMAIL));
             json.put(Events_DB_VM.USER_PASSWORD,USER_PASSWORD);
-            json.put(Events_DB_VM.NUM_POINTS,String.valueOf(list_of_added_points.size()));
+            json.put(Events_DB_VM.EVENT_NAME,event_name_et.getText().toString());
             json.put(EVENT_TYPE,String.valueOf(event_type));
-            json.put(EVENT_DATE_CREATED,standard_date_format.format(current_date));
             json.put(EVENT_DATE,Date_Time_Provider.date_to_YMD(event_date_tv.getText().toString()));
+            json.put(EVENT_DATE_END,Date_Time_Provider.date_to_YMD(event_date_end_tv.getText().toString()));
             json.put(Events_DB_VM.EVENT_TIME,time_24_format.format(calendar_time_picker.getTime()));
+            json.put(Events_DB_VM.EVENT_TIME_END,time_24_format.format(calendar_time_picker.getTime()));
             json.put(Events_DB_VM.USER_TYPE,String.valueOf(1));
             json.put(USER_PIC,USER_PICTURE);
 
@@ -578,8 +632,10 @@ public class map_fragment extends Fragment implements
                 json.put(longitude_x,String.valueOf(list_of_added_points.get(i).longitude()));
                 json.put(latitude_x,String.valueOf(list_of_added_points.get(i).latitude()));
             }
+
+
         }
-        catch (Exception e) {}
+        catch (Exception e) {Log.d(TAG,"Send event reg request items Error"+e);}
 
         Callback callback = new Callback()
         {
@@ -593,14 +649,19 @@ public class map_fragment extends Fragment implements
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException
             {
 
-                Log.d(TAG,"Post Test Code: "+response.code());
-                Log.d(TAG,"Post Test Body: "+response.body().string());
+                String response_str = response.body().string();
+                Log.d(TAG,"Event reg request Code: "+response.code());
+                Log.d(TAG,"Event reg request Body: "+response_str);
                 //db_model.refresh_db();
                 ((Main_Activity)getActivity()).refresh_db();
             }
         };
+        //HTTP_Provider
 
-        HTTP_Provider.post_json("belle_net_users_info/user_register_new_event.php",json,callback);
+        //HTTP_Provider.post_json("belle_net_users_info/user_register_new_event.php",json,callback);
+        try {HTTP_Provider.upload_text(json,event_explanation_et.getText().toString(),callback);}
+        catch (Exception e){Log.d(TAG,"Send event reg request Error "+e);}
+
 
     }
 
@@ -623,13 +684,16 @@ public class map_fragment extends Fragment implements
 
                 Log.d(TAG, "Post Body: "+response.body().string());
                 send_join_command_response(feature);
+                ((Main_Activity)getActivity()).refresh_db();
 
             }
         };
         wait_on_loading_data(false);
 
         HTTP_Provider.post_json(getActivity().getString(R.string.bellenet_join_event_url),json,callback);
-        ((Main_Activity)getActivity()).refresh_db();
+
+
+
         remove_points_routes();
     }
 
@@ -810,7 +874,7 @@ public class map_fragment extends Fragment implements
         hint_user_tv = v.findViewById(R.id.selected_event_user_join_hint);
         selected_user_name = v.findViewById(R.id.selected_user_name);
         selected_user_profile_image = v.findViewById(R.id.selected_user_profile_image);
-        selected_event_date = v.findViewById(R.id.selected_event_date);
+        selected_event_date = v.findViewById(R.id.selected_event_start_date_tv);
         selected_event_type = v.findViewById(R.id.selected_event_type);
         selected_event_status = v.findViewById(R.id.selected_event_user_join_status);
         join_event_layout_cl = v.findViewById(R.id.bottom_sheet_click_to_join);
@@ -826,15 +890,15 @@ public class map_fragment extends Fragment implements
         List<Point> list_received_points;
         list_received_points = new ArrayList<>();
 
-        int num_points = Integer.parseInt(info.get("num_points").toString());
+        //int num_points = Integer.parseInt(info.get("num_points").toString());
 
         /// Removes former added pins
         if(list_of_of_added_points_symbol.size()>0)
             symbol_manager.delete(list_of_of_added_points_symbol);
 
-
+        //TODO: Change the logic to the type of the event
         /// Adding pins to the path
-        for(int i=0; i<num_points;i++)
+        for(int i=0; i<2;i++)
         {
             Point point = Point.fromLngLat(Double.parseDouble(info.get("longitude_"+i).toString())
                     ,Double.parseDouble(info.get("latitude_"+i).toString()));
@@ -852,13 +916,9 @@ public class map_fragment extends Fragment implements
                 list_of_of_added_points_symbol.add(user_marker_pinned);
             }
 
-
-
         }
-
-        /// Drawing the path
-        if(num_points>1)
-            get_route(list_received_points);
+        /// TODO: Remove after initiating the path retriever api
+        get_route(list_received_points);
 
 
 
@@ -1317,6 +1377,7 @@ public class map_fragment extends Fragment implements
 
     }
 
+    //TODO: Using Handler-Executor
 
     private static class Load_GeoJson_Data_Task extends AsyncTask<Void, Void, FeatureCollection>
     {
@@ -1474,32 +1535,65 @@ public class map_fragment extends Fragment implements
                     @SuppressLint("InflateParams") ConstraintLayout constraint_layout =
                             (ConstraintLayout) inflater.inflate(R.layout.event_id_card, null);
 
-                    /// Name Section
+                    /*/// Adding User Name
+                    String user_type = feature.getStringProperty(Events_DB_VM.EVENT_NAME);
+                    Log.v(TAG,"Events_DB_VM.USER_TYPE: "+ user_type);
+                    TextView event_name_tv = constraint_layout.findViewById(R.id.event_name_tv);
+                    event_name_tv.setText(user_type);
 
+                     */
+
+                    /*/// Adding User Name
                     String user_name = feature.getStringProperty(Events_DB_VM.USER_NAME);
                     Log.v(TAG,"Events_DB_VM.USER_NAME: "+ user_name);
-                    TextView titleTextView = constraint_layout.findViewById(R.id.invitor_name);
+                    TextView titleTextView = constraint_layout.findViewById(R.id.invitor_name_tv);
                     titleTextView.setText(user_name);
 
+                     */
 
-                    /// Created Date Section
-                    String event_date_created = feature.getStringProperty(EVENT_DATE_CREATED);
-                    Log.v(TAG,"Events_DB_VM.EVENT_DATE_CREATED: "+ event_date_created);
-                    TextView event_date_created_tv = constraint_layout.findViewById(R.id.event_date_created_tv);
-                    event_date_created_tv.setText(Date_Time_Provider.date_to_MDY(event_date_created));
 
-                    /// Event Date Section
+                    /// Adding Event Date
                     String event_date = feature.getStringProperty(EVENT_DATE);
                     Log.v(TAG,"Events_DB_VM.EVENT_DATE: "+event_date);
                     TextView event_date_tv = constraint_layout.findViewById(R.id.event_date_tv);
-                    event_date_tv.setText(Date_Time_Provider.date_to_MDY(event_date)); //
+                    event_date_tv.setText(Date_Time_Provider.date_to_MDY(event_date));
+
+                    /// Adding Event Time
+                    String event_time = feature.getStringProperty(EVENT_TIME);
+                    Log.v(TAG,"Events_DB_VM.EVENT_DATE: "+event_date);
+                    TextView event_time_tv = constraint_layout.findViewById(R.id.event_time_tv);
+                    event_time_tv.setText(Date_Time_Provider.time_reformat(event_time));
+
+                    /// Adding Event Date End
+                    String event_date_end = feature.getStringProperty(EVENT_DATE_END);
+                    Log.v(TAG,"Events_DB_VM.EVENT_DATE_CREATED: "+ event_date_end);
+                    TextView event_date_created_tv = constraint_layout.findViewById(R.id.event_date_end_tv);
+                    event_date_created_tv.setText(Date_Time_Provider.date_to_MDY(event_date_end));
+
+                    /// Adding Event Time
+                    String event_time_end = feature.getStringProperty(EVENT_TIME_END);
+                    Log.v(TAG,"Events_DB_VM.EVENT_DATE: "+event_date);
+                    TextView event_time_end_tv = constraint_layout.findViewById(R.id.event_time_end_tv);
+                    event_time_end_tv.setText(Date_Time_Provider.time_reformat(event_time_end));
+
+                    /// Adding Event Type
+                    String event_type = feature.getStringProperty(EVENT_TYPE);
+                    if(event_type.equals("0"))
+                        event_type = "Ensemble";
+                    else if(event_type.equals("1"))
+                        event_type = "Challenge";
+                    else
+                        event_type = "Experience";
+                    Log.v(TAG,"Events_DB_VM.EVENT_DATE: "+event_date);
+                    TextView event_type_tv = constraint_layout.findViewById(R.id.event_type_tv);
+                    event_type_tv.setText(event_type);
 
 
 
                     /// Profile Pix Section
                     String profile_pic_name = feature.getStringProperty(USER_PIC);
                     //Log.v(TAG,"Events_DB_VM.USER_PIC: "+profile_pic_name);
-                    CircleImageView profile_image = constraint_layout.findViewById(R.id.profile_image);
+                    CircleImageView profile_image = constraint_layout.findViewById(R.id.user_image_civ);
                     Bitmap profile_pic = Image_Provider.get_profile_bmp(profile_pic_name);
                     if(profile_pic!=null)
                         profile_image.setImageBitmap(profile_pic);
@@ -1509,7 +1603,7 @@ public class map_fragment extends Fragment implements
                     {
                         String num_of_joined = feature.getStringProperty(Events_DB_VM.NUM_OF_JOINED);
                         Log.v(TAG,"Events_DB_VM.NUM_OF_JOINED: "+num_of_joined);
-                        TextView number_of_joined_users_tv = constraint_layout.findViewById(R.id.num_of_joined);
+                        TextView number_of_joined_users_tv = constraint_layout.findViewById(R.id.num_of_members_tv);
                         number_of_joined_users_tv.setText(num_of_joined);
                     }
                     catch (Exception e)

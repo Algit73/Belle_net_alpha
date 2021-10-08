@@ -114,6 +114,7 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
         holder.mItem = feature_list.get(position);
         holder.name_tv.setText(feature_list.get(position).getStringProperty(Events_DB_VM.USER_NAME));
         holder.family_tv.setText(feature_list.get(position).getStringProperty(Events_DB_VM.USER_FAMILY));
+        holder.event_name_tv.setText(feature_list.get(position).getStringProperty(Events_DB_VM.EVENT_NAME));
         holder.event_date_tv.setText(Date_Time_Provider
                 .date_to_MDY(feature_list.get(position).getStringProperty(Events_DB_VM.EVENT_DATE)));
         holder.event_date_end_tv.setText(Date_Time_Provider
@@ -122,7 +123,10 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
                 .time_reformat(feature_list.get(position).getStringProperty(Events_DB_VM.EVENT_TIME)));
         holder.event_time_end_tv.setText(Date_Time_Provider
                 .time_reformat(feature_list.get(position).getStringProperty(Events_DB_VM.EVENT_TIME_END)));
-        holder.event_joinees_tv.setText(feature_list.get(position).getStringProperty(Events_DB_VM.NUM_OF_JOINED));
+        try
+        {
+            holder.event_joinees_tv.setText(feature_list.get(position).getStringProperty(Events_DB_VM.NUM_OF_JOINED));
+        } catch (Exception e){}
 
         /// Setting button color according to the user's past choices
 
@@ -214,13 +218,18 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
 
         });
 
+
         holder.card_layout.setOnClickListener(v ->
         {
-
             Intent intent = new Intent(holder.card_layout.getContext(), Selected_Event_Activity.class);
             intent.putExtra("feature", feature_list.get(position).toJson());
             holder.join_event_btn.getContext().startActivity(intent);
+
         });
+
+
+
+
 
     }
 
@@ -240,13 +249,14 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException
             {
 
-                Log.d(TAG, "Post Body: "+response.body().string());
+                Log.d(TAG, "Send Join/Remove inside event: "+response.body().string());
+                ((Main_Activity)context).refresh_db();
 
             }
         };
 
         HTTP_Provider.post_json(context.getString(R.string.bellenet_join_event_url),json,callback);
-        ((Main_Activity)context).refresh_db();
+
 
     }
 
@@ -262,6 +272,7 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
         public final View mView;
         public final TextView name_tv;
         public final TextView family_tv;
+        public final TextView event_name_tv;
         public final TextView event_date_tv;
         public final TextView event_date_end_tv;
         public final TextView event_time_tv;
@@ -284,6 +295,7 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
             mView = view;
             name_tv = view.findViewById(R.id.user_name_tv);
             family_tv = view.findViewById(R.id.user_family_tv);
+            event_name_tv = view.findViewById(R.id.event_name_tv);
             event_date_tv = view.findViewById(R.id.event_date_tv);
             event_date_end_tv = view.findViewById(R.id.event_date_end_tv);
             event_time_tv = view.findViewById(R.id.event_start_time_tv);
