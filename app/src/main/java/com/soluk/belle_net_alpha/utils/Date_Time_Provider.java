@@ -122,7 +122,7 @@ public class Date_Time_Provider
         switch (format)
         {
             case H24:
-                date_format = new SimpleDateFormat("MMMM, dd, yyyy", Locale.getDefault());
+                date_format = new SimpleDateFormat("MMM, dd, yyyy", Locale.getDefault());
                 break;
             case H12:
                 date_format = new SimpleDateFormat("yyyy, MM, dd", Locale.getDefault());
@@ -170,7 +170,7 @@ public class Date_Time_Provider
     public static String date_to_MDY(String time)
     {
         String inputPattern = "yyyy-MM-dd";
-        String outputPattern = "MMMM, dd, yy";
+        String outputPattern = "MMM, dd, yy";
         SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
         SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
 
@@ -188,7 +188,7 @@ public class Date_Time_Provider
 
     public static String date_to_YMD(String time)
     {
-        String inputPattern = "MMMM, dd, yy";
+        String inputPattern = "MMM, dd, yy";
         String outputPattern = "yyyy-MM-dd";
         SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
         SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);

@@ -34,12 +34,13 @@
                     >
 
                     <LinearLayout
+                        android:id="@+id/followers_holder_ll"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         >
 
-                        <de.hdodenhof.circleimageview.CircleImageView
+                        <!--de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/fan1"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
@@ -100,7 +101,7 @@
                             android:layout_width="50dp"
                             android:layout_height="50dp"
                             android:layout_marginStart="16dp"
-                            android:src="@drawable/al_profile_300"/>
+                            android:src="@drawable/al_profile_300"/-->
 
                         <View
                             android:layout_width="50dp"

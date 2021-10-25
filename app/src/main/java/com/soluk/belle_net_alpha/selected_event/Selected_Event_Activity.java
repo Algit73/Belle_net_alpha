@@ -30,7 +30,7 @@ public class Selected_Event_Activity extends AppCompatActivity
 
         selected_event_map_fragment = Selected_Event_Map_Fragment.newInstance(extra);
         selected_event_info_fragment = Selected_Event_Info_Fragment.newInstance(extra);
-        selected_event_followers_fragment = new Selected_Event_Followers_Fragment();
+        selected_event_followers_fragment = Selected_Event_Followers_Fragment.newInstance(extra);
         selected_event_comments_fragement = new Selected_Event_Comments_Fragement();
 
         if (savedInstanceState == null)

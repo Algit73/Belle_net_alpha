@@ -122,6 +122,7 @@ import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_DATE_END;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_TIME;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_TIME_END;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_TYPE;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.NUM_OF_JOINED;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_PIC;
 
 /**
@@ -164,9 +165,15 @@ public class map_fragment extends Fragment implements
     TextView hint_user_tv;
     TextView selected_user_name;
     CircleImageView selected_user_profile_image;
-    TextView selected_event_date;
+    TextView selected_event_name;
+    TextView selected_event_start_date;
+    TextView selected_event_start_time;
+    TextView selected_event_end_date;
+    TextView selected_event_end_time;
     TextView selected_event_type;
     TextView selected_event_status;
+    TextView selected_event_members_tv;
+    ImageView selected_event_user_join_status_iv;
 
 
     /// Mapbox Variables
@@ -340,9 +347,10 @@ public class map_fragment extends Fragment implements
 
 
 
+
         /// Configuring BottomSheet_Choose_Challenge in the BelleNet
-        View bottom_sheet_challenges_veiw = v.findViewById(R.id.bottom_sheet_challenges);
-        bottom_sheet_Choose_challenge = BottomSheetBehavior.from(bottom_sheet_challenges_veiw);
+        View bottom_sheet_challenges_view = v.findViewById(R.id.bottom_sheet_challenges);
+        bottom_sheet_Choose_challenge = BottomSheetBehavior.from(bottom_sheet_challenges_view);
         bottom_sheet_Choose_challenge.setState(BottomSheetBehavior.STATE_HIDDEN);
 
 
@@ -874,18 +882,25 @@ public class map_fragment extends Fragment implements
         hint_user_tv = v.findViewById(R.id.selected_event_user_join_hint);
         selected_user_name = v.findViewById(R.id.selected_user_name);
         selected_user_profile_image = v.findViewById(R.id.selected_user_profile_image);
-        selected_event_date = v.findViewById(R.id.selected_event_start_date_tv);
-        selected_event_type = v.findViewById(R.id.selected_event_type);
+        selected_event_name = v.findViewById(R.id.selected_event_name);
+        selected_event_start_date = v.findViewById(R.id.selected_event_start_date_tv);
+        selected_event_start_time = v.findViewById(R.id.selected_event_start_time_tv);
+        selected_event_end_date = v.findViewById(R.id.selected_event_end_date_tv);
+        selected_event_end_time = v.findViewById(R.id.selected_event_end_time_tv);
+        selected_event_type = v.findViewById(R.id.selected_event_type_tv);
         selected_event_status = v.findViewById(R.id.selected_event_user_join_status);
+        selected_event_members_tv = v.findViewById(R.id.selected_event_members_tv);
         join_event_layout_cl = v.findViewById(R.id.bottom_sheet_click_to_join);
+        selected_event_user_join_status_iv = v.findViewById(R.id.selected_event_user_join_status_iv);
     }
 
-    /// Each time a pin selected, the appropriate bottom_sheet appears
+    /// Each time a pinned event selected, the appropriate bottom_sheet appears
     private void open_selected_pinned_event(Feature feature) throws JSONException
     {
         JSONObject info = new JSONObject(feature.properties().toString());
         ((Main_Activity)getActivity()).bottom_navigation_visibility(false);
         bottom_sheet_click_join.setState(BottomSheetBehavior.STATE_EXPANDED);
+
 
         List<Point> list_received_points;
         list_received_points = new ArrayList<>();
@@ -896,7 +911,7 @@ public class map_fragment extends Fragment implements
         if(list_of_of_added_points_symbol.size()>0)
             symbol_manager.delete(list_of_of_added_points_symbol);
 
-        //TODO: Change the logic to the type of the event
+        //TODO: Change the logic of the type of the event
         /// Adding pins to the path
         for(int i=0; i<2;i++)
         {
@@ -922,39 +937,64 @@ public class map_fragment extends Fragment implements
 
 
 
-        /// Setting name of the user
-        String name_family = (info.get(Events_DB_VM.USER_NAME)+ " " + info.get(Events_DB_VM.USER_FAMILY));
+        /// Setting name of the user and event
+        String name_family = (info.get(Events_DB_VM.USER_NAME) + " " + info.get(Events_DB_VM.USER_FAMILY));
         selected_user_name.setText(name_family);
+        selected_event_name.setText(info.get(Events_DB_VM.EVENT_NAME).toString());
+
 
         /// Setting the profile image of the selected_user
         Bitmap selected_profile_image_bmp = Image_Provider.get_profile_bmp(info.get(USER_PIC).toString());
         if(selected_profile_image_bmp!=null)
             selected_user_profile_image.setImageBitmap(selected_profile_image_bmp);
+        selected_user_profile_image.setOnClickListener(v->
+        {
+            Intent intent = new Intent(getContext(), User_Profile_Page_Activity.class);
+            intent.putExtra("feature", feature.toJson());
+            getContext().startActivity(intent);
 
-        /// Setting event date
-        selected_event_date.setText(Date_Time_Provider.
+        });
+
+        /// Setting event info
+        selected_event_start_date.setText(Date_Time_Provider.
                 date_to_MDY(info.get(EVENT_DATE).toString()));
+        selected_event_start_time.setText(Date_Time_Provider.
+                time_reformat(info.get(EVENT_TIME).toString()));
+        selected_event_end_date.setText(Date_Time_Provider.
+                date_to_MDY(info.get(EVENT_DATE_END).toString()));
+        selected_event_end_time.setText(Date_Time_Provider.
+                time_reformat(info.get(EVENT_TIME_END).toString()));
+
+        selected_event_members_tv.setText(info.get(NUM_OF_JOINED).toString());
 
 
         /// Setting event type
         String event_type = info.get(EVENT_TYPE).toString();
-        if(event_type.equals("1"))
-            selected_event_type.setText("Ensemble Riding");
-        else if(event_type.equals("2"))
-            selected_event_type.setText("Offering Challenge");
-        if(event_type.equals("3"))
-            selected_event_type.setText("Sharing Experience");
+        switch (event_type)
+        {
+            case "0":
+                selected_event_type.setText("Ensemble");
+                break;
+            case "1":
+                selected_event_type.setText("Challenge");
+                break;
+            case "2":
+                selected_event_type.setText("Experience");
+                break;
+        }
 
 
         join_event_layout_cl.setOnClickListener(v ->
         {
             Intent intent = new Intent(getContext(), Selected_Event_Activity.class);
+            intent.putExtra("feature", feature.toJson());
             getContext().startActivity(intent);
+
         });
 
         /// Check if user owns the event or opens someone else's event
         boolean user_owns_event = info.get(Events_DB_VM.USER_ID).toString().equals(USER_ID);
-
+        //*
         selected_user_profile_image.setOnClickListener(v ->
         {
                 if(!user_owns_event)
@@ -967,6 +1007,7 @@ public class map_fragment extends Fragment implements
         });
 
 
+
         if(!user_owns_event)
         {
             join_btn.setBackgroundTintList(ResourcesCompat.getColorStateList(getResources()
@@ -977,7 +1018,9 @@ public class map_fragment extends Fragment implements
                 hint_user_tv.setText("*Click opt out if you don't want to participate");
                 join_btn.setText("Opt out");
                 join_status = true;
-
+                selected_event_user_join_status_iv.setImageResource(R.drawable.calendar_check);
+                selected_event_user_join_status_iv.setImageTintList(ResourcesCompat.getColorStateList(getResources()
+                        ,R.color.teal_palette_light,getActivity().getTheme()));
             }
             else
             {
@@ -985,6 +1028,9 @@ public class map_fragment extends Fragment implements
                 hint_user_tv.setText("*Click join to join this event");
                 join_btn.setText("Join");
                 join_status = false;
+                selected_event_user_join_status_iv.setImageResource(R.drawable.calendar_plus);
+                selected_event_user_join_status_iv.setImageTintList(ResourcesCompat.getColorStateList(getResources()
+                        ,R.color.red_500,getActivity().getTheme()));
             }
         }
         else
@@ -994,7 +1040,11 @@ public class map_fragment extends Fragment implements
             join_btn.setText("Remove");
             join_btn.setBackgroundTintList(ResourcesCompat.getColorStateList(getResources()
                     ,R.color.red_500,getActivity().getTheme()));
+            selected_event_user_join_status_iv.setImageResource(R.drawable.calendar_check);
+            selected_event_user_join_status_iv.setImageTintList(ResourcesCompat.getColorStateList(getResources()
+                    ,R.color.teal_palette_light,getActivity().getTheme()));
         }
+
 
         join_btn.setOnClickListener(v ->
         {
@@ -1066,6 +1116,8 @@ public class map_fragment extends Fragment implements
 
 
         Log.d(TAG,"Feature selected data: "+info.toString());
+
+         //*/
 
     }
 
@@ -1311,6 +1363,7 @@ public class map_fragment extends Fragment implements
                                 last_event_selected = featureList.get(i).getStringProperty(Events_DB_VM.EVENT_ID);
                                 try {open_selected_pinned_event(featureList.get(i));}
                                 catch (Exception e){Log.d(TAG,"Closing Bottom: "+e.getMessage());}
+
                             }
                         }
                         /// Open the selected point
@@ -1601,7 +1654,7 @@ public class map_fragment extends Fragment implements
                     /// Number of Joined User Section
                     try
                     {
-                        String num_of_joined = feature.getStringProperty(Events_DB_VM.NUM_OF_JOINED);
+                        String num_of_joined = feature.getStringProperty(NUM_OF_JOINED);
                         Log.v(TAG,"Events_DB_VM.NUM_OF_JOINED: "+num_of_joined);
                         TextView number_of_joined_users_tv = constraint_layout.findViewById(R.id.num_of_members_tv);
                         number_of_joined_users_tv.setText(num_of_joined);

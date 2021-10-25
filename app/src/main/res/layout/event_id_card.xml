@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
+        android:alpha=".9"
     android:padding="8dp">
 
 
@@ -32,7 +32,7 @@
                     android:textSize="28sp"
                     android:textStyle="bold"
                     tools:text="Grand Tour"
-                    android:textColor="@color/gray_800"
+                    android:textColor="@color/gray_700"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -112,14 +112,14 @@
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:src="@drawable/calendar"
-                            app:tint="@color/gray_200"/>
+                            app:tint="@color/gray_700"/>
 
                         <TextView
                             android:id="@+id/event_date_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="14sp"
-                            android:textColor="@color/gray_100"
+                            android:textColor="@color/gray_700"
                             tools:text="January,19"
                             android:layout_marginStart="8dp"
                             />
@@ -139,14 +139,14 @@
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:src="@drawable/clock_outline"
-                            app:tint="@color/gray_200"/>
+                            app:tint="@color/gray_700"/>
 
                         <TextView
                             android:id="@+id/event_time_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="14sp"
-                            android:textColor="@color/gray_100"
+                            android:textColor="@color/gray_700"
                             tools:text="January,19"
                             android:layout_marginStart="8dp"
                             />
@@ -254,7 +254,7 @@
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:src="@drawable/bike"
-                            app:tint = "@color/gray_200"/>
+                            app:tint = "@color/gray_700"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -266,7 +266,7 @@
                             android:layout_marginStart="8dp"
                             android:text="Type"
                             android:textSize="14sp"
-                            android:textColor="@color/gray_100"
+                            android:textColor="@color/gray_700"
                             />
 
                 </LinearLayout>
@@ -283,7 +283,7 @@
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:src="@drawable/account_group"
-                            app:tint = "@color/gray_200"/>
+                            app:tint = "@color/gray_700"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -295,7 +295,7 @@
                             android:layout_marginStart="8dp"
                             android:text="98"
                             android:textSize="14sp"
-                            android:textColor="@color/gray_100"
+                            android:textColor="@color/gray_700"
 
                             />
 
@@ -314,7 +314,7 @@
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:src="@drawable/map_marker_path"
-                            app:tint = "@color/gray_200"/>
+                            app:tint = "@color/gray_700"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -326,7 +326,7 @@
                             android:layout_marginStart="8dp"
                             android:text="7 Km"
                             android:textSize="14sp"
-                            android:textColor="@color/gray_100"
+                            android:textColor="@color/gray_700"
 
                             />
 

@@ -42,8 +42,7 @@ public class Selected_Event_Map_Fragment extends Fragment implements OnMapReadyC
 
 
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private static final String ARG_feature = "feature";
 
     // TODO: Rename and change types of parameters
@@ -55,20 +54,12 @@ public class Selected_Event_Map_Fragment extends Fragment implements OnMapReadyC
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Selected_Event_Map_Fragment.
-     */
+
 
     private MapView mapView;
     private MapboxMap mapboxMap;
     private SymbolManager symbol_manager;
-    private NavigationOptions navigation_options;
-    private MapboxNavigation mapbox_navigation;
+    //private MapboxNavigation mapbox_navigation;
     private LocationComponent location_component;
     private NavigationMapRoute navigation_mapRoute;
 
@@ -134,11 +125,11 @@ public class Selected_Event_Map_Fragment extends Fragment implements OnMapReadyC
     void mapbox_navigation_configuration(Style style)
     {
         LocationEngine locationEngine = LocationEngineProvider.getBestLocationEngine(getActivity());
-        navigation_options = MapboxNavigation.defaultNavigationOptionsBuilder(getActivity(),
+        NavigationOptions navigation_options = MapboxNavigation.defaultNavigationOptionsBuilder(getActivity(),
                 getString(R.string.mapbox_access_token))
                 .locationEngine(locationEngine)
                 .build();
-        mapbox_navigation = new MapboxNavigation(navigation_options);
+        //mapbox_navigation = new MapboxNavigation(navigation_options);
         symbol_manager = new SymbolManager(mapView, mapboxMap, style);
         symbol_manager.setIconAllowOverlap(true);
         style.addImage("marker_guide_pin", BitmapFactory.decodeResource(getResources(),R.drawable.blue_marker));

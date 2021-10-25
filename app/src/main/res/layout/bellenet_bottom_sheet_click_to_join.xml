@@ -5,322 +5,337 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background = "@drawable/bellenet_bottom_sheet_background"
-    android:paddingBottom="32dp"
+    android:paddingBottom="16dp"
     android:id="@+id/bottom_sheet_click_to_join"
-    app:behavior_hideable="false"
+    app:behavior_hideable="true"
     app:behavior_peekHeight="16dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    android:alpha=".95"
     >
 
-    <View
-        android:id="@+id/vertical_splitter"
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"/>
-
-    <TextView
-        android:id="@+id/selected_event_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="12dp"
-        android:textSize="24sp"
-        android:text="Event Name"
-        android:textStyle="bold"
-        android:textColor="@color/gray_800"/>
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/selected_user_profile_image"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:src="@drawable/default_profile_pic"
-        app:civ_border_width="2dp"
-        app:civ_border_color="@color/teal_200"
-        app:layout_constraintTop_toBottomOf="@+id/selected_event_name"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/event_creator_text"
-        app:layout_constraintTop_toTopOf="@id/selected_user_profile_image"
-        app:layout_constraintLeft_toRightOf="@id/selected_user_profile_image"
-        android:layout_marginStart="16dp"
-        android:text="Event Owner:"
-
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/selected_user_name"
-        android:text="Alireza Alikhani"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/event_creator_text"
-        app:layout_constraintBottom_toBottomOf="@id/selected_user_profile_image"
-        app:layout_constraintLeft_toRightOf="@+id/selected_user_profile_image"
-        android:layout_marginStart="16dp"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/selected_event_start_date_text_tv"
-        android:textSize="16sp"
-        android:text="Start Date"
-        app:layout_constraintTop_toBottomOf="@id/selected_user_profile_image"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        />
-
-    <ImageView
-        android:id="@+id/selected_event_start_date_icon_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/selected_event_start_date_text_tv"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/calendar"
-        app:tint="@color/gray_800"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/selected_event_start_date_tv"
-        android:text="April, 25, 21"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="@id/selected_event_start_date_icon_iv"
-        app:layout_constraintLeft_toRightOf="@id/selected_event_start_date_icon_iv"
-        android:layout_marginStart="16dp"/>
-
-    <ImageView
-        android:id="@+id/selected_event_start_time_icon_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/selected_event_start_date_icon_iv"
-        app:layout_constraintLeft_toLeftOf="@id/selected_event_start_date_icon_iv"
-        android:layout_marginTop="8dp"
-        android:src="@drawable/clock_outline"
-        app:tint="@color/gray_800"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/selected_event_start_time_tv"
-        android:text="April, 25, 21"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="@id/selected_event_start_time_icon_iv"
-        app:layout_constraintLeft_toRightOf="@id/selected_event_start_time_icon_iv"
-        android:layout_marginStart="16dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/selected_event_end_date_text_tv"
-        android:textSize="16sp"
-        android:text="End Date:"
-        app:layout_constraintTop_toBottomOf="@id/selected_user_profile_image"
-        app:layout_constraintLeft_toLeftOf="@id/vertical_splitter"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        />
-
-    <ImageView
-        android:id="@+id/selected_event_end_date_icon_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/selected_event_start_date_text_tv"
-        app:layout_constraintLeft_toLeftOf="@id/vertical_splitter"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/calendar"
-        app:tint="@color/gray_800"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/selected_event_end_date_tv"
-        android:text="April, 25, 21"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="@id/selected_event_start_date_icon_iv"
-        app:layout_constraintLeft_toRightOf="@id/selected_event_end_date_icon_iv"
-        android:layout_marginStart="16dp"/>
-
-    <ImageView
-        android:id="@+id/selected_event_end_time_icon_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/selected_event_start_date_icon_iv"
-        app:layout_constraintLeft_toLeftOf="@id/vertical_splitter"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
-        android:src="@drawable/clock_outline"
-        app:tint="@color/gray_800"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/selected_event_end_time_tv"
-        android:text="April, 25, 21"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="@id/selected_event_start_time_icon_iv"
-        app:layout_constraintLeft_toRightOf="@id/selected_event_end_time_icon_iv"
-        android:layout_marginStart="16dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/selected_event_type_text_tv"
-        android:textSize="16sp"
-        android:text="Event Info:"
-        app:layout_constraintTop_toBottomOf="@id/selected_event_start_time_icon_iv"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        />
 
 
-    <ImageView
-        android:id="@+id/selected_event_type_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toBottomOf="@+id/selected_event_type_text_tv"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
-        android:src="@drawable/bike"
-        app:tint="@color/gray_800"/>
+        <View
+            android:id="@+id/vertical_splitter"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/selected_event_type_tv"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:text="Ensemble"
-        app:layout_constraintTop_toTopOf="@id/selected_event_type_iv"
-        app:layout_constraintLeft_toRightOf="@id/selected_event_type_iv"
-        android:layout_marginStart="16dp"
-        />
+        <TextView
+            android:id="@+id/selected_event_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="8dp"
+            android:textSize="24sp"
+            android:text="Event Name"
+            android:textStyle="bold"
+            android:textColor="@color/gray_800"/>
 
-    <ImageView
-        android:id="@+id/selected_event_members_icon_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@+id/selected_event_type_iv"
-        app:layout_constraintLeft_toRightOf="@+id/selected_event_type_tv"
-        android:layout_marginStart="16dp"
-        android:src="@drawable/account_group"
-        app:tint="@color/gray_800"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/selected_user_profile_image"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/default_profile_pic"
+            app:civ_border_width="2dp"
+            app:civ_border_color="@color/teal_200"
+            app:layout_constraintTop_toBottomOf="@+id/selected_event_name"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            />
 
-    <TextView
-        android:id="@+id/selected_event_members_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="7"
-        app:layout_constraintTop_toTopOf="@+id/selected_event_members_icon_iv"
-        app:layout_constraintLeft_toRightOf="@+id/selected_event_members_icon_iv"
-        android:textSize="18sp"
-        android:textStyle="bold"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/event_creator_text"
+            app:layout_constraintTop_toTopOf="@id/selected_user_profile_image"
+            app:layout_constraintLeft_toRightOf="@id/selected_user_profile_image"
+            android:layout_marginStart="16dp"
+            android:text="Event Owner:"
 
-    <ImageView
-        android:id="@+id/selected_event_length_icon_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@+id/selected_event_type_iv"
-        app:layout_constraintLeft_toRightOf="@+id/selected_event_members_tv"
-        android:layout_marginStart="16dp"
-        android:src="@drawable/map_marker_path"
-        app:tint="@color/gray_800"/>
+            />
 
-    <TextView
-        android:id="@+id/selected_event_length_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="24.3 Km"
-        app:layout_constraintTop_toTopOf="@+id/selected_event_length_icon_iv"
-        app:layout_constraintLeft_toRightOf="@+id/selected_event_length_icon_iv"
-        android:textSize="18sp"
-        android:textStyle="bold"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selected_user_name"
+            android:text="Alireza Alikhani"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/event_creator_text"
+            app:layout_constraintBottom_toBottomOf="@id/selected_user_profile_image"
+            app:layout_constraintLeft_toRightOf="@+id/selected_user_profile_image"
+            android:layout_marginStart="16dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selected_event_start_date_text_tv"
+            android:textSize="16sp"
+            android:text="Start Date"
+            app:layout_constraintTop_toBottomOf="@id/selected_user_profile_image"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            />
+
+        <ImageView
+            android:id="@+id/selected_event_start_date_icon_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/selected_event_start_date_text_tv"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:src="@drawable/calendar"
+            app:tint="@color/gray_800"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selected_event_start_date_tv"
+            android:text="April, 25, 21"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@id/selected_event_start_date_icon_iv"
+            app:layout_constraintLeft_toRightOf="@id/selected_event_start_date_icon_iv"
+            android:layout_marginStart="16dp"/>
+
+        <ImageView
+            android:id="@+id/selected_event_start_time_icon_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/selected_event_start_date_icon_iv"
+            app:layout_constraintLeft_toLeftOf="@id/selected_event_start_date_icon_iv"
+            android:layout_marginTop="4dp"
+            android:src="@drawable/clock_outline"
+            app:tint="@color/gray_800"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selected_event_start_time_tv"
+            android:text="April, 25, 21"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@id/selected_event_start_time_icon_iv"
+            app:layout_constraintLeft_toRightOf="@id/selected_event_start_time_icon_iv"
+            android:layout_marginStart="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selected_event_end_date_text_tv"
+            android:textSize="16sp"
+            android:text="End Date:"
+            app:layout_constraintTop_toTopOf="@id/selected_event_start_date_text_tv"
+            app:layout_constraintLeft_toLeftOf="@id/vertical_splitter"
+            android:layout_marginStart="24dp"
+
+            />
+
+        <ImageView
+            android:id="@+id/selected_event_end_date_icon_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/selected_event_start_date_text_tv"
+            app:layout_constraintLeft_toLeftOf="@id/vertical_splitter"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:src="@drawable/calendar"
+            app:tint="@color/gray_800"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selected_event_end_date_tv"
+            android:text="April, 25, 21"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@id/selected_event_start_date_icon_iv"
+            app:layout_constraintLeft_toRightOf="@id/selected_event_end_date_icon_iv"
+            android:layout_marginStart="16dp"/>
+
+        <ImageView
+            android:id="@+id/selected_event_end_time_icon_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/selected_event_start_date_icon_iv"
+            app:layout_constraintLeft_toLeftOf="@id/vertical_splitter"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/clock_outline"
+            app:tint="@color/gray_800"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selected_event_end_time_tv"
+            android:text="April, 25, 21"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@id/selected_event_start_time_icon_iv"
+            app:layout_constraintLeft_toRightOf="@id/selected_event_end_time_icon_iv"
+            android:layout_marginStart="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selected_event_type_text_tv"
+            android:textSize="16sp"
+            android:text="Event Info:"
+            app:layout_constraintTop_toBottomOf="@id/selected_event_start_time_icon_iv"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="4dp"
+            />
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/selected_event_user_join_status"
-        android:textSize="20sp"
-        android:text="You have not joined this event"
-        app:layout_constraintTop_toBottomOf="@id/selected_event_type_iv"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:textStyle="bold"
-        />
+        <ImageView
+            android:id="@+id/selected_event_type_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toBottomOf="@+id/selected_event_type_text_tv"
+            app:layout_constraintRight_toLeftOf="@+id/selected_event_type_tv"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/bike"
+            app:tint="@color/gray_800"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/selected_event_user_join_hint"
-        android:textSize="16sp"
-        android:text="*Click remove to revoke the event"
-        app:layout_constraintTop_toBottomOf="@id/selected_event_user_join_status"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selected_event_type_tv"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:text="Ensemble"
+            app:layout_constraintTop_toTopOf="@id/selected_event_type_iv"
+            app:layout_constraintRight_toLeftOf="@id/selected_event_members_icon_iv"
+            android:layout_marginEnd="24dp"
+            />
+
+        <ImageView
+            android:id="@+id/selected_event_members_icon_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@+id/selected_event_type_iv"
+            app:layout_constraintRight_toLeftOf="@+id/vertical_splitter"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/account_group"
+            app:tint="@color/gray_800"/>
+
+        <TextView
+            android:id="@+id/selected_event_members_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="7"
+            app:layout_constraintTop_toTopOf="@+id/selected_event_members_icon_iv"
+            app:layout_constraintLeft_toRightOf="@+id/vertical_splitter"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+
+        <ImageView
+            android:id="@+id/selected_event_length_icon_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@+id/selected_event_type_iv"
+            app:layout_constraintLeft_toRightOf="@+id/selected_event_members_tv"
+            android:layout_marginStart="24dp"
+            android:src="@drawable/map_marker_path"
+            app:tint="@color/gray_800"/>
+
+        <TextView
+            android:id="@+id/selected_event_length_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:text="24.3 Km"
+            app:layout_constraintTop_toTopOf="@+id/selected_event_length_icon_iv"
+            app:layout_constraintLeft_toRightOf="@+id/selected_event_length_icon_iv"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+
+
+        <ImageView
+            android:id="@+id/selected_event_user_join_status_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="@+id/selected_event_type_iv"
+            app:layout_constraintTop_toBottomOf="@+id/selected_event_type_iv"
+            android:src="@drawable/calendar_plus"
+            android:layout_marginTop="4dp"
+            app:tint="@color/red_500"/>
 
 
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/join_event"
-        android:text="Join"
-        android:background="@drawable/button_rounded_corners"
-        app:layout_constraintTop_toBottomOf="@id/selected_event_user_join_hint"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="36dp"
-        android:layout_marginStart="24dp"
-        app:backgroundTint="@color/save_button"
-        android:shadowColor="@color/teal_200"
-        android:textColor="@color/gray_100"
-        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selected_event_user_join_status"
+            android:textSize="14sp"
+            android:text="You have not joined this event"
+            app:layout_constraintTop_toBottomOf="@id/selected_event_type_iv"
+            app:layout_constraintLeft_toRightOf="@+id/selected_event_user_join_status_iv"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:textStyle="bold"
+            />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/cancel_join_event"
-        android:text="cancel"
-        android:background="@drawable/button_rounded_corners"
-        app:layout_constraintTop_toBottomOf="@id/selected_event_user_join_hint"
-        app:layout_constraintLeft_toRightOf="@id/join_event"
-        android:layout_marginTop="36dp"
-        android:layout_marginStart="24dp"
-        app:backgroundTint="@color/cancel_button"
-        android:textColor="@color/gray_100"
-        />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selected_event_user_join_hint"
+            android:textSize="16sp"
+            android:text="*Click remove to revoke the event"
+            app:layout_constraintTop_toBottomOf="@id/selected_event_user_join_status"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginStart="16dp"
+            android:visibility="gone"
+
+            />
 
 
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/join_event"
+            android:text="Join"
+            android:background="@drawable/button_rounded_corners"
+            app:layout_constraintTop_toBottomOf="@id/selected_event_user_join_hint"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="24dp"
+            app:backgroundTint="@color/save_button"
+            android:shadowColor="@color/teal_200"
+            android:textColor="@color/gray_100"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cancel_join_event"
+            android:text="cancel"
+            android:background="@drawable/button_rounded_corners"
+            app:layout_constraintTop_toBottomOf="@id/selected_event_user_join_hint"
+            app:layout_constraintLeft_toRightOf="@id/join_event"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="24dp"
+            app:backgroundTint="@color/cancel_button"
+            android:textColor="@color/gray_100"
+            />
 
 
 
