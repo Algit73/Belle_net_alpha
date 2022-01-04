@@ -1,22 +1,60 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".selected_event.Selected_Event_Comments_Fragement">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
-        android:id="@+id/review_holder_ll"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+        android:id="@+id/adding_comment_message_tv"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="Add your Comment"
+        android:textSize="16sp"
+        android:textAlignment="center"
+        android:layout_margin="8dp"
+        android:background="@drawable/round_corner_teal_light"
+        android:padding="8dp"
+        android:textColor="@color/teal_palette_light"
+        android:layout_marginBottom="8dp"
+        />
 
-        <include layout="@layout/user_review_card"/>
 
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/adding_comment_message_hint_tv"
+        app:layout_constraintTop_toBottomOf="@+id/adding_comment_message_tv"
+        android:text="* No Comment Available"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:padding="16dp"/>
 
-    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/selected_event_comment_list_rv"
+        android:name="com.soluk.belle_net_alpha.user_followx.Followx_Fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/gray_200"
+        android:layout_marginTop="8dp"
+        android:visibility="visible"
+        app:layoutManager="LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@+id/adding_comment_message_tv"
+        tools:context=".user_followx.FollowX_Fragment"
+        tools:layout_editor_absoluteX="42dp"
+        tools:listitem="@layout/fragment_selected_event_comment_list_card" />
 
+    <!--com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="64dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/teal_palette_light"
+        app:tint="@color/gray_100"
+        android:src="@drawable/feather"/-->
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

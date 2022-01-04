@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/user_followx_list_rv"
-    android:name="com.soluk.belle_net_alpha.user_followx.Followx_Fragment"
+    android:name="com.soluk.belle_net_alpha.selected_event.Selected_Event_Comments_Fragement"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"

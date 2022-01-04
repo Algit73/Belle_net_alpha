@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".selected_event.Selected_Event_Activity"
     android:orientation="vertical"
-    android:background="@color/gray_200">
+    android:background="@color/gray_100">
 
     <LinearLayout
         android:id="@+id/title_holder"
@@ -50,6 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
+        android:id="@+id/event_info_nsv"
         >
         <LinearLayout
             android:layout_width="match_parent"
@@ -89,9 +90,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginStart="24dp"
-                android:textSize="24sp"
+                android:textSize="18sp"
                 android:textColor="@color/gray_800"
-                android:text="People Joined This Event:"
+                android:text="People Joined"
+                android:textStyle="bold"
                 />
 
             <androidx.fragment.app.FragmentContainerView
@@ -101,7 +103,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:paddingBottom="8dp"
-                android:paddingTop="8dp"
+                android:paddingTop="16dp"
                 />
 
             <TextView
@@ -110,9 +112,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginStart="24dp"
-                android:textSize="24sp"
+                android:textSize="18sp"
                 android:textColor="@color/gray_800"
-                android:text="Comments:"
+                android:text="Comments"
+                android:textStyle="bold"
                 />
 
             <androidx.fragment.app.FragmentContainerView
@@ -122,13 +125,13 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:paddingBottom="8dp"
-                android:paddingTop="8dp"
+                android:paddingTop="16dp"
                 />
 
-            <View
+            <!--View
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                />
+                /-->
 
 
 

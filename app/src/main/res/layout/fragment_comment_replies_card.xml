@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/event_comment_layout_ll"
     android:orientation="vertical">
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="16dp"
-            android:id="@+id/user_review_card">
+
+            android:id="@+id/user_reply_card">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/user_profile_image_civ"
@@ -31,43 +35,30 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="@id/user_profile_image_civ"
-                app:layout_constraintBottom_toBottomOf="@id/user_profile_image_civ"
                 app:layout_constraintLeft_toRightOf="@id/user_profile_image_civ"
                 android:layout_marginStart="24dp"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textColor="@color/gray_800"
                 android:text="ALireza ALikhani"/>
 
-            <me.zhanghai.android.materialratingbar.MaterialRatingBar
-                android:id="@+id/rating1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/Widget.MaterialRatingBar.RatingBar.Indicator.Small"
-                app:layout_constraintLeft_toLeftOf="@id/user_profile_image_civ"
-                app:layout_constraintTop_toBottomOf="@id/user_profile_image_civ"
-                android:layout_marginTop="16dp"
-                android:minHeight="18dp"
-                android:minWidth="18dp"
-                android:stepSize=".01"
-                />
 
             <TextView
-                android:id="@+id/added_date_tv"
+                android:id="@+id/comment_date_time_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                app:layout_constraintBottom_toBottomOf="@id/rating1"
-                app:layout_constraintLeft_toRightOf="@id/rating1"
-                android:layout_marginStart="16dp"
+                app:layout_constraintTop_toBottomOf="@id/user_name_family_tv"
+                app:layout_constraintLeft_toLeftOf="@id/user_name_family_tv"
+
                 android:textSize="14sp"
                 android:textColor="@color/gray_600"
-                android:text="May, 19"/>
+                android:text="May, 19, 2021 at 20:23"/>
 
             <TextView
                 android:id="@+id/user_comment_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/rating1"
+                app:layout_constraintTop_toBottomOf="@id/user_profile_image_civ"
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="16dp"
@@ -75,8 +66,17 @@
                 android:layout_marginBottom="16dp"
                 android:textSize="16sp"
                 android:textColor="@color/gray_800"
-                android:text="A wonderful place and a great ride. I'm really glad to join it"
+                android:text="Seems to be a good challenge. Would you please tell me more about the details? "
                 />
+            <LinearLayout
+                android:id="@+id/user_comment_interactions_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@+id/user_comment_tv">
+
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
@@ -84,6 +84,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="10dp"/>
+
+
 
 
 </LinearLayout>

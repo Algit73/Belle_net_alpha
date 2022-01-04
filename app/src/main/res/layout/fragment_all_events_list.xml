@@ -112,7 +112,7 @@
                     android:id="@+id/own_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
-                    android:text="Own"
+                    android:text="Owned"
                     android:backgroundTint="@color/gray_300"
                     android:textColor="@color/gray_700"
                     app:cornerRadius="36dp"

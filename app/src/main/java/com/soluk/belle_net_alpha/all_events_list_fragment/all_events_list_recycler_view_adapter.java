@@ -302,7 +302,7 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
             event_time_end_tv = view.findViewById(R.id.event_start_time_end_tv);
             event_distance_tv = view.findViewById(R.id.event_distance);
             event_type_tv = view.findViewById(R.id.challenge_type_tv);
-            event_explanation_tv = view.findViewById(R.id.event_explanation);
+            event_explanation_tv = view.findViewById(R.id.event_explanation_tv);
             event_joinees_tv = view.findViewById(R.id.event_joinees);
             profile_pic_civ = view.findViewById(R.id.profile_pic_civ);
             join_event_btn = view.findViewById(R.id.join_event_btn);

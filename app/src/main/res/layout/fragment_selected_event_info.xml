@@ -294,12 +294,12 @@
 
 
                 <TextView
-                    android:id="@+id/event_explanation"
+                    android:id="@+id/event_explanation_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="@id/event_explanation_icon"
                     app:layout_constraintLeft_toRightOf="@id/event_explanation_icon"
-                    android:text="I will start this journey to reach Chocolate Hills and to enjoy the beautiful horizons"
+
                     android:layout_marginStart="48dp"
                     android:layout_marginEnd="48dp"
                     android:textSize="16sp"
@@ -310,7 +310,7 @@
                     android:id="@+id/join_event_btn"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:layout_constraintTop_toBottomOf="@+id/event_explanation"
+                    app:layout_constraintTop_toBottomOf="@+id/event_explanation_tv"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     android:layout_marginTop="16dp"

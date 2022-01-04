@@ -1,10 +1,12 @@
 package com.soluk.belle_net_alpha.selected_event;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageButton;
 
 import com.soluk.belle_net_alpha.R;
@@ -17,7 +19,8 @@ public class Selected_Event_Activity extends AppCompatActivity
     Selected_Event_Map_Fragment selected_event_map_fragment;
     Selected_Event_Info_Fragment selected_event_info_fragment;
     Selected_Event_Followers_Fragment selected_event_followers_fragment;
-    Selected_Event_Comments_Fragement selected_event_comments_fragement;
+    Selected_Event_Comments_Fragment selected_event_comments_fragement;
+    private NestedScrollView nested_scroll_view_nsv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -31,7 +34,8 @@ public class Selected_Event_Activity extends AppCompatActivity
         selected_event_map_fragment = Selected_Event_Map_Fragment.newInstance(extra);
         selected_event_info_fragment = Selected_Event_Info_Fragment.newInstance(extra);
         selected_event_followers_fragment = Selected_Event_Followers_Fragment.newInstance(extra);
-        selected_event_comments_fragement = new Selected_Event_Comments_Fragement();
+        selected_event_comments_fragement =  Selected_Event_Comments_Fragment.newInstance(extra);
+        //nested_scroll_view_nsv.findViewById(R.id.event_info_nsv);
 
         if (savedInstanceState == null)
         {
@@ -49,6 +53,14 @@ public class Selected_Event_Activity extends AppCompatActivity
         {
             super.onBackPressed();
         });
+
+        /*
+        nested_scroll_view_nsv.setOnScrollChangeListener((View.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) ->
+        {
+
+        });
+
+         */
 
 
     }

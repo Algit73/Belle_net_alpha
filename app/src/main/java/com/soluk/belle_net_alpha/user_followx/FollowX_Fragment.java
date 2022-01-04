@@ -78,7 +78,7 @@ public class FollowX_Fragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.fragment_followx__list, container, false);
+        View view = inflater.inflate(R.layout.fragment_followx_list, container, false);
 
 
         JSONObject followx_json;

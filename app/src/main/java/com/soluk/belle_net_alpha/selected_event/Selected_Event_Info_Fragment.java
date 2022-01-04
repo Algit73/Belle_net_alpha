@@ -1,10 +1,13 @@
 package com.soluk.belle_net_alpha.selected_event;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +15,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.gson.JsonObject;
 import com.mapbox.geojson.Feature;
 import com.soluk.belle_net_alpha.HTTP_Provider;
 import com.soluk.belle_net_alpha.R;
 import com.soluk.belle_net_alpha.model.Events_DB_VM;
+import com.soluk.belle_net_alpha.ui.login.User_Credentials;
 import com.soluk.belle_net_alpha.utils.Date_Time_Provider;
 import com.soluk.belle_net_alpha.utils.Image_Provider;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -31,6 +36,13 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+import static android.os.Looper.getMainLooper;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_ID;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_EMAIL;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_ID;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_PASSWORD;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_REQUEST;
+
 
 public class Selected_Event_Info_Fragment extends Fragment
 {
@@ -41,6 +53,8 @@ public class Selected_Event_Info_Fragment extends Fragment
     private static final String ARG_feature = "feature";
     private String feature_string;
     private JSONObject feature_json;
+    private static final String REQUEST_DB_USER_FOLLOWERS_SUB_URL = "belle_net_users_info/return_followings_followers_request.php";
+    private TextView event_explanation_tv;
 
     public Selected_Event_Info_Fragment()
     {
@@ -85,6 +99,7 @@ public class Selected_Event_Info_Fragment extends Fragment
         TextView user_name_family_tv = view.findViewById(R.id.user_name_family_tv);
         CircleImageView user_profile_image_civ = view.findViewById(R.id.user_profile_image_civ);
         Button join_event_btn = view.findViewById(R.id.join_event_btn);
+        event_explanation_tv = view.findViewById(R.id.event_explanation_tv);
 
 
         Feature feature = Feature.fromJson(feature_string);
@@ -121,6 +136,13 @@ public class Selected_Event_Info_Fragment extends Fragment
 
         }
 
+
+
+        request_event_description(feature);
+
+
+
+
         join_event_btn.setOnClickListener(v->
         {
             Callback callback = new Callback()
@@ -154,9 +176,53 @@ public class Selected_Event_Info_Fragment extends Fragment
 
         });
 
-
-
-
         return view;
+    }
+
+    private void request_event_description(Feature feature)
+    {
+        JSONObject user_follow = new JSONObject();
+        try
+        {
+            user_follow.put(EVENT_ID,feature.getStringProperty(EVENT_ID));
+            user_follow.put(USER_REQUEST,"event_description");
+            user_follow.put(USER_ID, User_Credentials.get_item(USER_ID));
+            user_follow.put(USER_EMAIL,User_Credentials.get_item(USER_EMAIL));
+            user_follow.put(USER_PASSWORD,User_Credentials.get_item(USER_PASSWORD));
+
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
+        Callback callback = new Callback()
+        {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e)
+            {}
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException
+            {
+                String body = response.body().string();
+                Log.d(TAG,"onResponse event_description: "+ body);
+                update_event_description(body);
+
+            }
+        };
+
+        HTTP_Provider.post_json(REQUEST_DB_USER_FOLLOWERS_SUB_URL,user_follow,callback);
+    }
+
+    private void update_event_description(String description)
+    {
+        /// Accessing the Main UI Thread
+        Handler mainHandler = new Handler(getMainLooper());
+        Runnable myRunnable = () ->
+        {
+            event_explanation_tv.setText(description);
+        };
+        mainHandler.post(myRunnable);
     }
 }

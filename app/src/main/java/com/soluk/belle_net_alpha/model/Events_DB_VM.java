@@ -80,6 +80,7 @@ public class Events_DB_VM extends ViewModel
     public static final String EVENT_TIME_END = "event_time_end";
     public static final String EVENT_TYPE = "event_type";
     public static final String EVENT_ID = "event_id";
+    public static final String COMMENT_ID = "comment_id";
     public static final String NUM_POINTS = "num_points";
     public static final String IS_USER_JOINED = "is_user_joined";
     public static final String NUM_OF_JOINED = "count";
