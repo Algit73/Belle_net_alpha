@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".selected_event.Selected_Event_Activity"
     android:orientation="vertical"
-    android:background="@color/gray_100">
+    android:background="@color/gray_200">
 
     <LinearLayout
         android:id="@+id/title_holder"
@@ -33,7 +33,7 @@
             android:id="@+id/followx_type_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Followings"
+            android:text="Event Info"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
             android:textSize="24sp"
@@ -61,9 +61,9 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp">
+                app:cardCornerRadius="4dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp">
 
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/fragment_map_section"
@@ -76,9 +76,9 @@
                 android:id="@+id/fragment_info_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="2dp"
                 android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="2dp"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
 
@@ -90,18 +90,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginStart="24dp"
-                android:textSize="18sp"
+                android:textSize="24sp"
                 android:textColor="@color/gray_800"
                 android:text="People Joined"
-                android:textStyle="bold"
+
                 />
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragment_followers_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp"
                 android:paddingBottom="8dp"
                 android:paddingTop="16dp"
                 />
@@ -112,18 +112,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginStart="24dp"
-                android:textSize="18sp"
+                android:textSize="24sp"
                 android:textColor="@color/gray_800"
                 android:text="Comments"
-                android:textStyle="bold"
+
                 />
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragment_reviews_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp"
                 android:paddingBottom="8dp"
                 android:paddingTop="16dp"
                 />

@@ -3,6 +3,7 @@ package com.soluk.belle_net_alpha.utils;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.util.Log;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -16,7 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-
+import java.util.TimeZone;
 
 
 public class Date_Time_Provider
@@ -222,6 +223,16 @@ public class Date_Time_Provider
             e.printStackTrace();
         }
         return str;
+    }
+
+    public static String localizing(String string_date_time) throws ParseException
+    {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date date = df.parse(string_date_time);
+        df.setTimeZone(TimeZone.getDefault());
+        String formatted_date_time = df.format(date);
+        return formatted_date_time;
     }
 
 

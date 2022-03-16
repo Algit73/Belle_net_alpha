@@ -5,6 +5,8 @@
     <string name="event_join_status">https://soluk.org/belle_net_users_info/send_join_event_status.php</string>
     <string name="upload_image_url">https://soluk.org/belle_net_users_info/upload_profile_pic.php</string>
     <string name="bellenet_join_event_url">belle_net_users_info/send_join_event_status.php</string>
+    <string name="events_comments_followers_handler">
+        belle_net_users_info/return_followings_followers_request.php</string>
 
 
     <string name="user_location_permission_explanation">This app needs location permissions to show its functionality.</string>

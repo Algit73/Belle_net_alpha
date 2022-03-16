@@ -4,6 +4,7 @@ package com.soluk.belle_net_alpha.selected_event;
 
 public class Selected_Event_Comment_Replies_Object
 {
+    String user_id;
     String user_name;
     String user_family;
     String user_picture;
@@ -13,6 +14,7 @@ public class Selected_Event_Comment_Replies_Object
     String comment_time;
 
 
+    public String getUser_id() { return user_id; }
 
     public String getUser_name() { return user_name; }
 
@@ -31,6 +33,7 @@ public class Selected_Event_Comment_Replies_Object
 
 
 
+    public void setUser_id(String user_id) { this.user_id = user_id; }
 
     public void setUser_name(String user_name) { this.user_name = user_name; }
 
@@ -54,6 +57,7 @@ public class Selected_Event_Comment_Replies_Object
     public String toString()
     {
         return "{" +
+                "user_id='" + user_id + '\'' +
                 "user_name='" + user_name + '\'' +
                 ", user_family='" + user_family + '\'' +
                 ", user_picture='" + user_picture + '\'' +

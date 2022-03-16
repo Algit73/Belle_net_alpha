@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/adding_comment_message_tv"
+        android:id="@+id/add_comment_tv"
         app:layout_constraintTop_toTopOf="parent"
         android:text="Add your Comment"
         android:textSize="16sp"
@@ -15,7 +15,7 @@
         android:layout_margin="8dp"
         android:background="@drawable/round_corner_teal_light"
         android:padding="8dp"
-        android:textColor="@color/teal_palette_light"
+        android:textColor="@color/palette_teal_light"
         android:layout_marginBottom="8dp"
         />
 
@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/adding_comment_message_hint_tv"
-        app:layout_constraintTop_toBottomOf="@+id/adding_comment_message_tv"
+        app:layout_constraintTop_toBottomOf="@+id/add_comment_tv"
         android:text="* No Comment Available"
         android:textSize="14sp"
         android:textStyle="bold"
@@ -40,7 +40,7 @@
         android:layout_marginTop="8dp"
         android:visibility="visible"
         app:layoutManager="LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@+id/adding_comment_message_tv"
+        app:layout_constraintTop_toBottomOf="@+id/add_comment_tv"
         tools:context=".user_followx.FollowX_Fragment"
         tools:layout_editor_absoluteX="42dp"
         tools:listitem="@layout/fragment_selected_event_comment_list_card" />

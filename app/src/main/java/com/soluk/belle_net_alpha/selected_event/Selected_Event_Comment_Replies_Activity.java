@@ -11,6 +11,7 @@ public class Selected_Event_Comment_Replies_Activity extends AppCompatActivity
 {
     private FragmentTransaction fragment_transaction;
     private Selected_Event_Comment_Replies_Fragment selected_event_comment_replies_fragment;
+    private final String TAG = Selected_Event_Comment_Replies_Fragment.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)

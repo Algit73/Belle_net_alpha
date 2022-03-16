@@ -68,7 +68,7 @@
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:src="@drawable/default_profile_pic"
-                            app:tint="@color/teal_palette_light"
+                            app:tint="@color/palette_teal_light"
                             />
 
                         <TextView
@@ -182,7 +182,7 @@
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:src="@drawable/calendar"
-                            app:tint="@color/teal_palette_light"/>
+                            app:tint="@color/palette_teal_light"/>
 
                         <TextView
                             android:id="@+id/event_date_end_tv"
@@ -210,7 +210,7 @@
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:src="@drawable/clock_outline"
-                            app:tint="@color/teal_palette_light"
+                            app:tint="@color/palette_teal_light"
                             />
 
                         <TextView

@@ -16,7 +16,7 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
+            app:cardCornerRadius="4dp"
             android:layout_marginTop="4dp"
             android:focusable="true"
             android:clickable="true"
@@ -41,7 +41,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginStart="16dp"
                     app:civ_border_width="2dp"
-                    app:civ_border_color="@color/teal_palette_light"
+                    app:civ_border_color="@color/palette_teal_light"
                     android:src="@drawable/al_profile_300"/>
 
                 <TextView
@@ -82,7 +82,7 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     android:layout_marginTop="16dp"
                     android:layout_marginStart="8dp"
-                    app:tint="@color/teal_palette_light"
+                    app:tint="@color/palette_teal_light"
                     />
 
 
@@ -120,7 +120,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginStart="8dp"
                     android:src="@drawable/calendar"
-                    app:tint="@color/teal_palette_light"
+                    app:tint="@color/palette_teal_light"
                     />
 
                 <TextView
@@ -143,7 +143,7 @@
                     app:layout_constraintLeft_toRightOf="@+id/event_date_icon_im"
                     android:layout_marginStart="120dp"
                     android:src="@drawable/clock_outline"
-                    app:tint="@color/teal_palette_light"
+                    app:tint="@color/palette_teal_light"
                     />
 
                 <TextView
@@ -180,7 +180,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginStart="8dp"
                     android:src="@drawable/calendar"
-                    app:tint="@color/teal_palette_light"
+                    app:tint="@color/palette_teal_light"
                     />
 
                 <TextView
@@ -202,7 +202,7 @@
                     app:layout_constraintTop_toTopOf="@+id/event_end_date_icon_im"
                     app:layout_constraintRight_toRightOf="@+id/event_start_time_icon_im"
                     android:src="@drawable/clock_outline"
-                    app:tint="@color/teal_palette_light"
+                    app:tint="@color/palette_teal_light"
                     />
 
                 <TextView
@@ -239,7 +239,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginStart="8dp"
                     android:src="@drawable/account_group"
-                    app:tint="@color/teal_palette_light"
+                    app:tint="@color/palette_teal_light"
                     />
 
                 <TextView
@@ -262,7 +262,7 @@
                     app:layout_constraintLeft_toLeftOf="@+id/event_start_time_icon_im"
 
                     android:src="@drawable/navigation_outline"
-                    app:tint="@color/teal_palette_light"
+                    app:tint="@color/palette_teal_light"
                     />
 
 
@@ -288,7 +288,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginStart="8dp"
                     android:src="@drawable/text"
-                    app:tint="@color/teal_palette_light"
+                    app:tint="@color/palette_teal_light"
                     />
 
 
@@ -316,7 +316,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp"
                     android:padding="12dp"
-                    android:backgroundTint="@color/teal_palette_light"
+                    android:backgroundTint="@color/palette_teal_light"
                     android:textColor="@color/gray_100"
                     app:cornerRadius="36dp"
                     android:text="join"/>

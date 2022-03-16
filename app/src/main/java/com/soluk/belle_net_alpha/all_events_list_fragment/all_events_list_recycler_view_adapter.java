@@ -94,7 +94,7 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
         {
             case DISCOVER_MODE:
                 holder.join_event_btn.setBackgroundColor(ResourcesCompat.getColor(holder.join_event_btn.getResources()
-                        , R.color.teal_palette_light, holder.join_event_btn.getContext().getTheme()));
+                        , R.color.palette_teal_light, holder.join_event_btn.getContext().getTheme()));
                 holder.join_event_btn.setTextColor(ResourcesCompat.getColor(holder.join_event_btn.getResources()
                         , R.color.gray_100, holder.join_event_btn.getContext().getTheme()));
                 holder.join_event_btn.setText("join"); break;

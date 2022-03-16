@@ -6,7 +6,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/teal_palette_dark"
+    android:background="@color/palette_gray_semi_light"
 
     tools:context=".ui.login.Login_Activity">
 
@@ -36,7 +36,7 @@
                 android:textSize="48sp"
                 android:text="BelleNet"
                 android:textAlignment="center"
-                android:textColor="@color/gray_100"
+                android:textColor="@color/palette_gray_dark"
                 android:textStyle="bold"
                 />
 
@@ -52,7 +52,7 @@
                 android:layout_marginTop="48dp"
                 android:layout_marginStart="32dp"
                 android:textSize="24sp"
-                android:textColor="@color/gray_100"
+                android:textColor="@color/palette_gray_dark"
                 />
 
 
@@ -153,7 +153,7 @@
 
 
                 android:text="@string/sign_up_hint"
-                android:textColor="@color/gray_100"
+                android:textColor="@color/palette_gray_dark"
                 />
 
             <ProgressBar
@@ -210,7 +210,7 @@
                 android:text="BelleNet"
                 android:textStyle="bold"
                 android:textAlignment="center"
-                android:textColor="@color/gray_100"
+                android:textColor="@color/palette_gray_dark"
                 android:padding="4dp"
                 />
 
@@ -226,7 +226,7 @@
                 android:layout_marginTop="48dp"
                 android:layout_marginStart="32dp"
                 android:textSize="24sp"
-                android:textColor="@color/gray_100"
+                android:textColor="@color/palette_gray_dark"
                 />
 
 
@@ -243,7 +243,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="16dp"
                 android:text="Name:"
-                android:textColor="@color/gray_100"
+                android:textColor="@color/palette_gray_dark"
                 />
 
 
@@ -256,7 +256,7 @@
                 android:layout_marginEnd="24dp"
 
                 android:background="@drawable/button_simple_stroked"
-                android:backgroundTint="@color/gray_100"
+                android:backgroundTint="@color/palette_gray_semi_light"
                 android:padding="4dp"
 
                 android:inputType="textEmailAddress"
@@ -277,7 +277,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="16dp"
                 android:text="Family:"
-                android:textColor="@color/gray_100"
+                android:textColor="@color/palette_gray_dark"
                 />
 
             <EditText
@@ -295,7 +295,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/user_family_text_su"
                 android:textColor="@color/gray_800"
                 android:background="@drawable/button_simple_stroked"
-                android:backgroundTint="@color/gray_100"
+                android:backgroundTint="@color/palette_gray_semi_light"
                 android:padding="4dp"
 
                 />
@@ -311,7 +311,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="16dp"
                 android:text="Email:"
-                android:textColor="@color/gray_100"
+                android:textColor="@color/palette_gray_dark"
                 />
 
 
@@ -330,7 +330,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/user_email_text_su"
                 android:textColor="@color/gray_800"
                 android:background="@drawable/button_simple_stroked"
-                android:backgroundTint="@color/gray_100"
+                android:backgroundTint="@color/palette_gray_semi_light"
                 android:padding="4dp"
 
                 />
@@ -345,7 +345,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="16dp"
                 android:text="Password:"
-                android:textColor="@color/gray_100"
+                android:textColor="@color/palette_gray_dark"
                 />
 
 
@@ -365,7 +365,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/user_password_text_su"
                 android:background="@drawable/button_simple_stroked"
-                android:backgroundTint="@color/gray_100"
+                android:backgroundTint="@color/palette_gray_semi_light"
                 android:padding="4dp"
                 android:textColor="@color/gray_800"
                 />
@@ -379,7 +379,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/confirm_password"
-                android:textColor="@color/gray_100"
+                android:textColor="@color/palette_gray_dark"
                 />
 
             <EditText
@@ -398,7 +398,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/user_password_confirm_text_su"
                 android:background="@drawable/button_simple_stroked"
-                android:backgroundTint="@color/gray_100"
+                android:backgroundTint="@color/palette_gray_semi_light"
                 android:padding="4dp"
                 />
 
@@ -438,7 +438,7 @@
                 android:layout_marginBottom="24dp"
 
                 android:text="@string/sign_in_hint"
-                android:textColor="@color/gray_100"
+                android:textColor="@color/palette_gray_dark"
                 />
 
             <ProgressBar

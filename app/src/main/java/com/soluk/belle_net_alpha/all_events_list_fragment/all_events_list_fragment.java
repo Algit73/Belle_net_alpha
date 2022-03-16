@@ -9,20 +9,16 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.soluk.belle_net_alpha.model.Events_DB_VM;
-import com.soluk.belle_net_alpha.recycler_view_get_index.CustomTouchListener;
 import com.soluk.belle_net_alpha.R;
 import com.soluk.belle_net_alpha.event_data_maker.file_maker;
-import com.soluk.belle_net_alpha.recycler_view_get_index.onItemClickListener;
 import com.soluk.belle_net_alpha.ui.login.User_Credentials;
 
 import org.json.JSONException;
@@ -105,7 +101,7 @@ public class all_events_list_fragment extends Fragment
         {
             reset_owning_buttons();
             discover_btn.setBackgroundColor(ResourcesCompat.getColor(getResources()
-                    , R.color.teal_palette_light, getContext().getTheme()));
+                    , R.color.palette_teal_light, getContext().getTheme()));
             discover_btn.setTextColor(ResourcesCompat.getColor(getResources()
                     , R.color.gray_100, getContext().getTheme()));
             mode = DISCOVER_MODE;
@@ -117,7 +113,7 @@ public class all_events_list_fragment extends Fragment
         {
             reset_owning_buttons();
             joined_btn.setBackgroundColor(ResourcesCompat.getColor(getResources()
-                    , R.color.teal_palette_light, getContext().getTheme()));
+                    , R.color.palette_teal_light, getContext().getTheme()));
             joined_btn.setTextColor(ResourcesCompat.getColor(getResources()
                     , R.color.gray_100, getContext().getTheme()));
             mode = JOINED_MODE;
@@ -129,7 +125,7 @@ public class all_events_list_fragment extends Fragment
         {
             reset_owning_buttons();
             own_btn.setBackgroundColor(ResourcesCompat.getColor(getResources()
-                    , R.color.teal_palette_light, getContext().getTheme()));
+                    , R.color.palette_teal_light, getContext().getTheme()));
             own_btn.setTextColor(ResourcesCompat.getColor(getResources()
                     , R.color.gray_100, getContext().getTheme()));
             mode = OWN_MODE;

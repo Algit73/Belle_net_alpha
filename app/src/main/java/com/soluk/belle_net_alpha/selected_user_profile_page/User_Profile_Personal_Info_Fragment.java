@@ -17,7 +17,6 @@ import com.mapbox.geojson.Feature;
 import com.soluk.belle_net_alpha.HTTP_Provider;
 import com.soluk.belle_net_alpha.R;
 import com.soluk.belle_net_alpha.ui.login.User_Credentials;
-import com.soluk.belle_net_alpha.user_followx.FollowX_Object;
 import com.soluk.belle_net_alpha.utils.Date_Time_Provider;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
@@ -164,7 +163,7 @@ public class User_Profile_Personal_Info_Fragment extends Fragment
                         if(!user_params.get("is_user_following").toString().equals("1"))
                         {
                             follow_btn.setBackgroundColor(ResourcesCompat.getColor(getResources()
-                                    , R.color.teal_palette_light, getActivity().getTheme()));
+                                    , R.color.palette_teal_light, getActivity().getTheme()));
                             follow_btn.setTextColor(ResourcesCompat.getColor(getResources()
                                     , R.color.gray_100, getActivity().getTheme()));
                             follow_btn.setText("Follow");
@@ -209,7 +208,7 @@ public class User_Profile_Personal_Info_Fragment extends Fragment
                 if (is_following)
                 {
                     follow_btn.setBackgroundColor(ResourcesCompat.getColor(getResources()
-                            , R.color.teal_palette_light, getActivity().getTheme()));
+                            , R.color.palette_teal_light, getActivity().getTheme()));
                     follow_btn.setTextColor(ResourcesCompat.getColor(getResources()
                             , R.color.gray_100, getActivity().getTheme()));
                     follow_btn.setStrokeWidth(0);

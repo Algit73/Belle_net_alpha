@@ -41,7 +41,7 @@
                 android:layout_marginStart="16dp"
                 android:background="@drawable/event_id_card_circle_background"
                 app:civ_border_width="2dp"
-                app:civ_border_color="@color/teal_palette_light"
+                app:civ_border_color="@color/palette_teal_light"
                 />
 
             <TextView
@@ -93,7 +93,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:layout_marginTop="16dp"
                 android:layout_marginStart="8dp"
-                app:tint="@color/teal_palette_light"
+                app:tint="@color/palette_teal_light"
                 />
 
             <TextView
@@ -132,7 +132,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginStart="8dp"
                 android:src="@drawable/calendar"
-                app:tint="@color/teal_palette_light"
+                app:tint="@color/palette_teal_light"
                 />
 
             <TextView
@@ -170,7 +170,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginStart="8dp"
                 android:src="@drawable/calendar"
-                app:tint="@color/teal_palette_light"
+                app:tint="@color/palette_teal_light"
                 />
 
             <TextView
@@ -194,7 +194,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginStart="8dp"
                 android:src="@drawable/clock_outline"
-                app:tint="@color/teal_palette_light"
+                app:tint="@color/palette_teal_light"
                 />
 
             <TextView
@@ -218,7 +218,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginStart="8dp"
                 android:src="@drawable/clock_outline"
-                app:tint="@color/teal_palette_light"
+                app:tint="@color/palette_teal_light"
                 />
 
             <TextView
@@ -242,7 +242,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginStart="8dp"
                 android:src="@drawable/account_group"
-                app:tint="@color/teal_palette_light"
+                app:tint="@color/palette_teal_light"
                 />
 
             <TextView
@@ -265,7 +265,7 @@
                 app:layout_constraintLeft_toLeftOf="@id/vertical_splitter"
                 android:layout_marginStart="8dp"
                 android:src="@drawable/navigation_outline"
-                app:tint="@color/teal_palette_light"
+                app:tint="@color/palette_teal_light"
                 />
 
 
@@ -295,7 +295,7 @@
                 android:layout_marginEnd="8dp"
                 android:text="join"
                 android:layout_marginTop="16dp"
-                android:backgroundTint="@color/teal_palette_light"
+                android:backgroundTint="@color/palette_teal_light"
                 android:textColor="@color/gray_100"
                 app:layout_constraintCircleRadius="50dp"
                 app:cornerRadius="36dp"

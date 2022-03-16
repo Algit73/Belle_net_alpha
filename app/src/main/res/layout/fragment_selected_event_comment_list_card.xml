@@ -8,7 +8,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="16dp"
+        app:cardCornerRadius="4dp"
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,6 +16,20 @@
             android:layout_height="match_parent"
 
             android:id="@+id/user_review_card">
+
+            <ImageButton
+                android:id="@+id/event_menu_ib"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:padding="@dimen/mapbox_dimen_16dp"
+                android:src="@drawable/dots_vertical"
+                android:background="@android:color/transparent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:textAppearance="?android:textAppearanceLarge" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/user_profile_image_civ"
@@ -115,7 +129,7 @@
                         app:layout_constraintTop_toTopOf="parent"
 
                         android:textSize="18sp"
-                        android:textColor="@color/gray_palette_dark"/>
+                        android:textColor="@color/palette_gray_dark"/>
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -150,7 +164,7 @@
                         app:layout_constraintTop_toTopOf="parent"
 
                         android:textSize="18sp"
-                        android:textColor="@color/gray_palette_dark"/>
+                        android:textColor="@color/palette_gray_dark"/>
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

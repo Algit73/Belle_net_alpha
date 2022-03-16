@@ -19,7 +19,6 @@ import com.google.gson.reflect.TypeToken;
 import com.mapbox.geojson.Feature;
 import com.soluk.belle_net_alpha.HTTP_Provider;
 import com.soluk.belle_net_alpha.R;
-import com.soluk.belle_net_alpha.selected_event.dummy.DummyContent;
 import com.soluk.belle_net_alpha.ui.login.User_Credentials;
 
 import org.jetbrains.annotations.NotNull;
@@ -114,7 +113,7 @@ public class Selected_Event_Comment_Replies_Fragment extends Fragment
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException
             {
                 String body = response.body().string();
-                Log.d(TAG,"Selected_Event_Comments_Fragment onResponse: \n"+ body);
+//                Log.d(TAG,"Selected_Event_Comments_Fragment onResponse: \n"+ body);
                 if(!body.equals(""))
                 {
                     List<Selected_Event_Comment_Replies_Object> comments = null;
@@ -122,7 +121,7 @@ public class Selected_Event_Comment_Replies_Fragment extends Fragment
                     comments = new Gson().fromJson(body, new TypeToken<List<Selected_Event_Comment_Replies_Object>>()
                     {
                     }.getType());
-                    Log.d(TAG, "Selected_Event_Comments_Fragment onResponse: \n" + comments);
+//                    Log.d(TAG, "Selected_Event_Comments_Fragment onResponse: \n" + comments);
                     received_comments_list(comments);
                 }
 

@@ -19,9 +19,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/gray_100"
-            app:tabSelectedTextColor="@color/teal_palette_light"
-            app:tabIndicatorColor="@color/teal_palette_light"
-            app:tabTextColor="@color/teal_palette_dark"
+            app:tabSelectedTextColor="@color/palette_teal_light"
+            app:tabIndicatorColor="@color/palette_teal_light"
+            app:tabTextColor="@color/palette_teal_dark"
             app:layout_constraintTop_toTopOf="parent"
             android:visibility="visible"
             >

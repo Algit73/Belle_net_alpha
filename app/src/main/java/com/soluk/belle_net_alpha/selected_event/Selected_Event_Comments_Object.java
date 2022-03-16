@@ -4,16 +4,19 @@ package com.soluk.belle_net_alpha.selected_event;
 
 public class Selected_Event_Comments_Object
 {
-    String user_name;
-    String user_family;
-    String user_picture;
-    String user_comment;
-    String comment_id;
-    String comment_date;
-    String comment_time;
-    String comment_replies;
-    String comment_likes;
+    String user_id;//
+    String user_name;//
+    String user_family;//
+    String user_picture;//
+    String user_comment;//
+    String comment_id;//
+    String comment_date;//
+    String comment_time;//
+    String comment_replies;//
+    String comment_likes;//
 
+
+    public String getUser_id() { return user_id; }
 
     public String getUser_name() { return user_name; }
 
@@ -34,6 +37,7 @@ public class Selected_Event_Comments_Object
     public String getComment_replies() { return comment_replies; }
 
 
+    public void setUser_id(String user_id) { this.user_id = user_id; }
 
     public void setUser_name(String user_name) { this.user_name = user_name; }
 
@@ -59,6 +63,7 @@ public class Selected_Event_Comments_Object
     public String toString()
     {
         return "{" +
+                "user_id='" + user_id + '\'' +
                 "user_name='" + user_name + '\'' +
                 ", user_family='" + user_family + '\'' +
                 ", user_picture='" + user_picture + '\'' +

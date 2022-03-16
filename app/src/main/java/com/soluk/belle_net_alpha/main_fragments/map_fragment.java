@@ -1020,7 +1020,7 @@ public class map_fragment extends Fragment implements
                 join_status = true;
                 selected_event_user_join_status_iv.setImageResource(R.drawable.calendar_check);
                 selected_event_user_join_status_iv.setImageTintList(ResourcesCompat.getColorStateList(getResources()
-                        ,R.color.teal_palette_light,getActivity().getTheme()));
+                        ,R.color.palette_teal_light,getActivity().getTheme()));
             }
             else
             {
@@ -1042,7 +1042,7 @@ public class map_fragment extends Fragment implements
                     ,R.color.red_500,getActivity().getTheme()));
             selected_event_user_join_status_iv.setImageResource(R.drawable.calendar_check);
             selected_event_user_join_status_iv.setImageTintList(ResourcesCompat.getColorStateList(getResources()
-                    ,R.color.teal_palette_light,getActivity().getTheme()));
+                    ,R.color.palette_teal_light,getActivity().getTheme()));
         }
 
 

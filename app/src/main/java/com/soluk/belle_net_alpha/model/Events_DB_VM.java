@@ -70,6 +70,8 @@ public class Events_DB_VM extends ViewModel
     public static final String USER_FOLLOWINGS = "user_followings";
     public static final String USER_FOLLOWERS = "user_followers";
     public static final String USER_TYPE = "user_type";
+    public static final String USER_COMMENT = "user_comment";
+    public static final String USER_REPLY = "user_reply";
     public static final String USER_REQUEST = "user_request";
     public static final String OWNER_USER_ID = "owner_user_id";
     public static final String EVENT_NAME = "event_name";

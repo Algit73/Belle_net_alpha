@@ -17,7 +17,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Belle_net_alpha">
-        <activity android:name=".selected_event.Selected_Event_Comment_Replies_Activity"></activity>
+        <activity android:name=".selected_event.Selected_Event_Add_Comment_Activity"></activity>
+        <activity android:name=".selected_event.Selected_Event_Comment_Replies_Activity" />
         <activity android:name=".search_users.Search_Users_Activity" />
         <activity android:name=".selected_user_profile_page.User_Profile_Page_Activity" />
         <activity android:name=".selected_event.Selected_Event_Activity" />

@@ -1,7 +1,5 @@
 package com.soluk.belle_net_alpha.selected_event;
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.core.content.res.ResourcesCompat;
@@ -22,14 +20,21 @@ import com.soluk.belle_net_alpha.model.Events_DB_VM;
 import com.soluk.belle_net_alpha.ui.login.User_Credentials;
 import com.soluk.belle_net_alpha.utils.Date_Time_Provider;
 import com.soluk.belle_net_alpha.utils.Image_Provider;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
@@ -102,17 +107,40 @@ public class Selected_Event_Info_Fragment extends Fragment
         event_explanation_tv = view.findViewById(R.id.event_explanation_tv);
 
 
+
         Feature feature = Feature.fromJson(feature_string);
+
+        String start_date_time = feature.getStringProperty(Events_DB_VM.EVENT_DATE) + " " +
+                feature.getStringProperty(Events_DB_VM.EVENT_TIME);
+        String end_date_time = feature.getStringProperty(Events_DB_VM.EVENT_DATE_END) + " " +
+                feature.getStringProperty(Events_DB_VM.EVENT_TIME_END);
+
+//        Log.d(TAG,"Date_time start_date_time: "+ start_date_time);
+//        Log.d(TAG,"Date_time end_date_time: "+ end_date_time);
+
+        try
+        {
+            start_date_time = Date_Time_Provider.localizing(start_date_time);
+            String start_date =  start_date_time.substring(0,9);
+            String start_time =  start_date_time.substring(10);
+
+            end_date_time = Date_Time_Provider.localizing(end_date_time);
+            String end_date =  end_date_time.substring(0,9);
+            String end_time =  end_date_time.substring(10);
+
+            event_start_date_tv.setText(Date_Time_Provider.date_to_MDY(start_date));
+            event_start_time_tv.setText(Date_Time_Provider.time_reformat(start_time));
+            Log.d(TAG,"Date_time end_date_time: "+ end_date_time);
+            Log.d(TAG,"Date_time end_date: "+ end_date);
+            Log.d(TAG,"Date_time end_time: "+ end_time);
+            event_end_date_tv.setText(Date_Time_Provider.date_to_MDY(end_date));
+            event_end_time_tv.setText(Date_Time_Provider.time_reformat(end_time));
+        }
+        catch (Exception e){Log.d(TAG,"Date_time Parse Error: "+ e);}
+
         String user_name_family = feature.getStringProperty(Events_DB_VM.USER_NAME) + " "+
                 feature.getStringProperty(Events_DB_VM.USER_FAMILY);
-        event_start_date_tv.setText(Date_Time_Provider
-                .date_to_MDY(feature.getStringProperty(Events_DB_VM.EVENT_DATE)));
-        event_end_date_tv.setText(Date_Time_Provider
-                .date_to_MDY(feature.getStringProperty(Events_DB_VM.EVENT_DATE_END)));
-        event_start_time_tv.setText(Date_Time_Provider
-                .time_reformat(feature.getStringProperty(Events_DB_VM.EVENT_TIME)));
-        event_end_time_tv.setText(Date_Time_Provider
-                .time_reformat(feature.getStringProperty(Events_DB_VM.EVENT_TIME_END)));
+
         event_joinees_tv.setText(feature.getStringProperty(Events_DB_VM.NUM_OF_JOINED));
         user_name_family_tv.setText(user_name_family);
         user_profile_image_civ.setImageBitmap(Image_Provider
@@ -129,7 +157,7 @@ public class Selected_Event_Info_Fragment extends Fragment
         else
         {
             join_event_btn.setBackgroundColor(ResourcesCompat.getColor(getResources()
-                    , R.color.teal_palette_light, getActivity().getTheme()));
+                    , R.color.palette_teal_light, getActivity().getTheme()));
             join_event_btn.setText("Join Now");
             join_event_btn.setTextColor(ResourcesCompat.getColor(getResources()
                     , R.color.gray_100, getActivity().getTheme()));
@@ -178,6 +206,8 @@ public class Selected_Event_Info_Fragment extends Fragment
 
         return view;
     }
+
+
 
     private void request_event_description(Feature feature)
     {

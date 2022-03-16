@@ -1,6 +1,5 @@
 package com.soluk.belle_net_alpha.selected_event;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -8,12 +7,10 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
@@ -23,15 +20,10 @@ import com.soluk.belle_net_alpha.HTTP_Provider;
 import com.soluk.belle_net_alpha.R;
 import com.soluk.belle_net_alpha.model.Events_DB_VM;
 import com.soluk.belle_net_alpha.ui.login.User_Credentials;
-import com.soluk.belle_net_alpha.user_followx.FollowX_Object;
-import com.soluk.belle_net_alpha.user_followx.User_FollowX_List_Activity;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -200,7 +192,7 @@ public class Selected_Event_Followers_Fragment extends Fragment
 
         CircleImageView follower_profile_image = new CircleImageView(getContext());
         follower_profile_image.setBorderColor(getResources().
-                getColor(R.color.teal_palette_light,getActivity().getTheme()));
+                getColor(R.color.palette_teal_light,getActivity().getTheme()));
         follower_profile_image.setBorderWidth(5);
         follower_profile_image.setLayoutParams(new ViewGroup.LayoutParams(50, 50));
         if(bitmap!=null)

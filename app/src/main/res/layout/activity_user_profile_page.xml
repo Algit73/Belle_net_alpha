@@ -30,7 +30,7 @@
                 android:layout_margin="8dp"
                 android:src="@drawable/arrow_left"
                 android:background="@null"
-                android:tint="@color/gray_palette_dark"
+                android:tint="@color/palette_gray_dark"
                 android:padding="8dp"
                 />
 
@@ -42,7 +42,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="16dp"
                 android:textSize="24sp"
-                android:textColor="@color/gray_palette_dark"
+                android:textColor="@color/palette_gray_dark"
                 />
         </LinearLayout>
 
