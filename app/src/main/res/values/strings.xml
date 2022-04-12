@@ -47,6 +47,7 @@
     <string name="login_failed">"Login failed"</string>
     <string name="sign_up_hint"><u>Don\'t have an account? Sign-up here.</u></string>
     <string name="sign_in_hint"><u>Already have an account? Sign-in here.</u></string>
+    <string name="comment_hint"><u>Put your comment here.</u></string>
     <string name="title_activity_test">test</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>

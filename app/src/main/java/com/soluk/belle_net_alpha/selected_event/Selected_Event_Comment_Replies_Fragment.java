@@ -3,6 +3,7 @@ package com.soluk.belle_net_alpha.selected_event;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -77,6 +79,8 @@ public class Selected_Event_Comment_Replies_Fragment extends Fragment
         {
             comment_Id = getArguments().getString(ARG_COMMENT_ID);
         }
+
+
     }
 
     @Override
@@ -152,5 +156,7 @@ public class Selected_Event_Comment_Replies_Fragment extends Fragment
         };
         mainHandler.post(myRunnable);
     }
+
+
 
 }

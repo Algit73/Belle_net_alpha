@@ -27,6 +27,7 @@ import java.util.Locale;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_ID;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_COMMENT;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_FAMILY;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_NAME;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_PIC;
@@ -102,7 +103,7 @@ public class Selected_Event_Add_Comment_Activity extends AppCompatActivity
             if (post_is_enabled)
             {
                 Intent result = new Intent();
-                result.putExtra("temp", user_comment_et.getText().toString());
+                result.putExtra(USER_COMMENT, user_comment_et.getText().toString());
                 setResult(Activity.RESULT_OK, result);
                 finish();
             }

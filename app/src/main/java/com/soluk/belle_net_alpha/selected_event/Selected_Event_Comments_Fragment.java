@@ -79,7 +79,7 @@ public class Selected_Event_Comments_Fragment extends Fragment
                 if (result.getResultCode() == Activity.RESULT_OK)
                 {
                     Intent data = result.getData();
-                    String user_comment = data.getStringExtra("temp");
+                    String user_comment = data.getStringExtra(USER_COMMENT);
 //                    JSONObject user_follow = new JSONObject();
                     try
                     {
@@ -87,11 +87,6 @@ public class Selected_Event_Comments_Fragment extends Fragment
                         request.add(EVENT_ID,event_feature.getStringProperty(EVENT_ID));
                         request.add(USER_REQUEST,"event_add_comment");
                         request.add(USER_COMMENT,user_comment);
-//                        user_follow.put(EVENT_ID,event_feature.getStringProperty(EVENT_ID));
-//                        user_follow.put(USER_REQUEST,"event_comments");
-//                        user_follow.put(USER_ID, User_Credentials.get_item(USER_ID));
-//                        user_follow.put(USER_EMAIL,User_Credentials.get_item(USER_EMAIL));
-//                        user_follow.put(USER_PASSWORD,User_Credentials.get_item(USER_PASSWORD));
                         send_post_request(request,SEND_USER_COMMENT);
                     } catch (JSONException e){e.printStackTrace();}
 
