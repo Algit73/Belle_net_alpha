@@ -24,12 +24,10 @@ import com.google.gson.reflect.TypeToken;
 import com.mapbox.geojson.Feature;
 import com.soluk.belle_net_alpha.HTTP_Provider;
 import com.soluk.belle_net_alpha.R;
-import com.soluk.belle_net_alpha.ui.login.User_Credentials;
 import com.soluk.belle_net_alpha.utils.Post_Request_Creator;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
@@ -41,9 +39,6 @@ import okhttp3.Response;
 import static android.os.Looper.getMainLooper;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_ID;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_COMMENT;
-import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_EMAIL;
-import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_ID;
-import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_PASSWORD;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_REQUEST;
 
 /**
@@ -65,12 +60,36 @@ public class Selected_Event_Comments_Fragment extends Fragment
     private List<Selected_Event_Comments_Object> comments = null;
     private static final int REFRESH_COMMENTS_LIST = 0;
     private static final int SEND_USER_COMMENT = 1;
+    private final int REMOVE_USER_COMMENT = 1;
 
 
     public Selected_Event_Comments_Fragment()
     {
         // Required empty public constructor
     }
+
+    Selected_Event_Comments_RecyclerViewAdapter.fragment_adapter_interface adapter_interface = command ->
+    {
+        if (command==REMOVE_USER_COMMENT)
+        {
+            refresh_comments_list();
+            Handler mainHandler = new Handler(getMainLooper());
+            Runnable myRunnable = () ->
+            {
+                Toast.makeText(getContext(),
+                        "Comment has been removed successfully", Toast.LENGTH_SHORT).show();
+//                refresh_comments_list();
+            };
+            mainHandler.post(myRunnable);
+//            Toast.makeText(getContext(),"Comment has been removed successfully",Toast.LENGTH_SHORT).show();
+        }
+    };
+
+
+    // Do whatever you wants to do with this data that is coming from your adapter
+
+
+    /// Receiving comment from Selected_Event_Add_Comment_Activity
 
     ActivityResultLauncher<Intent> launch_add_comment_activity = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -87,7 +106,7 @@ public class Selected_Event_Comments_Fragment extends Fragment
                         request.add(EVENT_ID,event_feature.getStringProperty(EVENT_ID));
                         request.add(USER_REQUEST,"event_add_comment");
                         request.add(USER_COMMENT,user_comment);
-                        send_post_request(request,SEND_USER_COMMENT);
+                        send_post_request(request);
                     } catch (JSONException e){e.printStackTrace();}
 
 
@@ -126,20 +145,8 @@ public class Selected_Event_Comments_Fragment extends Fragment
 
         /// Sending user's request to retrieve the comments
         event_feature = Feature.fromJson(feature_string);
-        JSONObject user_follow = new JSONObject();
-        try
-        {
-            Post_Request_Creator request = new Post_Request_Creator();
-            request.add(EVENT_ID,event_feature.getStringProperty(EVENT_ID));
-            request.add(USER_REQUEST,"event_comments");
-//            request.add(USER_COMMENT,user_comment);
-//            user_follow.put(EVENT_ID,event_feature.getStringProperty(EVENT_ID));
-//            user_follow.put(USER_REQUEST,"event_comments");
-//            user_follow.put(USER_ID, User_Credentials.get_item(USER_ID));
-//            user_follow.put(USER_EMAIL,User_Credentials.get_item(USER_EMAIL));
-//            user_follow.put(USER_PASSWORD,User_Credentials.get_item(USER_PASSWORD));
-            send_post_request(request,REFRESH_COMMENTS_LIST);
-        } catch (JSONException e){e.printStackTrace();}
+        refresh_comments_list();
+
 
 //        Callback callback = new Callback()
 //        {
@@ -188,24 +195,26 @@ public class Selected_Event_Comments_Fragment extends Fragment
         return view;
     }
 
-    private void received_comments_list(List<Selected_Event_Comments_Object> body)
-    {
-        /// Accessing the Main UI Thread
-        Handler mainHandler = new Handler(getMainLooper());
-        Runnable myRunnable = () ->
-        {
-            recyclerView.setAdapter(new Selected_Event_Comments_RecyclerViewAdapter(body));
-        };
-        mainHandler.post(myRunnable);
-    }
+//    public void toast()
+//    {
+//        Toast.makeText(getContext(),"Toasting the roasting: ",Toast.LENGTH_LONG).show();
+//    }
 
-    private void send_post_request(Post_Request_Creator request, int request_type)
+    private void refresh_comments_list()
     {
+        Post_Request_Creator request = null;
+        try
+        {
+            request = new Post_Request_Creator();
+            request.add(EVENT_ID,event_feature.getStringProperty(EVENT_ID));
+            request.add(USER_REQUEST,"event_comments");
+//            send_post_request(request,REFRESH_COMMENTS_LIST);
+        } catch (JSONException e){e.printStackTrace();}
+
         Callback callback = new Callback()
         {
             @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e)
-            {}
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {}
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException
@@ -218,39 +227,66 @@ public class Selected_Event_Comments_Fragment extends Fragment
                     String ok_return = body.substring(0, 2);
                     body = body.substring(2);
                     Log.d(TAG, "ok folan : \n" + ok_return);
-                    if (request_type == SEND_USER_COMMENT)
-                    {
-                        Log.d(TAG,"SEND_USER_COMMENT send_post_request: \n"+ body);
-                        if (ok_return.equals("ok"))
-                        {
-//                            comments = new Gson().fromJson(body, new TypeToken<List<Selected_Event_Comments_Object>>()
-//                            {
-//                            }.getType());
-//                            Log.d(TAG, "SEND_USER_COMMENT onResponse: \n" + comments);
-//                            received_comments_list(comments);
-                        }
-                        else if (body.equals("fail"))
-                            Toast.makeText(getContext(),
-                                    "Failed to Send your Comment", Toast.LENGTH_LONG).show();
 
-                    }
-                    else if (request_type == REFRESH_COMMENTS_LIST)
+                    if (!body.equals(""))
                     {
-                        if (!body.equals(""))
+                        comments = new Gson().fromJson(body, new TypeToken<List<Selected_Event_Comments_Object>>()
                         {
-                            comments = new Gson().fromJson(body, new TypeToken<List<Selected_Event_Comments_Object>>()
-                            {
-                            }.getType());
-                            Log.d(TAG, "REFRESH_COMMENTS_LIST onResponse: \n" + comments);
-                            received_comments_list(comments);
-                        }
+                        }.getType());
+                        Log.d(TAG, "REFRESH_COMMENTS_LIST onResponse: \n" + comments);
+                        received_comments_list(comments);
                     }
+
                 }
                 else
                     Toast.makeText(getContext(),"Connection was Unsuccessful",Toast.LENGTH_LONG).show();
 
+            }
+        };
 
+        HTTP_Provider.post_json(REQUEST_DB_USER_FOLLOWERS_SUB_URL,request.get_request(),callback);
+    }
 
+    private void received_comments_list(List<Selected_Event_Comments_Object> body)
+    {
+        /// Accessing the Main UI Thread
+        Handler mainHandler = new Handler(getMainLooper());
+        Runnable myRunnable = () ->
+        {
+            recyclerView.setAdapter(new Selected_Event_Comments_RecyclerViewAdapter(body, adapter_interface));
+        };
+        mainHandler.post(myRunnable);
+    }
+
+    private void send_post_request(Post_Request_Creator request)
+    {
+        Callback callback = new Callback()
+        {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {}
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException
+            {
+                String body = response.body().string();
+                Log.d(TAG,"Selected_Event_Comments_Fragment send_post_request: \n"+ body);
+
+                Log.d(TAG,"SEND_USER_COMMENT send_post_request: \n"+ body);
+                if (body.equals("ok"))
+                {
+                    if(getActivity() != null)
+                    {
+                        Log.d(TAG,"SEND_USER_COMMENT Activity is not null: \n"+ body);
+                        Handler mainHandler = new Handler(getMainLooper());
+                        Runnable myRunnable = () ->
+                        {
+                            Toast.makeText(getContext(),
+                                    "Comment has been sent successfully", Toast.LENGTH_LONG).show();
+                            refresh_comments_list();
+                        };
+                        mainHandler.post(myRunnable);
+                    }
+                }
             }
         };
 

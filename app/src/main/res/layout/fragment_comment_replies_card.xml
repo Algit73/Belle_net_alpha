@@ -54,6 +54,20 @@
                 android:textColor="@color/gray_600"
                 android:text="May, 19, 2021 at 20:23"/>
 
+            <ImageButton
+                android:id="@+id/comment_menu_ib"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:padding="@dimen/mapbox_dimen_16dp"
+                android:src="@drawable/dots_vertical"
+                android:background="@android:color/transparent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:textAppearance="?android:textAppearanceLarge" />
+
             <TextView
                 android:id="@+id/user_comment_tv"
                 android:layout_width="match_parent"

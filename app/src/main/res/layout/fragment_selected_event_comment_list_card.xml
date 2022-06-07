@@ -117,6 +117,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/is_liked_iv"
                         android:src="@drawable/thumb_up_outline"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintLeft_toRightOf="@+id/vertical_splitter_like"

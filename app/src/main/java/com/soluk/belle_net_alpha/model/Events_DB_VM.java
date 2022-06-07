@@ -73,6 +73,7 @@ public class Events_DB_VM extends ViewModel
     public static final String USER_COMMENT = "user_comment";
     public static final String USER_REPLY = "user_reply";
     public static final String USER_REQUEST = "user_request";
+    public static final String USER_ACTION = "user_action";
     public static final String OWNER_USER_ID = "owner_user_id";
     public static final String EVENT_NAME = "event_name";
     public static final String EVENT_CREATION_DATE = "event_creation_date";
@@ -83,6 +84,9 @@ public class Events_DB_VM extends ViewModel
     public static final String EVENT_TYPE = "event_type";
     public static final String EVENT_ID = "event_id";
     public static final String COMMENT_ID = "comment_id";
+    public static final String COMMENT_TAIL_ID = "comment_tail_id";
+    public static final String COMMENT_TAIL_ID_R0 = "r0";
+    public static final String COMMENT_REPLIES = "comment_replies";
     public static final String NUM_POINTS = "num_points";
     public static final String IS_USER_JOINED = "is_user_joined";
     public static final String NUM_OF_JOINED = "count";

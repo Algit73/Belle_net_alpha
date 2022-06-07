@@ -12,15 +12,12 @@
         android:id="@+id/selected_event_comment_replies_list_rv"
         android:name="com.soluk.belle_net_alpha.selected_event.ItemFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="8dp"
         app:layoutManager="LinearLayoutManager"
         tools:context=".selected_event.Selected_Event_Comment_Replies_Fragment"
         tools:listitem="@layout/fragment_comment_replies_card" />
-
-
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
