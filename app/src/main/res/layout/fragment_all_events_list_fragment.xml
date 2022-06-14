@@ -246,7 +246,7 @@
                 />
 
             <TextView
-                android:id="@+id/event_joinees"
+                android:id="@+id/event_joiners"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="@id/event_joinees_icon"
@@ -261,7 +261,7 @@
                 android:id="@+id/event_distance_icon"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                app:layout_constraintTop_toTopOf="@id/event_joinees"
+                app:layout_constraintTop_toTopOf="@id/event_joiners"
                 app:layout_constraintLeft_toLeftOf="@id/vertical_splitter"
                 android:layout_marginStart="8dp"
                 android:src="@drawable/navigation_outline"

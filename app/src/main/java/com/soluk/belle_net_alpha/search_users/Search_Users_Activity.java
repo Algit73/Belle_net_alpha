@@ -11,6 +11,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageButton;
 
 import com.google.android.material.tabs.TabLayout;
 import com.soluk.belle_net_alpha.R;
@@ -74,16 +75,17 @@ public class Search_Users_Activity extends AppCompatActivity
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab)
-            {
-
-            }
+            public void onTabUnselected(TabLayout.Tab tab) {}
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab)
-            {
+            public void onTabReselected(TabLayout.Tab tab) {}
+        });
 
-            }
+
+        ImageButton back_button_ib = findViewById(R.id.back_button_ib);
+        back_button_ib.setOnClickListener(v ->
+        {
+            super.onBackPressed();
         });
 
 

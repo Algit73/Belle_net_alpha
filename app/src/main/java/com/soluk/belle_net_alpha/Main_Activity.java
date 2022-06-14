@@ -4,7 +4,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -153,7 +152,7 @@ public class Main_Activity extends AppCompatActivity implements
 
 
         model_db = new ViewModelProvider(this).get(Events_DB_VM.class);
-        model_db.set_db_handler(this::update_children_fragments);
+        model_db.set_db_callback(this::update_children_fragments);
         model_db.init_db(file_directory,image_directory);
         Image_Provider.set_file(image_directory);
 

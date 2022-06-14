@@ -4,11 +4,15 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="4dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
     app:cardCornerRadius="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="@dimen/mapbox_dimen_8dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/user_profile_image_civ"
@@ -43,8 +47,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginEnd="16dp"
-            android:backgroundTint="@color/blue_500"
-            android:textColor="@color/gray_100"
+            android:backgroundTint="@color/palette_teal_light"
+            android:textColor="@color/palette_gray_light"
             android:text="Follow"
             />
 

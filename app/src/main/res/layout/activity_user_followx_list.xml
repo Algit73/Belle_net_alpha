@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_200"
+    android:background="@color/palette_gray_semi_light"
     tools:context=".user_followx.User_FollowX_List_Activity">
 
 
@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:orientation="horizontal"
-        android:background="@color/palette_teal_light"
+        android:background="@color/palette_gray_light"
         android:padding="8dp"
         >
 
@@ -28,7 +28,7 @@
             android:src="@drawable/arrow_left"
             android:background="@null"
             android:backgroundTint="@color/gray_100"
-            android:tint="@color/gray_100"
+            android:tint="@color/palette_gray_dark"
             android:padding="8dp"
             />
 
@@ -40,7 +40,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
             android:textSize="24sp"
-            android:textColor="@color/gray_100"
+            android:textColor="@color/palette_gray_dark"
             />
 
 
@@ -51,9 +51,9 @@
         android:id="@+id/followx_tab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/palette_teal_light"
-        app:tabSelectedTextColor="@color/gray_100"
-        app:tabIndicatorColor="@color/palette_teal_dark"
+        android:background="@color/palette_gray_light"
+        app:tabSelectedTextColor="@color/palette_teal_light"
+        app:tabIndicatorColor="@color/palette_teal_light"
         app:tabTextColor="@color/palette_teal_dark"
         app:layout_constraintTop_toBottomOf="@id/title_holder"
         android:visibility="visible"

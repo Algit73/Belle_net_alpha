@@ -76,6 +76,8 @@ public class User_FollowX_List_Activity extends AppCompatActivity
             public void onTabReselected(TabLayout.Tab tab) {}
         });
 
+
+
     }
 
     public void update_followx_type(int mode)

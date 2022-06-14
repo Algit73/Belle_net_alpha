@@ -125,7 +125,7 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
                 .time_reformat(feature_list.get(position).getStringProperty(Events_DB_VM.EVENT_TIME_END)));
         try
         {
-            holder.event_joinees_tv.setText(feature_list.get(position).getStringProperty(Events_DB_VM.NUM_OF_JOINED));
+            holder.event_joiners_tv.setText(feature_list.get(position).getStringProperty(Events_DB_VM.NUM_OF_JOINED));
         } catch (Exception e){}
 
         /// Setting button color according to the user's past choices
@@ -280,11 +280,11 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
         public final TextView event_distance_tv;
         public final TextView event_type_tv;
         public final TextView event_explanation_tv;
-        public final TextView event_joinees_tv;
+        public final TextView event_joiners_tv;
         public final CircleImageView profile_pic_civ;
         public final Button join_event_btn;
         public final ConstraintLayout card_layout;
-        public final CardView even_card_cv;
+        public final CardView event_card_cv;
         public Feature mItem;
         public ProgressBar loading_wheel_pb;
         public ImageView loading_screen_iv;
@@ -303,11 +303,11 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
             event_distance_tv = view.findViewById(R.id.event_distance);
             event_type_tv = view.findViewById(R.id.challenge_type_tv);
             event_explanation_tv = view.findViewById(R.id.event_explanation_tv);
-            event_joinees_tv = view.findViewById(R.id.event_joinees);
+            event_joiners_tv = view.findViewById(R.id.event_joiners);
             profile_pic_civ = view.findViewById(R.id.profile_pic_civ);
             join_event_btn = view.findViewById(R.id.join_event_btn);
             card_layout = view.findViewById(R.id.card_layout);
-            even_card_cv = view.findViewById(R.id.event_card_cv);
+            event_card_cv = view.findViewById(R.id.event_card_cv);
             loading_wheel_pb = view.findViewById(R.id.loading_wheel_pb);
             loading_screen_iv = view.findViewById(R.id.loading_screen_iv);
         }

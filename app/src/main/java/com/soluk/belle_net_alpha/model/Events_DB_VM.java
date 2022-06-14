@@ -51,7 +51,7 @@ public class Events_DB_VM extends ViewModel
     private static File image_file_directory_static;
     public static String file_directory_static = "";
     private static final String FILE_NAME = "geo_json_bellenet";
-    protected db_update_handler db_handler;
+    protected db_update_callback db_handler;
     protected DB_Image_Callback db_image_callback;
 
     public int num_until_updating;
@@ -83,6 +83,7 @@ public class Events_DB_VM extends ViewModel
     public static final String EVENT_TIME_END = "event_time_end";
     public static final String EVENT_TYPE = "event_type";
     public static final String EVENT_ID = "event_id";
+    public static final String EVENT_DISPLAY_TYPE = "event_display_type";
     public static final String COMMENT_ID = "comment_id";
     public static final String COMMENT_TAIL_ID = "comment_tail_id";
     public static final String COMMENT_TAIL_ID_R0 = "r0";
@@ -341,9 +342,9 @@ public class Events_DB_VM extends ViewModel
 
 
     /// Callback function to inform when DB get updated
-    public void set_db_handler(db_update_handler db_handler)
+    public void set_db_callback(db_update_callback db_callback)
     {
-        this.db_handler = db_handler;
+        this.db_handler = db_callback;
     }
 
     public void set_catch_images_callback(DB_Image_Callback db_image_callback)
