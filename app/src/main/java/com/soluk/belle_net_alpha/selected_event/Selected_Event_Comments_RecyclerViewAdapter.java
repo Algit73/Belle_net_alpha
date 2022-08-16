@@ -137,7 +137,7 @@ public class Selected_Event_Comments_RecyclerViewAdapter extends RecyclerView.Ad
         });
 
         /// Loading the user's profile image
-        String path = Events_DB_VM.profile_pic_url + comment_info.getUser_picture() + ".jpg";
+        String path = Events_DB_VM.profile_pic_url + comment_info.getUser_picture();
         Target target = new Target()
         {
             @Override

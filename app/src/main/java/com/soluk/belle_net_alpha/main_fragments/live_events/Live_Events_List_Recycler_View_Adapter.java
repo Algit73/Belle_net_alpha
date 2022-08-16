@@ -1,4 +1,4 @@
-package com.soluk.belle_net_alpha.all_events_list_fragment;
+package com.soluk.belle_net_alpha.main_fragments.live_events;
 
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -41,26 +41,29 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-import static com.soluk.belle_net_alpha.all_events_list_fragment.all_events_list_fragment.DISCOVER_MODE;
-import static com.soluk.belle_net_alpha.all_events_list_fragment.all_events_list_fragment.JOINED_MODE;
-import static com.soluk.belle_net_alpha.all_events_list_fragment.all_events_list_fragment.OWN_MODE;
+import static com.soluk.belle_net_alpha.main_fragments.live_events.Live_Events_List_Fragment.DISCOVER_MODE;
+import static com.soluk.belle_net_alpha.main_fragments.live_events.Live_Events_List_Fragment.JOINED_MODE;
+import static com.soluk.belle_net_alpha.main_fragments.live_events.Live_Events_List_Fragment.OWN_MODE;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_DATE;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_DATE_END;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_ID;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_TYPE;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_EMAIL;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_ID;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_PASSWORD;
 
 
-public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<all_events_list_recycler_view_adapter.ViewHolder>
+public class Live_Events_List_Recycler_View_Adapter extends RecyclerView.Adapter<Live_Events_List_Recycler_View_Adapter.ViewHolder>
 {
 
     private final List<Feature> feature_list;
     private int event_mode;
     boolean is_user_owned_event = false;
-    private final String TAG = all_events_list_recycler_view_adapter.class.getSimpleName();
+    private final String TAG = Live_Events_List_Recycler_View_Adapter.class.getSimpleName();
     String user_id;
 
 
-    public all_events_list_recycler_view_adapter(List<Feature> feature_list, int event_mode)
+    public Live_Events_List_Recycler_View_Adapter(List<Feature> feature_list, int event_mode)
     {
         this.feature_list = feature_list;
         this.event_mode = event_mode;
@@ -80,49 +83,24 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position)
     {
+        Feature feature = feature_list.get(position);
 
-        holder.loading_wheel_pb.setVisibility(View.GONE);
-        holder.loading_screen_iv.setVisibility(View.GONE);
+        /// Turn the progress wheel off
+        setup_progress_wheel(holder);
+
         /// Find out if user owns the event
-
         try {user_id = User_Credentials.get_item(USER_ID);}
         catch (JSONException e){e.printStackTrace();}
+        set_owner_mode(holder);
+
+        set_owner_name(holder, feature);
+        set_event_name(holder, feature);
+        set_event_date(holder, feature.getStringProperty(EVENT_DATE)
+                , feature.getStringProperty(EVENT_DATE_END));
+        set_event_type(holder, feature);
 
 
-        /// Showing event cards according to the
-        switch (event_mode)
-        {
-            case DISCOVER_MODE:
-                holder.join_event_btn.setBackgroundColor(ResourcesCompat.getColor(holder.join_event_btn.getResources()
-                        , R.color.palette_teal_light, holder.join_event_btn.getContext().getTheme()));
-                holder.join_event_btn.setTextColor(ResourcesCompat.getColor(holder.join_event_btn.getResources()
-                        , R.color.gray_100, holder.join_event_btn.getContext().getTheme()));
-                holder.join_event_btn.setText("join"); break;
-            case JOINED_MODE:
-                holder.join_event_btn.setBackgroundColor(ResourcesCompat.getColor(holder.join_event_btn.getResources()
-                        , R.color.gray_200, holder.join_event_btn.getContext().getTheme()));
-                holder.join_event_btn.setTextColor(ResourcesCompat.getColor(holder.join_event_btn.getResources()
-                        , R.color.gray_500, holder.join_event_btn.getContext().getTheme()));
-                holder.join_event_btn.setText("joined"); break;
-            case OWN_MODE:
-                holder.join_event_btn.setBackgroundTintList(ResourcesCompat.getColorStateList(holder.join_event_btn.getResources()
-                        ,R.color.red_500, holder.join_event_btn.getContext().getTheme()));
-                holder.join_event_btn.setText("Remove"); break;
-        }
 
-
-        holder.mItem = feature_list.get(position);
-        holder.name_tv.setText(feature_list.get(position).getStringProperty(Events_DB_VM.USER_NAME));
-        holder.family_tv.setText(feature_list.get(position).getStringProperty(Events_DB_VM.USER_FAMILY));
-        holder.event_name_tv.setText(feature_list.get(position).getStringProperty(Events_DB_VM.EVENT_NAME));
-        holder.event_date_tv.setText(Date_Time_Provider
-                .date_to_MDY(feature_list.get(position).getStringProperty(Events_DB_VM.EVENT_DATE)));
-        holder.event_date_end_tv.setText(Date_Time_Provider
-                .date_to_MDY(feature_list.get(position).getStringProperty(Events_DB_VM.EVENT_DATE_END)));
-        holder.event_time_tv.setText(Date_Time_Provider
-                .time_reformat(feature_list.get(position).getStringProperty(Events_DB_VM.EVENT_TIME)));
-        holder.event_time_end_tv.setText(Date_Time_Provider
-                .time_reformat(feature_list.get(position).getStringProperty(Events_DB_VM.EVENT_TIME_END)));
         try
         {
             holder.event_joiners_tv.setText(feature_list.get(position).getStringProperty(Events_DB_VM.NUM_OF_JOINED));
@@ -131,7 +109,7 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
         /// Setting button color according to the user's past choices
 
 
-        String profile_pic_name = feature_list.get(position).getStringProperty(Events_DB_VM.USER_PIC);
+        String profile_pic_name = feature.getStringProperty(Events_DB_VM.USER_PIC);
 
         Bitmap profile_pic = Image_Provider.get_profile_bmp(profile_pic_name);
 
@@ -233,6 +211,81 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
 
     }
 
+    private void set_event_type(ViewHolder holder, Feature feature)
+    {
+        switch (feature.getStringProperty(EVENT_TYPE))
+        {
+            case "0":
+                holder.event_type_icon_iv.setImageResource(R.drawable.bike);
+                holder.event_type_tv.setText("Ensemble"); break;
+            case "1":
+                holder.event_type_icon_iv.setImageResource(R.drawable.flag);
+                holder.event_type_tv.setText("Challenge"); break;
+            case "2":
+                holder.event_type_icon_iv.setImageResource(R.drawable.image);
+                holder.event_type_tv.setText("Experience"); break;
+        }
+    }
+
+    private void set_event_date(ViewHolder holder, String date_start, String date_end)
+    {
+//        holder.event_date_tv.setText(Date_Time_Provider
+//                .date_to_MDY(feature.getStringProperty(EVENT_DATE)));
+//        holder.event_date_end_tv.setText(Date_Time_Provider
+//                .date_to_MDY(feature.getStringProperty(EVENT_DATE)));
+//        holder.event_time_tv.setText(Date_Time_Provider
+//                .time_reformat(feature.getStringProperty(Events_DB_VM.EVENT_TIME)));
+//        holder.event_time_end_tv.setText(Date_Time_Provider
+//                .time_reformat(feature.getStringProperty(Events_DB_VM.EVENT_TIME_END)));
+
+        String date_start_modified = Date_Time_Provider.date_to_MD(date_start);
+        String date_end_modified = Date_Time_Provider.date_to_MD(date_end);
+        String date = date_start_modified + " to " + date_end_modified;
+        Log.d(TAG,"set_event_date: " + date);
+        holder.event_date_tv.setText(date);
+
+    }
+
+    private void set_event_name(ViewHolder holder, Feature feature)
+    {holder.event_name_tv.setText(feature.getStringProperty(Events_DB_VM.EVENT_NAME));}
+
+    private void set_owner_name(ViewHolder holder, Feature feature)
+    {
+        holder.name_tv.setText(feature.getStringProperty(Events_DB_VM.USER_NAME));
+        holder.family_tv.setText(feature.getStringProperty(Events_DB_VM.USER_FAMILY));
+    }
+
+    private void set_owner_mode(ViewHolder holder)
+    {
+        /// Showing event cards according to the
+        switch (event_mode)
+        {
+            case DISCOVER_MODE:
+                holder.join_event_btn.setBackgroundColor(ResourcesCompat.getColor(holder.join_event_btn.getResources()
+                        , R.color.palette_teal_light, holder.join_event_btn.getContext().getTheme()));
+                holder.join_event_btn.setTextColor(ResourcesCompat.getColor(holder.join_event_btn.getResources()
+                        , R.color.gray_100, holder.join_event_btn.getContext().getTheme()));
+                holder.join_event_btn.setText("join"); break;
+            case JOINED_MODE:
+                holder.join_event_btn.setBackgroundColor(ResourcesCompat.getColor(holder.join_event_btn.getResources()
+                        , R.color.gray_200, holder.join_event_btn.getContext().getTheme()));
+                holder.join_event_btn.setTextColor(ResourcesCompat.getColor(holder.join_event_btn.getResources()
+                        , R.color.gray_500, holder.join_event_btn.getContext().getTheme()));
+                holder.join_event_btn.setText("joined"); break;
+            case OWN_MODE:
+                holder.join_event_btn.setBackgroundTintList(ResourcesCompat.getColorStateList(holder.join_event_btn.getResources()
+                        ,R.color.red_500, holder.join_event_btn.getContext().getTheme()));
+                holder.join_event_btn.setText("Remove"); break;
+        }
+
+    }
+
+    private void setup_progress_wheel(ViewHolder holder)
+    {
+        holder.loading_wheel_pb.setVisibility(View.GONE);
+        holder.loading_screen_iv.setVisibility(View.GONE);
+    }
+
     void send_join_command(JSONObject json, Context context)
     {
         //Log.d(TAG,"Send join: "+params);
@@ -274,9 +327,6 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
         public final TextView family_tv;
         public final TextView event_name_tv;
         public final TextView event_date_tv;
-        public final TextView event_date_end_tv;
-        public final TextView event_time_tv;
-        public final TextView event_time_end_tv;
         public final TextView event_distance_tv;
         public final TextView event_type_tv;
         public final TextView event_explanation_tv;
@@ -288,6 +338,7 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
         public Feature mItem;
         public ProgressBar loading_wheel_pb;
         public ImageView loading_screen_iv;
+        public ImageView event_type_icon_iv;
 
         public ViewHolder(View view)
         {
@@ -297,11 +348,8 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
             family_tv = view.findViewById(R.id.user_family_tv);
             event_name_tv = view.findViewById(R.id.event_name_tv);
             event_date_tv = view.findViewById(R.id.event_date_tv);
-            event_date_end_tv = view.findViewById(R.id.event_date_end_tv);
-            event_time_tv = view.findViewById(R.id.event_start_time_tv);
-            event_time_end_tv = view.findViewById(R.id.event_start_time_end_tv);
             event_distance_tv = view.findViewById(R.id.event_distance);
-            event_type_tv = view.findViewById(R.id.challenge_type_tv);
+            event_type_tv = view.findViewById(R.id.event_type_tv);
             event_explanation_tv = view.findViewById(R.id.event_explanation_tv);
             event_joiners_tv = view.findViewById(R.id.event_joiners);
             profile_pic_civ = view.findViewById(R.id.profile_pic_civ);
@@ -310,6 +358,7 @@ public class all_events_list_recycler_view_adapter extends RecyclerView.Adapter<
             event_card_cv = view.findViewById(R.id.event_card_cv);
             loading_wheel_pb = view.findViewById(R.id.loading_wheel_pb);
             loading_screen_iv = view.findViewById(R.id.loading_screen_iv);
+            event_type_icon_iv = view.findViewById(R.id.event_type_icon_iv);
         }
 
 

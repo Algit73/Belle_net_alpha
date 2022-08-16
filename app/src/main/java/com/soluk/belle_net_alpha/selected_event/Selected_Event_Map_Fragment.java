@@ -30,7 +30,6 @@ import com.mapbox.navigation.base.options.NavigationOptions;
 import com.mapbox.navigation.core.MapboxNavigation;
 import com.mapbox.navigation.ui.route.NavigationMapRoute;
 import com.soluk.belle_net_alpha.R;
-import com.soluk.belle_net_alpha.main_fragments.map_fragment;
 
 /**
  * A simple {@link Fragment} subclass.

@@ -168,6 +168,25 @@ public class Date_Time_Provider
         return calendar_time_picker.getTime();
     }
 
+    public static String date_to_MD(String time)
+    {
+        String inputPattern = "yyyy-MM-dd";
+        String outputPattern = "dd, MMM";
+        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
+
+        Date date = null;
+        String str = null;
+
+        try {
+            date = inputFormat.parse(time);
+            str = outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return str;
+    }
+
     public static String date_to_MDY(String time)
     {
         String inputPattern = "yyyy-MM-dd";

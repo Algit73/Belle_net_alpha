@@ -3,16 +3,26 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/drawable/compass.xml" value="0.1275" />
+        <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/drawable/flag.xml" value="0.1275" />
+        <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/drawable/ticket_confirmation.xml" value="0.1275" />
         <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/activity_search_users.xml" value="0.25" />
+        <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/activity_selected_event_add_comment.xml" value="0.15040650406504066" />
         <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/activity_user_followx_list.xml" value="0.15040650406504066" />
         <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/fragment_all_events_list.xml" value="0.25" />
-        <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/fragment_all_events_list_fragment.xml" value="0.15040650406504066" />
-        <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/fragment_events_hub_feed.xml" value="0.1" />
+        <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/fragment_all_events_list_fragment.xml" value="0.33" />
+        <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/fragment_comment_replies_card.xml" value="0.15040650406504066" />
+        <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/fragment_events_hub_feed.xml" value="0.18" />
+        <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/fragment_feed_events_list.xml" value="0.14305555555555555" />
+        <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/fragment_feed_list.xml" value="0.22" />
+        <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/fragment_feed_list_fragment.xml" value="0.25" />
         <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/fragment_followx.xml" value="0.15040650406504066" />
         <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/fragment_followx_list.xml" value="0.30833333333333335" />
         <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/fragment_search_users.xml" value="0.15040650406504066" />
         <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/fragment_search_users_list.xml" value="0.15040650406504066" />
         <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/fragment_selected_event_comment_list_card.xml" value="0.25" />
+        <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/fragment_selected_event_comments.xml" value="0.15040650406504066" />
+        <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/fragment_selected_event_info.xml" value="0.33" />
         <entry key="..\:/Researches/Android/Android_Studio/Belle_net_alpha/app/src/main/res/layout/fragment_user_profile_personal_info.xml" value="0.33" />
       </map>
     </option>

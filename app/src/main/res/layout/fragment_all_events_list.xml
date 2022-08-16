@@ -62,7 +62,7 @@
                         android:backgroundTint="@color/palette_teal_dark"
                         android:textColor="@color/palette_teal_light"
                         app:cornerRadius="36dp"
-                        android:drawableLeft="@drawable/map"
+                        android:drawableLeft="@drawable/flag"
                         android:drawableTint="@color/palette_teal_light"
                         android:layout_margin="8dp"
                         />
@@ -170,7 +170,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
                         android:layout_marginRight="8dp"
-                        tools:context=".all_events_list_fragment.all_events_list_fragment"
+                        tools:context=".main_fragments.live_events.Live_Events_List_Fragment"
                         tools:listitem="@layout/fragment_all_events_list_fragment"
                         />
 

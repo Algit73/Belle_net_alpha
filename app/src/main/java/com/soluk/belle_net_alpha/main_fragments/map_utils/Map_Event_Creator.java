@@ -14,7 +14,7 @@ import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.soluk.belle_net_alpha.R;
-import com.soluk.belle_net_alpha.main_fragments.map_fragment;
+import com.soluk.belle_net_alpha.main_fragments.Map_Fragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -149,13 +149,13 @@ public class Map_Event_Creator
      */
     public void setUpData(final FeatureCollection collection, int type)
     {
-        if (map_fragment.mapboxMap != null)
+        if (Map_Fragment.mapboxMap != null)
         {
             Log.d(TAG,"setUpData: map_fragment.mapboxMap != null");
             if(type==EVENT_TYPE_ENSEMBLE)
             {
                 Log.d(TAG,"setUpData: EVENT_TYPE_ENSEMBLE");
-                map_fragment.mapboxMap.getStyle(style ->
+                Map_Fragment.mapboxMap.getStyle(style ->
                 {
                     style.removeSource(GEOJSON_SOURCE_ID_ENSEMBLE);
                     style.removeLayer(GEOJSON_SOURCE_ID_ENSEMBLE);
@@ -168,7 +168,7 @@ public class Map_Event_Creator
             else
             {
                 Log.d(TAG,"setUpData: Others");
-                map_fragment.mapboxMap.getStyle(style ->
+                Map_Fragment.mapboxMap.getStyle(style ->
                 {
                     style.removeSource(GEOJSON_SOURCE_ID_CHALLENGE);
                     style.removeLayer(GEOJSON_SOURCE_ID_CHALLENGE);
@@ -243,9 +243,9 @@ public class Map_Event_Creator
      */
     public void setImageGenResults(HashMap<String, Bitmap> imageMap)
     {
-        if (map_fragment.mapboxMap != null)
+        if (Map_Fragment.mapboxMap != null)
         {
-            map_fragment.mapboxMap.getStyle(style ->
+            Map_Fragment.mapboxMap.getStyle(style ->
             {
                 // calling addImages is faster as separate addImage calls for each bitmap.
                 style.addImages(imageMap);

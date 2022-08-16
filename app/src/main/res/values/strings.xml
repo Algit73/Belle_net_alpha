@@ -21,6 +21,7 @@
     <string name="hint_user_to_remove_the_marks">Tap remove button to remove marks</string>
 
     <string name="profile_pic_url">https://soluk.org/belle_net_users_info/profile_pictures/</string>
+    <string name="event_wallpaper_url">https://soluk.org/belle_net_users_info/events_wallpapers/</string>
     <string name="register_event">https://soluk.org/belle_net_users_info/user_register_new_event.php</string>
     <string-array name="list_of_challenges_items">
         <item>Invite for a Challenge</item>

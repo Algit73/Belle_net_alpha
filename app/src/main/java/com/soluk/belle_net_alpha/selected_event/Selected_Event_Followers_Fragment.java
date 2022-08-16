@@ -138,7 +138,7 @@ public class Selected_Event_Followers_Fragment extends Fragment
                     new TypeToken<List<Selected_Event_Followers_Object>>() {}.getType());
             for(int i=0;i<event_followers.size();i++)
             {
-                String path = Events_DB_VM.profile_pic_url + event_followers.get(i).user_picture + ".jpg";
+                String path = Events_DB_VM.profile_pic_url + event_followers.get(i).user_picture;
                 receiving_user_picture(path);
 
             }

@@ -30,12 +30,11 @@ import android.widget.Toast;
 //import android.widget.Toolbar;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.soluk.belle_net_alpha.main_fragments.Profile_Fragment;
-import com.soluk.belle_net_alpha.main_fragments.events_hub_feed_fragment;
-import com.soluk.belle_net_alpha.main_fragments.map_fragment;
+import com.soluk.belle_net_alpha.main_fragments.live_events_feed_fragment;
+import com.soluk.belle_net_alpha.main_fragments.Map_Fragment;
 import com.soluk.belle_net_alpha.model.Events_DB_VM;
 import com.soluk.belle_net_alpha.search_users.Search_Users_Activity;
 import com.soluk.belle_net_alpha.ui.login.User_Credentials;
@@ -65,8 +64,8 @@ public class Main_Activity extends AppCompatActivity implements
 
 
     private FragmentTransaction fragment_transaction;
-    private map_fragment map_fragment_instance;
-    private events_hub_feed_fragment event_list_parent_holder;
+    private Map_Fragment mapFragment_instance;
+    private live_events_feed_fragment event_list_parent_holder;
     private Profile_Fragment profile_fragment;
 
     private BottomNavigationView bottom_navigation_view;
@@ -127,15 +126,15 @@ public class Main_Activity extends AppCompatActivity implements
 
 
 
-        map_fragment_instance = new map_fragment();
-        event_list_parent_holder = new events_hub_feed_fragment();
+        mapFragment_instance = new Map_Fragment();
+        event_list_parent_holder = new live_events_feed_fragment();
         profile_fragment = new Profile_Fragment();
 
         if (savedInstanceState == null)
         {
             fragment_transaction =  getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
-                    .add(R.id.fragment_map_view, map_fragment_instance, null)
+                    .add(R.id.fragment_map_view, mapFragment_instance, null)
                     .add(R.id.fragment_user_profile, profile_fragment,null)
                     .add(R.id.fragment_event_list_parent, event_list_parent_holder,null)
                     .hide(event_list_parent_holder).hide(profile_fragment);
@@ -148,7 +147,6 @@ public class Main_Activity extends AppCompatActivity implements
         String file_directory = Main_Activity.this.getFilesDir().toString();
         ContextWrapper context_wrapper = new ContextWrapper(getApplicationContext());
         File image_directory = context_wrapper.getDir("Profile_Pictures", Context.MODE_PRIVATE);
-
 
 
         model_db = new ViewModelProvider(this).get(Events_DB_VM.class);
@@ -174,13 +172,13 @@ public class Main_Activity extends AppCompatActivity implements
                case R.id.page_map: //bottom_navigation_view.
 
                    fragment_transaction = getSupportFragmentManager().beginTransaction();
-                   fragment_transaction.show(map_fragment_instance).hide(event_list_parent_holder)
+                   fragment_transaction.show(mapFragment_instance).hide(event_list_parent_holder)
                                                                     .hide(profile_fragment).commit();
                    break;
 
                case R.id.page_events:
                    fragment_transaction = getSupportFragmentManager().beginTransaction();
-                   fragment_transaction.show(event_list_parent_holder).hide(map_fragment_instance)
+                   fragment_transaction.show(event_list_parent_holder).hide(mapFragment_instance)
                                                                         .hide(profile_fragment).commit();
                    break;
                case R.id.page_profile:
@@ -207,7 +205,7 @@ public class Main_Activity extends AppCompatActivity implements
     {
         fragment_transaction = getSupportFragmentManager().beginTransaction();
         fragment_transaction.show(profile_fragment).hide(event_list_parent_holder)
-                .hide(map_fragment_instance).commit();
+                .hide(mapFragment_instance).commit();
 
         bottom_navigation_view.getMenu().getItem(2).setChecked(true);
     }
@@ -316,7 +314,7 @@ public class Main_Activity extends AppCompatActivity implements
 
         new Handler(Looper.getMainLooper()).postDelayed(()->
         {
-            map_fragment_instance.update_map();
+            mapFragment_instance.update_map();
             event_list_parent_holder.refresh_fragments();
             profile_fragment.get_updated();
 
@@ -348,36 +346,37 @@ public class Main_Activity extends AppCompatActivity implements
 
 
         /// Get device token
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task ->
-        {
-            //String deviceToken = task.getResult();
-            Log.d(TAG, "Device Token: " +  task.getResult());
-        });
 
-
-        if (getIntent().getExtras() != null)
-        {
-            for (String key : getIntent().getExtras().keySet())
-            {
-                Object value = getIntent().getExtras().get(key);
-                Log.d(TAG, "Key: " + key + " Value: " + value);
-            }
-        }
-        // [END handle_data_extras]
-
-        Log.d(TAG, "Subscribing to: "+getString(R.string.bellenet_cloud_messaging_public));
-        // [START subscribe_topics]
-        FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.bellenet_cloud_messaging_public))
-                .addOnCompleteListener(task ->
-                {
-                    String msg = "Subscribe Was Successful";
-                    if (!task.isSuccessful())
-                    {
-                        msg = "Subscribe Was Not Successful";
-                    }
-                    Log.d(TAG, msg);
-                    //Toast.makeText(Main_Activity.this, msg, Toast.LENGTH_SHORT).show();
-                });
+//        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task ->
+//        {
+//            //String deviceToken = task.getResult();
+//            Log.d(TAG, "Device Token: " +  task.getResult());
+//        });
+//
+//
+//        if (getIntent().getExtras() != null)
+//        {
+//            for (String key : getIntent().getExtras().keySet())
+//            {
+//                Object value = getIntent().getExtras().get(key);
+//                Log.d(TAG, "Key: " + key + " Value: " + value);
+//            }
+//        }
+//        // [END handle_data_extras]
+//
+//        Log.d(TAG, "Subscribing to: "+getString(R.string.bellenet_cloud_messaging_public));
+//        // [START subscribe_topics]
+//        FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.bellenet_cloud_messaging_public))
+//                .addOnCompleteListener(task ->
+//                {
+//                    String msg = "Subscribe Was Successful";
+//                    if (!task.isSuccessful())
+//                    {
+//                        msg = "Subscribe Was Not Successful";
+//                    }
+//                    Log.d(TAG, msg);
+//                    //Toast.makeText(Main_Activity.this, msg, Toast.LENGTH_SHORT).show();
+//                });
 
     }
 

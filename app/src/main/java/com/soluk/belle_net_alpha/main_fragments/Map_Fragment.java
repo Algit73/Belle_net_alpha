@@ -100,6 +100,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
@@ -127,14 +130,14 @@ import static com.soluk.belle_net_alpha.model.Events_DB_VM.USER_PIC;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link map_fragment#newInstance} factory method to
+ * Use the {@link Map_Fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class map_fragment extends Fragment implements
+public class Map_Fragment extends Fragment implements
         OnMapReadyCallback, MapboxMap.OnMapClickListener,MapboxMap.OnMapLongClickListener, PermissionsListener
 {
 
-    private static final String TAG = map_fragment.class.getSimpleName();
+    private static final String TAG = Map_Fragment.class.getSimpleName();
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -224,7 +227,7 @@ public class map_fragment extends Fragment implements
     private List<Point> list_of_added_points;
     private List<Symbol> list_of_of_added_points_symbol;
 
-    public map_fragment()
+    public Map_Fragment()
     {
         // Required empty public constructor
     }
@@ -238,9 +241,9 @@ public class map_fragment extends Fragment implements
      * @return A new instance of fragment maps_fragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static map_fragment newInstance(String param1, String param2)
+    public static Map_Fragment newInstance(String param1, String param2)
     {
-        map_fragment fragment = new map_fragment();
+        Map_Fragment fragment = new Map_Fragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -319,9 +322,9 @@ public class map_fragment extends Fragment implements
         list_of_added_points = new ArrayList<>();
 
 
-        file_directory_static = getActivity().getFilesDir().toString();
+        file_directory_static = requireActivity().getFilesDir().toString();
         Log.d(TAG,"map Fragment dir: "+file_directory_static);
-        Mapbox.getInstance(getActivity(), getString(R.string.mapbox_access_token));
+        Mapbox.getInstance(requireActivity(), getString(R.string.mapbox_access_token));
         request_permission();
 
     }
@@ -363,7 +366,7 @@ public class map_fragment extends Fragment implements
             {
 
 
-                if (PermissionsManager.areLocationPermissionsGranted(getActivity()))
+                if (PermissionsManager.areLocationPermissionsGranted(requireActivity()))
                 {
                     if(enable_access_location)
                     {
@@ -877,7 +880,7 @@ public class map_fragment extends Fragment implements
 
     private void bottom_sheet_join_event_init(View v)
     {
-        join_btn = v.findViewById(R.id.join_event);
+        join_btn = v.findViewById(R.id.explore_event);
         cancel_join_event_btn = v.findViewById(R.id.cancel_join_event);
         hint_user_tv = v.findViewById(R.id.selected_event_user_join_hint);
         selected_user_name = v.findViewById(R.id.selected_user_name);
@@ -1139,12 +1142,72 @@ public class map_fragment extends Fragment implements
     public void update_map()
     {
         Log.d(TAG,"update map received");
-        new Load_GeoJson_Data_Task(map_fragment.this,0).execute();
+//        new Load_GeoJson_Data_Task(Map_Fragment.this,0).execute();
+        load_geoJson_date_exec();
         refresh_map();
         wait_on_loading_data(true);
     }
 
+    private final ExecutorService executor_geoJson_date_loader = Executors.newSingleThreadExecutor();
+    private final Handler executor_handler = new Handler(Looper.getMainLooper());
+    private void load_geoJson_date_exec()
+    {
+        executor_geoJson_date_loader.execute(() ->
+        {
+            file_maker geo_json_holder = new file_maker(file_directory_static,FILE_NAME);
+            FeatureCollection feature_collection =
+                    FeatureCollection.fromJson(geo_json_holder.read_json().toString());
+            executor_handler.post(() ->
+            {
+                FeatureCollection feature_collection_ensemble;
+                FeatureCollection feature_collection_others;
+                List<Feature> features_ensemble= new ArrayList<>();
+                List<Feature> features_others= new ArrayList<>();
 
+                for (Feature singleFeature : feature_collection.features())
+                {
+
+                    singleFeature.addBooleanProperty(PROPERTY_SELECTED, false);
+                    //feature_collection_ensemble.features() = FeatureCollection.fromFeature(singleFeature)
+                    Log.d(TAG,"singleFeature.properties(): "+singleFeature.properties().toString());
+                    if(singleFeature.properties().get("event_type").toString().equals("\"0\""))
+                    {
+                        //feature_collection_ensemble.features().add(singleFeature);
+                        Log.d(TAG,"event_type = 0");
+                        features_ensemble.add(singleFeature);
+                    }
+                    else
+                    {
+                        //feature_collection_others.features().add(singleFeature);
+                        Log.d(TAG,"event_type = 1");
+                        features_others.add(singleFeature);
+                    }
+                    Log.v(TAG,"Sing_Feature: "+singleFeature.properties());
+                    Log.v(TAG,"PROPERTY_SELECTED, False");
+                }
+
+                //activity.set_feature_collection(featureCollection);
+                map_event_creator.set_feature_collection(feature_collection);
+                if(features_ensemble.size()!=0)
+                {
+                    feature_collection_ensemble = FeatureCollection.fromFeatures(features_ensemble);
+                    map_event_creator.setUpData(feature_collection_ensemble, 0);
+                }
+
+                if(features_others.size()!=0)
+                {
+                    feature_collection_others = FeatureCollection.fromFeatures(features_others);
+                    map_event_creator.setUpData(feature_collection_others, 1);
+                }
+
+//                Generate_View_Icon_Task generateViewIconTask=null;
+                Log.v(TAG,"LoadGeoJsonDataTask: onPostExecute");
+//                new Generate_View_Icon_Task(Map_Fragment.this).execute(feature_collection);
+                generate_view_icon_task(feature_collection);
+
+            });
+        });
+    }
     /// Configuring Map Interactions
     @Override
     public boolean onMapClick(@NonNull LatLng point)
@@ -1224,11 +1287,11 @@ public class map_fragment extends Fragment implements
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap)
     {
-        map_fragment.mapboxMap = mapboxMap;
+        Map_Fragment.mapboxMap = mapboxMap;
         mapboxMap.setStyle(Style.MAPBOX_STREETS, style ->
         {
-            mapboxMap.addOnMapClickListener(map_fragment.this);
-            mapboxMap.addOnMapLongClickListener(map_fragment.this);
+            mapboxMap.addOnMapClickListener(Map_Fragment.this);
+            mapboxMap.addOnMapLongClickListener(Map_Fragment.this);
             enable_location_component(style);
             mapbox_navigation_configuration(style);
             symbol_manager = new SymbolManager(mapView, mapboxMap, style);
@@ -1239,9 +1302,7 @@ public class map_fragment extends Fragment implements
 
     void refresh_map()
     {
-        map_fragment.mapboxMap.setStyle(Style.MAPBOX_STREETS, this::mapbox_navigation_configuration);
-
-        }
+        Map_Fragment.mapboxMap.setStyle(Style.MAPBOX_STREETS, this::mapbox_navigation_configuration);}
 
     void mapbox_navigation_configuration(Style style)
     {
@@ -1262,7 +1323,7 @@ public class map_fragment extends Fragment implements
     private void enable_location_component(@NonNull Style loadedMapStyle)
     {
         // Check if permissions are enabled and if not request
-        if (PermissionsManager.areLocationPermissionsGranted(getActivity()))
+        if (PermissionsManager.areLocationPermissionsGranted(requireActivity()))
         {
 
             enable_access_location = true;
@@ -1284,6 +1345,7 @@ public class map_fragment extends Fragment implements
             location_component.setLocationComponentEnabled(true);
             location_component.setCameraMode(CameraMode.TRACKING);
             location_component.setRenderMode(RenderMode.COMPASS);
+
         }
         else
         {
@@ -1430,102 +1492,102 @@ public class map_fragment extends Fragment implements
 
     }
 
-    //TODO: Using Handler-Executor
+    //TODO: Removing Excess Codes
 
-    private static class Load_GeoJson_Data_Task extends AsyncTask<Void, Void, FeatureCollection>
-    {
-
-        private final WeakReference<map_fragment> activityRef;
-
-        Load_GeoJson_Data_Task(map_fragment activity, int type)
-        {
-            this.activityRef = new WeakReference<>(activity);
-            Log.v(TAG,"LoadGeoJsonDataTask: constructor");
-
-        }
-
-        @Override
-        protected FeatureCollection doInBackground(Void... params)
-        {
-            Log.d(TAG,"Load_GeoJson_Data_Task activated");
-            map_fragment activity = activityRef.get();
-
-            if (activity == null)
-            {
-                return null;
-            }
-
-            Log.v(TAG,"Feature Collection Returned");
-
-            file_maker geo_json_holder = new file_maker(file_directory_static,FILE_NAME);
-
-            Log.v(TAG,"LoadGeoJsonDataTask: doInBackground");
-            return FeatureCollection.fromJson(geo_json_holder.read_json().toString());
-        }
-
-        @Override
-        protected void onPostExecute(FeatureCollection featureCollection)
-        {
-            super.onPostExecute(featureCollection);
-            Log.v(TAG,"On post execute");
-            map_fragment activity = activityRef.get();
-            if (featureCollection == null || activity == null)
-            {
-                return;
-            }
-
-            // This example runs on the premise that each GeoJSON Feature has a "selected" property,
-            // with a boolean value. If your data's Features don't have this boolean property,
-            // add it to the FeatureCollection 's features with the following code:
-
-            FeatureCollection feature_collection_ensemble = null;
-            FeatureCollection feature_collection_others = null;
-            List<Feature> features_ensemble= new ArrayList<>();
-            List<Feature> features_others= new ArrayList<>();
-
-            for (Feature singleFeature : featureCollection.features())
-            {
-
-                singleFeature.addBooleanProperty(PROPERTY_SELECTED, false);
-                //feature_collection_ensemble.features() = FeatureCollection.fromFeature(singleFeature)
-                Log.d(TAG,"singleFeature.properties(): "+singleFeature.properties().toString());
-                if(singleFeature.properties().get("event_type").toString().equals("\"0\""))
-                {
-                    //feature_collection_ensemble.features().add(singleFeature);
-                    Log.d(TAG,"event_type = 0");
-                    features_ensemble.add(singleFeature);
-                }
-                else
-                {
-                    //feature_collection_others.features().add(singleFeature);
-                    Log.d(TAG,"event_type = 1");
-                    features_others.add(singleFeature);
-                }
-                Log.v(TAG,"Sing_Feature: "+singleFeature.properties());
-                Log.v(TAG,"PROPERTY_SELECTED, False");
-            }
-
-            //activity.set_feature_collection(featureCollection);
-            activity.map_event_creator.set_feature_collection(featureCollection);
-            if(features_ensemble.size()!=0)
-            {
-                feature_collection_ensemble = FeatureCollection.fromFeatures(features_ensemble);
-                activity.map_event_creator.setUpData(feature_collection_ensemble, 0);
-            }
-
-            if(features_others.size()!=0)
-            {
-                feature_collection_others = FeatureCollection.fromFeatures(features_others);
-                activity.map_event_creator.setUpData(feature_collection_others, 1);
-            }
-
-            Generate_View_Icon_Task generateViewIconTask=null;
-            Log.v(TAG,"LoadGeoJsonDataTask: onPostExecute");
-            new Generate_View_Icon_Task(activity).execute(featureCollection);
-
-        }
-
-    }
+//    private static class Load_GeoJson_Data_Task extends AsyncTask<Void, Void, FeatureCollection>
+//    {
+//
+//        private final WeakReference<Map_Fragment> activityRef;
+//
+//        Load_GeoJson_Data_Task(Map_Fragment fragment, int type)
+//        {
+//            this.activityRef = new WeakReference<>(fragment);
+//            Log.v(TAG,"LoadGeoJsonDataTask: constructor");
+//
+//        }
+//
+//        @Override
+//        protected FeatureCollection doInBackground(Void... params)
+//        {
+//            Log.d(TAG,"Load_GeoJson_Data_Task activated");
+//            Map_Fragment activity = activityRef.get();
+//
+//            if (activity == null)
+//            {
+//                return null;
+//            }
+//
+//            Log.v(TAG,"Feature Collection Returned");
+//
+//            file_maker geo_json_holder = new file_maker(file_directory_static,FILE_NAME);
+//
+//            Log.v(TAG,"LoadGeoJsonDataTask: doInBackground");
+//            return FeatureCollection.fromJson(geo_json_holder.read_json().toString());
+//        }
+//
+//        @Override
+//        protected void onPostExecute(FeatureCollection featureCollection)
+//        {
+//            super.onPostExecute(featureCollection);
+//            Log.v(TAG,"On post execute");
+//            Map_Fragment activity = activityRef.get();
+//            if (featureCollection == null || activity == null)
+//            {
+//                return;
+//            }
+//
+//            // This example runs on the premise that each GeoJSON Feature has a "selected" property,
+//            // with a boolean value. If your data's Features don't have this boolean property,
+//            // add it to the FeatureCollection 's features with the following code:
+//
+//            FeatureCollection feature_collection_ensemble = null;
+//            FeatureCollection feature_collection_others = null;
+//            List<Feature> features_ensemble= new ArrayList<>();
+//            List<Feature> features_others= new ArrayList<>();
+//
+//            for (Feature singleFeature : featureCollection.features())
+//            {
+//
+//                singleFeature.addBooleanProperty(PROPERTY_SELECTED, false);
+//                //feature_collection_ensemble.features() = FeatureCollection.fromFeature(singleFeature)
+//                Log.d(TAG,"singleFeature.properties(): "+singleFeature.properties().toString());
+//                if(singleFeature.properties().get("event_type").toString().equals("\"0\""))
+//                {
+//                    //feature_collection_ensemble.features().add(singleFeature);
+//                    Log.d(TAG,"event_type = 0");
+//                    features_ensemble.add(singleFeature);
+//                }
+//                else
+//                {
+//                    //feature_collection_others.features().add(singleFeature);
+//                    Log.d(TAG,"event_type = 1");
+//                    features_others.add(singleFeature);
+//                }
+//                Log.v(TAG,"Sing_Feature: "+singleFeature.properties());
+//                Log.v(TAG,"PROPERTY_SELECTED, False");
+//            }
+//
+//            //activity.set_feature_collection(featureCollection);
+//            activity.map_event_creator.set_feature_collection(featureCollection);
+//            if(features_ensemble.size()!=0)
+//            {
+//                feature_collection_ensemble = FeatureCollection.fromFeatures(features_ensemble);
+//                activity.map_event_creator.setUpData(feature_collection_ensemble, 0);
+//            }
+//
+//            if(features_others.size()!=0)
+//            {
+//                feature_collection_others = FeatureCollection.fromFeatures(features_others);
+//                activity.map_event_creator.setUpData(feature_collection_others, 1);
+//            }
+//
+//            Generate_View_Icon_Task generateViewIconTask=null;
+//            Log.v(TAG,"LoadGeoJsonDataTask: onPostExecute");
+//            new Generate_View_Icon_Task(activity).execute(featureCollection);
+//
+//        }
+//
+//    }
 
     /**
      * This method handles click events for SymbolLayer symbols.
@@ -1545,163 +1607,263 @@ public class map_fragment extends Fragment implements
      * Generating Views on background thread since we are not going to be adding them to the view hierarchy.
      * </p>
      */
-    private static class Generate_View_Icon_Task extends AsyncTask<FeatureCollection, Void, HashMap<String, Bitmap>>
+
+    private final ExecutorService executor_generate_view_icon = Executors.newSingleThreadExecutor();
+    private final Handler executor_generate_view_icon_handler = new Handler(Looper.getMainLooper());
+    private final HashMap<String, View> viewMap = new HashMap<>();
+    private void generate_view_icon_task(FeatureCollection featureCollection)
     {
-
-        private final HashMap<String, View> viewMap = new HashMap<>();
-        private final WeakReference<map_fragment> activityRef;
-        //private final boolean refreshSource;
-        @SuppressLint("StaticFieldLeak")
-        // final Context context;
-        private boolean is_user_joined;
-
-        Generate_View_Icon_Task(map_fragment activity, boolean refreshSource)
+        executor_generate_view_icon.execute(() ->
         {
-            this.activityRef = new WeakReference<>(activity);
-            //this.refreshSource = refreshSource;
-            //this.context = activity.getContext();
-            Log.v(TAG,"GenerateViewIconTask: Constructor_1");
-        }
+            HashMap<String, Bitmap> imagesMap = new HashMap<>();
+            LayoutInflater inflater = LayoutInflater.from(getActivity());
 
-        Generate_View_Icon_Task(map_fragment activity)
-        {
-            this(activity, false);
-            Log.v(TAG,"GenerateViewIconTask: Constructor_2");
-        }
-
-
-        @SuppressWarnings("WrongThread")
-        @Override
-        protected HashMap<String, Bitmap> doInBackground(FeatureCollection... params)
-        {
-            map_fragment activity = activityRef.get();
-            if (activity != null)
+            for (Feature feature : featureCollection.features())
             {
-                HashMap<String, Bitmap> imagesMap = new HashMap<>();
-                LayoutInflater inflater = LayoutInflater.from(activity.getActivity()); //////
+                @SuppressLint("InflateParams") ConstraintLayout constraint_layout =
+                        (ConstraintLayout) inflater.inflate(R.layout.event_id_card, null);
 
-                FeatureCollection featureCollection = params[0];
+                String event_date = feature.getStringProperty(EVENT_DATE);
+                Log.v(TAG,"Events_DB_VM.EVENT_DATE: "+event_date);
+                TextView event_date_tv = constraint_layout.findViewById(R.id.event_date_tv);
+                event_date_tv.setText(Date_Time_Provider.date_to_MDY(event_date));
 
-                for (Feature feature : featureCollection.features())
+                /// Adding Event Time
+                String event_time = feature.getStringProperty(EVENT_TIME);
+                Log.v(TAG,"Events_DB_VM.EVENT_DATE: "+event_date);
+                TextView event_time_tv = constraint_layout.findViewById(R.id.event_time_tv);
+                event_time_tv.setText(Date_Time_Provider.time_reformat(event_time));
+
+                /// Adding Event Date End
+                String event_date_end = feature.getStringProperty(EVENT_DATE_END);
+                Log.v(TAG,"Events_DB_VM.EVENT_DATE_CREATED: "+ event_date_end);
+                TextView event_date_created_tv = constraint_layout.findViewById(R.id.event_date_end_tv);
+                event_date_created_tv.setText(Date_Time_Provider.date_to_MDY(event_date_end));
+
+                /// Adding Event Time
+                String event_time_end = feature.getStringProperty(EVENT_TIME_END);
+                Log.v(TAG,"Events_DB_VM.EVENT_DATE: "+event_date);
+                TextView event_time_end_tv = constraint_layout.findViewById(R.id.event_time_end_tv);
+                event_time_end_tv.setText(Date_Time_Provider.time_reformat(event_time_end));
+
+                /// Adding Event Type
+                String event_type = feature.getStringProperty(EVENT_TYPE);
+                if(event_type.equals("0"))
+                    event_type = "Ensemble";
+                else if(event_type.equals("1"))
+                    event_type = "Challenge";
+                else
+                    event_type = "Experience";
+                Log.v(TAG,"Events_DB_VM.EVENT_DATE: "+event_date);
+                TextView event_type_tv = constraint_layout.findViewById(R.id.event_type_tv);
+                event_type_tv.setText(event_type);
+
+
+
+                /// Profile Pix Section
+                String profile_pic_name = feature.getStringProperty(USER_PIC);
+                //Log.v(TAG,"Events_DB_VM.USER_PIC: "+profile_pic_name);
+                CircleImageView profile_image = constraint_layout.findViewById(R.id.user_image_civ);
+                Bitmap profile_pic = Image_Provider.get_profile_bmp(profile_pic_name);
+                if(profile_pic!=null)
+                    profile_image.setImageBitmap(profile_pic);
+
+                /// Number of Joined User Section
+                try
                 {
-
-                    @SuppressLint("InflateParams") ConstraintLayout constraint_layout =
-                            (ConstraintLayout) inflater.inflate(R.layout.event_id_card, null);
-
-                    /*/// Adding User Name
-                    String user_type = feature.getStringProperty(Events_DB_VM.EVENT_NAME);
-                    Log.v(TAG,"Events_DB_VM.USER_TYPE: "+ user_type);
-                    TextView event_name_tv = constraint_layout.findViewById(R.id.event_name_tv);
-                    event_name_tv.setText(user_type);
-
-                     */
-
-                    /*/// Adding User Name
-                    String user_name = feature.getStringProperty(Events_DB_VM.USER_NAME);
-                    Log.v(TAG,"Events_DB_VM.USER_NAME: "+ user_name);
-                    TextView titleTextView = constraint_layout.findViewById(R.id.invitor_name_tv);
-                    titleTextView.setText(user_name);
-
-                     */
-
-
-                    /// Adding Event Date
-                    String event_date = feature.getStringProperty(EVENT_DATE);
-                    Log.v(TAG,"Events_DB_VM.EVENT_DATE: "+event_date);
-                    TextView event_date_tv = constraint_layout.findViewById(R.id.event_date_tv);
-                    event_date_tv.setText(Date_Time_Provider.date_to_MDY(event_date));
-
-                    /// Adding Event Time
-                    String event_time = feature.getStringProperty(EVENT_TIME);
-                    Log.v(TAG,"Events_DB_VM.EVENT_DATE: "+event_date);
-                    TextView event_time_tv = constraint_layout.findViewById(R.id.event_time_tv);
-                    event_time_tv.setText(Date_Time_Provider.time_reformat(event_time));
-
-                    /// Adding Event Date End
-                    String event_date_end = feature.getStringProperty(EVENT_DATE_END);
-                    Log.v(TAG,"Events_DB_VM.EVENT_DATE_CREATED: "+ event_date_end);
-                    TextView event_date_created_tv = constraint_layout.findViewById(R.id.event_date_end_tv);
-                    event_date_created_tv.setText(Date_Time_Provider.date_to_MDY(event_date_end));
-
-                    /// Adding Event Time
-                    String event_time_end = feature.getStringProperty(EVENT_TIME_END);
-                    Log.v(TAG,"Events_DB_VM.EVENT_DATE: "+event_date);
-                    TextView event_time_end_tv = constraint_layout.findViewById(R.id.event_time_end_tv);
-                    event_time_end_tv.setText(Date_Time_Provider.time_reformat(event_time_end));
-
-                    /// Adding Event Type
-                    String event_type = feature.getStringProperty(EVENT_TYPE);
-                    if(event_type.equals("0"))
-                        event_type = "Ensemble";
-                    else if(event_type.equals("1"))
-                        event_type = "Challenge";
-                    else
-                        event_type = "Experience";
-                    Log.v(TAG,"Events_DB_VM.EVENT_DATE: "+event_date);
-                    TextView event_type_tv = constraint_layout.findViewById(R.id.event_type_tv);
-                    event_type_tv.setText(event_type);
-
-
-
-                    /// Profile Pix Section
-                    String profile_pic_name = feature.getStringProperty(USER_PIC);
-                    //Log.v(TAG,"Events_DB_VM.USER_PIC: "+profile_pic_name);
-                    CircleImageView profile_image = constraint_layout.findViewById(R.id.user_image_civ);
-                    Bitmap profile_pic = Image_Provider.get_profile_bmp(profile_pic_name);
-                    if(profile_pic!=null)
-                        profile_image.setImageBitmap(profile_pic);
-
-                    /// Number of Joined User Section
-                    try
-                    {
-                        String num_of_joined = feature.getStringProperty(NUM_OF_JOINED);
-                        Log.v(TAG,"Events_DB_VM.NUM_OF_JOINED: "+num_of_joined);
-                        TextView number_of_joined_users_tv = constraint_layout.findViewById(R.id.num_of_members_tv);
-                        number_of_joined_users_tv.setText(num_of_joined);
-                    }
-                    catch (Exception e)
-                    {
-                        Log.v(TAG,"Events_DB_VM.NUM_OF_JOINED: Failed");
-                    }
-
-
-                    /// Is User Joined Section
-                    String is_user_joined = feature.getStringProperty(Events_DB_VM.IS_USER_JOINED);
-
-
-                    int measureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-                    constraint_layout.measure(measureSpec, measureSpec);
-
-
-                    /// Naming each car identically using event_id
-                    String event_id = feature.getStringProperty(Events_DB_VM.EVENT_ID);
-                    Bitmap bitmap = map_fragment.SymbolGenerator.generate(constraint_layout);
-                    imagesMap.put(event_id, bitmap);
-                    viewMap.put(event_id, constraint_layout);
+                    String num_of_joined = feature.getStringProperty(NUM_OF_JOINED);
+                    Log.v(TAG,"Events_DB_VM.NUM_OF_JOINED: "+num_of_joined);
+                    TextView number_of_joined_users_tv = constraint_layout.findViewById(R.id.num_of_members_tv);
+                    number_of_joined_users_tv.setText(num_of_joined);
                 }
-                Log.v(TAG,"GenerateViewIconTask: doInBackground");
-                return imagesMap;
-            }
-            else
-            {
-                Log.v(TAG,"GenerateViewIconTask: doInBackground Null");
-                return null;
-            }
-        }
+                catch (Exception e)
+                {
+                    Log.v(TAG,"Events_DB_VM.NUM_OF_JOINED: Failed");
+                }
 
-        @Override
-        protected void onPostExecute(HashMap<String, Bitmap> bitmapHashMap)
-        {
-            super.onPostExecute(bitmapHashMap);
-            map_fragment activity = activityRef.get();
-            if (activity != null && bitmapHashMap != null)
-            {
-                activity.map_event_creator.setImageGenResults(bitmapHashMap);
+
+                /// Is User Joined Section
+                String is_user_joined = feature.getStringProperty(Events_DB_VM.IS_USER_JOINED);
+
+
+                int measureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                constraint_layout.measure(measureSpec, measureSpec);
+
+
+                /// Naming each car identically using event_id
+                String event_id = feature.getStringProperty(Events_DB_VM.EVENT_ID);
+                Bitmap bitmap = Map_Fragment.SymbolGenerator.generate(constraint_layout);
+                imagesMap.put(event_id, bitmap);
+                viewMap.put(event_id, constraint_layout);
             }
-            Log.v(TAG,"GenerateViewIconTask: onPostExecute");
-            //Toast.makeText(activity, R.string.tap_on_marker_instruction, Toast.LENGTH_SHORT).show();
-        }
+            Log.v(TAG,"GenerateViewIconTask: doInBackground");
+            executor_generate_view_icon_handler.post(() ->
+            {
+                map_event_creator.setImageGenResults(imagesMap);
+                Log.v(TAG,"GenerateViewIconTask: onPostExecute");
+            });
+
+
+        });
     }
+
+//    private static class Generate_View_Icon_Task extends AsyncTask<FeatureCollection, Void, HashMap<String, Bitmap>>
+//    {
+//
+//        private final HashMap<String, View> viewMap = new HashMap<>();
+//        private final WeakReference<Map_Fragment> activityRef;
+//        //private final boolean refreshSource;
+//        @SuppressLint("StaticFieldLeak")
+//        // final Context context;
+//        private boolean is_user_joined;
+//
+//        Generate_View_Icon_Task(Map_Fragment activity, boolean refreshSource)
+//        {
+//            this.activityRef = new WeakReference<>(activity);
+//            //this.refreshSource = refreshSource;
+//            //this.context = activity.getContext();
+//            Log.v(TAG,"GenerateViewIconTask: Constructor_1");
+//        }
+//
+//        Generate_View_Icon_Task(Map_Fragment activity)
+//        {
+//            this(activity, false);
+//            Log.v(TAG,"GenerateViewIconTask: Constructor_2");
+//        }
+//
+//
+//        @SuppressWarnings("WrongThread")
+//        @Override
+//        protected HashMap<String, Bitmap> doInBackground(FeatureCollection... params)
+//        {
+//            Map_Fragment activity = activityRef.get();
+//            if (activity != null)
+//            {
+//                HashMap<String, Bitmap> imagesMap = new HashMap<>();
+//                LayoutInflater inflater = LayoutInflater.from(activity.getActivity()); //////
+//
+//                FeatureCollection featureCollection = params[0];
+//
+//                for (Feature feature : featureCollection.features())
+//                {
+//
+//                    @SuppressLint("InflateParams") ConstraintLayout constraint_layout =
+//                            (ConstraintLayout) inflater.inflate(R.layout.event_id_card, null);
+//
+//                    /*/// Adding User Name
+//                    String user_type = feature.getStringProperty(Events_DB_VM.EVENT_NAME);
+//                    Log.v(TAG,"Events_DB_VM.USER_TYPE: "+ user_type);
+//                    TextView event_name_tv = constraint_layout.findViewById(R.id.event_name_tv);
+//                    event_name_tv.setText(user_type);
+//
+//                     */
+//
+//                    /*/// Adding User Name
+//                    String user_name = feature.getStringProperty(Events_DB_VM.USER_NAME);
+//                    Log.v(TAG,"Events_DB_VM.USER_NAME: "+ user_name);
+//                    TextView titleTextView = constraint_layout.findViewById(R.id.invitor_name_tv);
+//                    titleTextView.setText(user_name);
+//
+//                     */
+//
+//
+//                    /// Adding Event Date
+//                    String event_date = feature.getStringProperty(EVENT_DATE);
+//                    Log.v(TAG,"Events_DB_VM.EVENT_DATE: "+event_date);
+//                    TextView event_date_tv = constraint_layout.findViewById(R.id.event_date_tv);
+//                    event_date_tv.setText(Date_Time_Provider.date_to_MDY(event_date));
+//
+//                    /// Adding Event Time
+//                    String event_time = feature.getStringProperty(EVENT_TIME);
+//                    Log.v(TAG,"Events_DB_VM.EVENT_DATE: "+event_date);
+//                    TextView event_time_tv = constraint_layout.findViewById(R.id.event_time_tv);
+//                    event_time_tv.setText(Date_Time_Provider.time_reformat(event_time));
+//
+//                    /// Adding Event Date End
+//                    String event_date_end = feature.getStringProperty(EVENT_DATE_END);
+//                    Log.v(TAG,"Events_DB_VM.EVENT_DATE_CREATED: "+ event_date_end);
+//                    TextView event_date_created_tv = constraint_layout.findViewById(R.id.event_date_end_tv);
+//                    event_date_created_tv.setText(Date_Time_Provider.date_to_MDY(event_date_end));
+//
+//                    /// Adding Event Time
+//                    String event_time_end = feature.getStringProperty(EVENT_TIME_END);
+//                    Log.v(TAG,"Events_DB_VM.EVENT_DATE: "+event_date);
+//                    TextView event_time_end_tv = constraint_layout.findViewById(R.id.event_time_end_tv);
+//                    event_time_end_tv.setText(Date_Time_Provider.time_reformat(event_time_end));
+//
+//                    /// Adding Event Type
+//                    String event_type = feature.getStringProperty(EVENT_TYPE);
+//                    if(event_type.equals("0"))
+//                        event_type = "Ensemble";
+//                    else if(event_type.equals("1"))
+//                        event_type = "Challenge";
+//                    else
+//                        event_type = "Experience";
+//                    Log.v(TAG,"Events_DB_VM.EVENT_DATE: "+event_date);
+//                    TextView event_type_tv = constraint_layout.findViewById(R.id.event_type_tv);
+//                    event_type_tv.setText(event_type);
+//
+//
+//
+//                    /// Profile Pix Section
+//                    String profile_pic_name = feature.getStringProperty(USER_PIC);
+//                    //Log.v(TAG,"Events_DB_VM.USER_PIC: "+profile_pic_name);
+//                    CircleImageView profile_image = constraint_layout.findViewById(R.id.user_image_civ);
+//                    Bitmap profile_pic = Image_Provider.get_profile_bmp(profile_pic_name);
+//                    if(profile_pic!=null)
+//                        profile_image.setImageBitmap(profile_pic);
+//
+//                    /// Number of Joined User Section
+//                    try
+//                    {
+//                        String num_of_joined = feature.getStringProperty(NUM_OF_JOINED);
+//                        Log.v(TAG,"Events_DB_VM.NUM_OF_JOINED: "+num_of_joined);
+//                        TextView number_of_joined_users_tv = constraint_layout.findViewById(R.id.num_of_members_tv);
+//                        number_of_joined_users_tv.setText(num_of_joined);
+//                    }
+//                    catch (Exception e)
+//                    {
+//                        Log.v(TAG,"Events_DB_VM.NUM_OF_JOINED: Failed");
+//                    }
+//
+//
+//                    /// Is User Joined Section
+//                    String is_user_joined = feature.getStringProperty(Events_DB_VM.IS_USER_JOINED);
+//
+//
+//                    int measureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+//                    constraint_layout.measure(measureSpec, measureSpec);
+//
+//
+//                    /// Naming each car identically using event_id
+//                    String event_id = feature.getStringProperty(Events_DB_VM.EVENT_ID);
+//                    Bitmap bitmap = Map_Fragment.SymbolGenerator.generate(constraint_layout);
+//                    imagesMap.put(event_id, bitmap);
+//                    viewMap.put(event_id, constraint_layout);
+//                }
+//                Log.v(TAG,"GenerateViewIconTask: doInBackground");
+//                return imagesMap;
+//            }
+//            else
+//            {
+//                Log.v(TAG,"GenerateViewIconTask: doInBackground Null");
+//                return null;
+//            }
+//        }
+//
+//        @Override
+//        protected void onPostExecute(HashMap<String, Bitmap> bitmapHashMap)
+//        {
+//            super.onPostExecute(bitmapHashMap);
+//            Map_Fragment activity = activityRef.get();
+//            if (activity != null && bitmapHashMap != null)
+//            {
+//                activity.map_event_creator.setImageGenResults(bitmapHashMap);
+//            }
+//            Log.v(TAG,"GenerateViewIconTask: onPostExecute");
+//            //Toast.makeText(activity, R.string.tap_on_marker_instruction, Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
     /**
      * Utility class to generate Bitmaps for Symbol.

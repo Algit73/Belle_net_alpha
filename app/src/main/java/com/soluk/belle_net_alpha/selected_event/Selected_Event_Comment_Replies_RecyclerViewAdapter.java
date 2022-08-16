@@ -115,7 +115,7 @@ public class Selected_Event_Comment_Replies_RecyclerViewAdapter extends Recycler
         });
 
         holder.user_comment_tv.setText(comment_info.user_comment);
-        String path = Events_DB_VM.profile_pic_url + comment_info.getUser_picture() + ".jpg";
+        String path = Events_DB_VM.profile_pic_url + comment_info.getUser_picture();
         Target target = new Target()
         {
             @Override

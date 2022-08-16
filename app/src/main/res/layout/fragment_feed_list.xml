@@ -1,29 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    android:layout_height="match_parent"
+<FrameLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fillViewport="true"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-
-        <androidx.recyclerview.widget.RecyclerView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/feed_list_recycler"
-            android:name="com.soluk.belle_net_alpha.feed_list_fragment"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            app:layoutManager="LinearLayoutManager"
-            tools:context=".feed_list_fragment.feed_list_fragment"
-            tools:listitem="@layout/fragment_feed_list_fragment"
-            />
+            android:layout_height="match_parent"
+            android:id="@+id/refresh_events_srl">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fadeScrollbars="true"
+                            android:scrollbars="none">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                        <Button
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:id="@+id/all_btn"
+                                            android:text="ALL"
+                                            android:backgroundTint="@color/palette_teal_light"
+                                            android:textColor="@color/gray_100"
+                                            app:cornerRadius="36dp"
+                                            android:drawableLeft="@drawable/dots_square"
+                                            android:drawableTint="@color/gray_100"
+                                            android:layout_margin="8dp"/>
+
+                                        <Button
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:id="@+id/challenge_btn"
+                                            android:text="Challenge"
+                                            android:backgroundTint="@color/palette_teal_dark"
+                                            android:textColor="@color/palette_teal_light"
+                                            app:cornerRadius="36dp"
+                                            android:drawableLeft="@drawable/flag"
+                                            android:drawableTint="@color/palette_teal_light"
+                                            android:layout_margin="8dp"/>
+
+                                        <Button
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:id="@+id/discount_btn"
+                                            android:text="Discount"
+                                            android:backgroundTint="@color/palette_teal_dark"
+                                            android:textColor="@color/palette_teal_light"
+                                            app:cornerRadius="36dp"
+                                            android:drawableLeft="@drawable/ticket_confirmation"
+                                            android:drawableTint="@color/palette_teal_light"
+                                            android:layout_margin="8dp"/>
+
+                                        <Button
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:id="@+id/explore_btn"
+                                            android:text="Explore"
+                                            android:backgroundTint="@color/palette_teal_dark"
+                                            android:textColor="@color/palette_teal_light"
+                                            app:cornerRadius="36dp"
+                                            android:drawableLeft="@drawable/compass"
+                                            android:drawableTint="@color/palette_teal_light"
+                                            android:layout_margin="8dp"/>
+
+                                </LinearLayout>
+
+                        </HorizontalScrollView>
+
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fadeScrollbars="true"
+                            android:scrollbars="none">
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+                                        <Button
+                                            android:id="@+id/recent_btn"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="36dp"
+                                            android:text="Recent"
+                                            android:backgroundTint="@color/palette_teal_light"
+                                            android:textColor="@color/gray_100"
+                                            app:cornerRadius="12dp"
+                                            android:layout_margin="8dp"
+                                            android:textSize="12sp"/>
+
+                                        <Button
+                                            android:id="@+id/hot_btn"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="36dp"
+                                            android:text="Hot"
+                                            app:cornerRadius="12dp"
+                                            android:backgroundTint="@color/gray_300"
+                                            android:textColor="@color/gray_700"
+                                            android:layout_margin="8dp"
+                                            android:textSize="12sp"/>
+
+                                        <Button
+                                            android:id="@+id/top_btn"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="36dp"
+                                            android:text="Top"
+                                            android:backgroundTint="@color/gray_300"
+                                            android:textColor="@color/gray_700"
+                                            app:cornerRadius="36dp"
+                                            android:layout_margin="8dp"
+                                            android:textSize="12sp"/>
+
+                                        <Button
+                                            android:id="@+id/own_btn"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="36dp"
+                                            android:text="Joined"
+                                            android:backgroundTint="@color/gray_300"
+                                            android:textColor="@color/gray_700"
+                                            app:cornerRadius="36dp"
+                                            android:layout_margin="8dp"
+                                            android:textSize="12sp"/>
+
+
+                                </LinearLayout>
+
+                        </HorizontalScrollView>
+
+
+
+                        <androidx.core.widget.NestedScrollView
+                            android:id="@+id/nestedScrollView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:overScrollMode="never"
+                            android:fillViewport="true"
+                            >
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:id="@+id/text_dummy"
+                                            android:layout_marginTop="16dp"
+                                            android:layout_marginStart="24dp"
+                                            android:layout_marginBottom="@dimen/mapbox_dimen_16dp"
+                                            android:text="Recommended For You:"
+                                            android:textSize="24sp"
+                                            android:textColor="@color/gray_800"
+                                            />
+
+                                        <androidx.recyclerview.widget.RecyclerView
+                                            xmlns:app="http://schemas.android.com/apk/res-auto"
+                                            xmlns:tools="http://schemas.android.com/tools"
+                                            android:id="@+id/feed_list_recycler"
+                                            android:name="com.soluk.belle_net_alpha.feed_list_fragment"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:padding="8dp"
+                                            app:layoutManager="LinearLayoutManager"
+                                            tools:context=".main_fragments.live_events.Offers_List_Fragment"
+                                            tools:listitem="@layout/fragment_feed_list_fragment"
+                                            />
+
+                                        <View
+                                            android:layout_width="match_parent"
+                                            android:layout_height="300dp"
+                                            />
+
+                                </LinearLayout>
+
+                        </androidx.core.widget.NestedScrollView>
+
+                </LinearLayout>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
 
 
-</androidx.core.widget.NestedScrollView>
+
+
+</FrameLayout>
 
 
 

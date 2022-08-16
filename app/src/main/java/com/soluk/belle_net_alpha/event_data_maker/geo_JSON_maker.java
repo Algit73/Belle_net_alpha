@@ -1,5 +1,13 @@
 package com.soluk.belle_net_alpha.event_data_maker;
 
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.BUSINESS_ID;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.BUSINESS_NAME;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.BUSINESS_PIC;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_CATEGORY;
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_DESCRIPTION;
+
+import android.util.Log;
+
 import com.mapbox.geojson.Feature;
 import com.soluk.belle_net_alpha.Main_Activity;
 import com.soluk.belle_net_alpha.model.Events_DB_VM;
@@ -48,9 +56,14 @@ public class geo_JSON_maker
             properties.put("marker-size", "medium");
             properties.put("marker-symbol", "");
             properties.put(Events_DB_VM.USER_ID, feature.get(Events_DB_VM.USER_ID));
+            properties.put(BUSINESS_ID, feature.get(BUSINESS_ID)==""? "null": feature.get(BUSINESS_ID));
+            properties.put(BUSINESS_NAME, feature.get(BUSINESS_NAME)==""? "null": feature.get(BUSINESS_NAME));
+            properties.put(BUSINESS_PIC, feature.get(BUSINESS_PIC)==""? "null": feature.get(BUSINESS_PIC));
+            properties.put(EVENT_CATEGORY, feature.get(EVENT_CATEGORY));
             properties.put(Events_DB_VM.USER_NAME, feature.get(Events_DB_VM.USER_NAME));
             properties.put(Events_DB_VM.USER_FAMILY, feature.get(Events_DB_VM.USER_FAMILY));
             properties.put(Events_DB_VM.EVENT_NAME, feature.get(Events_DB_VM.EVENT_NAME));
+            properties.put(EVENT_DESCRIPTION, feature.get(EVENT_DESCRIPTION)==""? "null": feature.get(EVENT_DESCRIPTION));
             properties.put(Events_DB_VM.EVENT_ID, feature.get(Events_DB_VM.EVENT_ID));
             properties.put(Events_DB_VM.EVENT_CREATION_DATE, feature.get(Events_DB_VM.EVENT_CREATION_DATE));
             properties.put(Events_DB_VM.EVENT_DATE, feature.get(Events_DB_VM.EVENT_DATE));
@@ -70,9 +83,10 @@ public class geo_JSON_maker
                 properties.put("latitude_"+i,feature.get("latitude_"+i));
             }
         }
-        catch (JSONException e)
+        catch (Exception e)
         {
             // TODO Auto-generated catch block
+            Log.d(TAG,"get_features_object: add_feature -> \n"+e);
             e.printStackTrace();
         }
         Feature feature1;

@@ -13,30 +13,30 @@ import android.view.ViewGroup;
 
 import com.google.android.material.tabs.TabLayout;
 import com.soluk.belle_net_alpha.R;
-import com.soluk.belle_net_alpha.all_events_list_fragment.all_events_list_fragment;
-import com.soluk.belle_net_alpha.feed_list_fragment.feed_list_fragment;
+import com.soluk.belle_net_alpha.main_fragments.live_events.Live_Events_List_Fragment;
+import com.soluk.belle_net_alpha.main_fragments.live_events.Offers_List_Fragment;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link events_hub_feed_fragment#newInstance} factory method to
+ * Use the {@link live_events_feed_fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class events_hub_feed_fragment extends Fragment
+public class live_events_feed_fragment extends Fragment
 {
 
-    private static final String TAG = events_hub_feed_fragment.class.getSimpleName();
+    private static final String TAG = live_events_feed_fragment.class.getSimpleName();
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
 
-    private all_events_list_fragment all_events_list;
-    private feed_list_fragment feed_list;
+    private Live_Events_List_Fragment all_events_list;
+    private Offers_List_Fragment feed_list;
 
     private FragmentTransaction fragment_transaction;
 
-    public events_hub_feed_fragment()
+    public live_events_feed_fragment()
     {
         // Required empty public constructor
     }
@@ -50,9 +50,9 @@ public class events_hub_feed_fragment extends Fragment
      * @return A new instance of fragment event_list_fragment_parent.
      */
     // TODO: Rename and change types and number of parameters
-    public static events_hub_feed_fragment newInstance(String param1, String param2)
+    public static live_events_feed_fragment newInstance(String param1, String param2)
     {
-        events_hub_feed_fragment fragment = new events_hub_feed_fragment();
+        live_events_feed_fragment fragment = new live_events_feed_fragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -75,8 +75,8 @@ public class events_hub_feed_fragment extends Fragment
         View v = inflater.inflate(R.layout.fragment_events_hub_feed, container, false);
         TabLayout tab_layout = v.findViewById(R.id.event_list_parent_tab);
 
-        all_events_list = new all_events_list_fragment();
-        feed_list = new feed_list_fragment();
+        all_events_list = new Live_Events_List_Fragment();
+        feed_list = new Offers_List_Fragment();
 
         fragment_transaction = getChildFragmentManager().beginTransaction().setReorderingAllowed(true)
                                     .add(R.id.all_events_list,all_events_list,null)

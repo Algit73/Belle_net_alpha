@@ -1,5 +1,6 @@
-package com.soluk.belle_net_alpha.all_events_list_fragment;
+package com.soluk.belle_net_alpha.main_fragments.live_events;
 
+import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_CATEGORY;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_DISPLAY_TYPE;
 import static com.soluk.belle_net_alpha.model.Events_DB_VM.EVENT_TYPE;
 
@@ -31,18 +32,17 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
 
 /**
  * A fragment representing a list of Items.
  */
-public class all_events_list_fragment extends Fragment
+public class Live_Events_List_Fragment extends Fragment
 {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String FILE_NAME = "geo_json_bellenet";
 
-    private int mColumnCount = 1;
 
     private RecyclerView recycler_view;
 
@@ -67,6 +67,7 @@ public class all_events_list_fragment extends Fragment
 
     private int event_type_current = 3;
 
+    private List<Feature> feature_list_all_received;
     private List<Feature> feature_list_all;
     private List<Feature> feature_list_ensemble;
     private List<Feature> feature_list_challenge;
@@ -75,14 +76,14 @@ public class all_events_list_fragment extends Fragment
 
 
 
-    public all_events_list_fragment()
+    public Live_Events_List_Fragment()
     {
     }
 
 
-    public static all_events_list_fragment newInstance(int columnCount)
+    public static Live_Events_List_Fragment newInstance(int columnCount)
     {
-        all_events_list_fragment fragment = new all_events_list_fragment();
+        Live_Events_List_Fragment fragment = new Live_Events_List_Fragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -94,10 +95,10 @@ public class all_events_list_fragment extends Fragment
     {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null)
-        {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
+//        if (getArguments() != null)
+//        {
+//
+//        }
     }
 
     @Override
@@ -107,7 +108,7 @@ public class all_events_list_fragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_all_events_list, container, false);
 
 
-        match_items_views(view);
+        find_items_views(view);
         feature_list_segmentation();
         setup_mode_buttons();
         setup_event_type_buttons();
@@ -120,11 +121,12 @@ public class all_events_list_fragment extends Fragment
         return view;
     }
 
-    void match_items_views(View view)
+    void find_items_views(View view)
     {
         Context context = view.getContext();
         recycler_view = view.findViewById(R.id.event_list_recycler);//(RecyclerView) view;
-        recycler_view.setLayoutManager(new LinearLayoutManager(context));
+//        recycler_view.setLayoutManager(new LinearLayoutManager(context));
+        recycler_view.setLayoutManager(new GridLayoutManager(context, 2));
 
 
         discover_btn = view.findViewById(R.id.discover_btn);
@@ -238,9 +240,9 @@ public class all_events_list_fragment extends Fragment
         {
             reset_mode_buttons();
             joined_btn.setBackgroundColor(ResourcesCompat.getColor(getResources()
-                    , R.color.palette_teal_light, getContext().getTheme()));
+                    , R.color.palette_teal_light, requireContext().getTheme()));
             joined_btn.setTextColor(ResourcesCompat.getColor(getResources()
-                    , R.color.gray_100, getContext().getTheme()));
+                    , R.color.gray_100, requireContext().getTheme()));
             mode = JOINED_MODE;
             find_event_type();
 
@@ -264,14 +266,23 @@ public class all_events_list_fragment extends Fragment
         String dir = requireActivity().getFilesDir().toString();
         file_maker geo_json_holder = new file_maker(dir,FILE_NAME);
         FeatureCollection feature_collection = geo_json_holder.read_features();
-        feature_list_all = feature_collection.features();
+        feature_list_all_received = feature_collection.features();
+        feature_list_all = new ArrayList<>();
         feature_list_experience = new ArrayList<>();
         feature_list_challenge = new ArrayList<>();
         feature_list_ensemble = new ArrayList<>();
 
-        assert feature_list_all != null;
-        for(Feature feature: feature_list_all)
+        assert feature_list_all_received != null;
+        for(Feature feature: feature_list_all_received)
         {
+            /// Checks if the event is user defined:
+            int event_category = Integer.parseInt(feature.getStringProperty(EVENT_CATEGORY));
+            if (event_category>0)   continue;
+
+            feature_list_all.add(feature);
+
+
+            /// Dividing Event types
             int event_type = Integer.parseInt(feature.getStringProperty(EVENT_TYPE));
             switch (event_type)
             {
@@ -311,7 +322,7 @@ public class all_events_list_fragment extends Fragment
     {
         List<Feature> feature_list_modified = new ArrayList<>();
 
-        assert feature_list_all != null;
+        assert feature_list_all_received != null;
         for (Feature feature: feature_list)
         {
             /// Check if the user joined the event
@@ -344,7 +355,7 @@ public class all_events_list_fragment extends Fragment
 
             }
         }
-        recycler_view.setAdapter(new all_events_list_recycler_view_adapter(feature_list_modified,mode));
+        recycler_view.setAdapter(new Live_Events_List_Recycler_View_Adapter(feature_list_modified,mode));
     }
 
     private void reset_mode_buttons()

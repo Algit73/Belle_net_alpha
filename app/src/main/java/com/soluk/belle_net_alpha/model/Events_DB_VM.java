@@ -61,6 +61,9 @@ public class Events_DB_VM extends ViewModel
     public static final String USER_NAME = "user_name";
     public static final String USER_FAMILY = "user_family";
     public static final String USER_NAME_FAMILY = "user_name_family";
+    public static final String BUSINESS_NAME = "business_name";
+    public static final String BUSINESS_PIC = "business_picture";
+    public static final String BUSINESS_ID = "business_id";
     public static final String USER_PIC = "user_picture";
     public static final String USER_ID = "user_id";
     public static final String USER_ID_FOLLOWING = "user_id_following";
@@ -76,12 +79,14 @@ public class Events_DB_VM extends ViewModel
     public static final String USER_ACTION = "user_action";
     public static final String OWNER_USER_ID = "owner_user_id";
     public static final String EVENT_NAME = "event_name";
+    public static final String EVENT_DESCRIPTION = "event_description";
     public static final String EVENT_CREATION_DATE = "event_creation_date";
     public static final String EVENT_DATE = "event_date";
     public static final String EVENT_DATE_END = "event_date_end";
     public static final String EVENT_TIME = "event_time";
     public static final String EVENT_TIME_END = "event_time_end";
     public static final String EVENT_TYPE = "event_type";
+    public static final String EVENT_CATEGORY = "event_category";
     public static final String EVENT_ID = "event_id";
     public static final String EVENT_DISPLAY_TYPE = "event_display_type";
     public static final String COMMENT_ID = "comment_id";
@@ -204,7 +209,7 @@ public class Events_DB_VM extends ViewModel
             try
             {
                 JSONObject event = new JSONObject(received_events.get(i).toString());
-                unique_profile_pics.add(event.get("user_picture").toString());
+                unique_profile_pics.add(event.get(USER_PIC).toString());
                 feature_maker.add_feature(event);
             }
             catch (Exception e)
@@ -222,7 +227,7 @@ public class Events_DB_VM extends ViewModel
 
         /// Using Server sorting
         try {cache_profile_images("");}
-        catch (Exception e) {}
+        catch (Exception e) {Log.d(TAG,"cache_profile_images: "+e.getMessage());}
 
 
         file_maker geo_json_holder = new file_maker(db_file_directory, FILE_NAME);
@@ -258,6 +263,7 @@ public class Events_DB_VM extends ViewModel
                 }
                 catch (JSONException e)
                 {
+                    Log.d(TAG,"cache_profile_images: "+e);
                     e.printStackTrace();
                 }
 
@@ -265,8 +271,8 @@ public class Events_DB_VM extends ViewModel
             }
         };
         JSONObject user_cred = new JSONObject();
-        user_cred.put("user_email", User_Credentials.get_item("user_email"));
-        user_cred.put("user_password", User_Credentials.get_item("user_password"));
+        user_cred.put(USER_EMAIL, User_Credentials.get_item(USER_EMAIL));
+        user_cred.put(USER_PASSWORD, User_Credentials.get_item(USER_PASSWORD));
 
         HTTP_Provider.post_json(REQUEST_PICS_SUB_URL,user_cred,callback);
 
@@ -321,7 +327,7 @@ public class Events_DB_VM extends ViewModel
                 Log.d(TAG,"BMP onPrepareLoad");
             }
         };
-        String path = profile_pic_url + postfix+ ".jpg";
+        String path = profile_pic_url + postfix;
         Log.d(TAG,"profile path: "+path);
 
         /// Accessing Main UI Thread
